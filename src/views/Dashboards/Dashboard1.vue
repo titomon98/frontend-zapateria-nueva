@@ -4,9 +4,9 @@
       <b-col sm="12">
         <iq-card class-name="iq-card-block iq-card-stretch iq-card-height">
           <template v-slot:headerTitle>
-            <h4 class="card-title">Personal actual</h4>
+            <h4 class="card-title">Este es el sistema de Zapateria</h4>
           </template>
-          <template v-slot:body class="d-flex flex-wrap align-items-center p-0 slick-initialized slick-slider">
+          <template v-slot:body>
               <Slick :option="slickOptions" id="doster-list-slide">
                   <div class="docter-list-item-inner rounded text-center" v-for="doctors in doctorList" :key="doctors.id">
                     <div class="donter-profile">
@@ -30,7 +30,7 @@
           <b-col sm="12">
             <iq-card class-name="iq-card-block iq-card-stretch iq-card-height" body-class="">
               <template v-slot:headerTitle>
-                <h4 class="card-title">Últimos exámenes</h4>
+                <h4 class="card-title">Últimos ingresos de producto</h4>
               </template>
 
               <template v-slot:body>
@@ -110,12 +110,12 @@ export default {
         prevArrow: '<a href="#" class="ri-arrow-right-s-line right"></a>'
       },
       doctorList: [
-        { name: 'Dr.Hugo Gálvez', img: require('../../assets/images/user/05.jpg'), position: 'Director médico', worksAt: 'Centro Galo' },
-        { name: 'Dr.Hugo Gálvez', img: require('../../assets/images/user/06.jpg'), position: 'Director médico', worksAt: 'Centro Galo' },
-        { name: 'Dr.Hugo Gálvez', img: require('../../assets/images/user/07.jpg'), position: 'Director médico', worksAt: 'Centro Galo' },
-        { name: 'Dr.Hugo Gálvez', img: require('../../assets/images/user/08.jpg'), position: 'Director médico', worksAt: 'Centro Galo' },
-        { name: 'Dr.Hugo Gálvez', img: require('../../assets/images/user/09.jpg'), position: 'Director médico', worksAt: 'Centro Galo' },
-        { name: 'Dr.Hugo Gálvez', img: require('../../assets/images/user/10.jpg'), position: 'Director médico', worksAt: 'Centro Galo' }
+        { name: 'Aquí si entienden castellano', img: require('../../assets/images/user/05.jpg'), position: 'No son unos mancos', worksAt: 'Zapatería el Centro' },
+        { name: 'Aquí si entienden castellano', img: require('../../assets/images/user/06.jpg'), position: 'No son unos mancos', worksAt: 'Zapatería el Centro' },
+        { name: 'Aquí si entienden castellano', img: require('../../assets/images/user/07.jpg'), position: 'No son unos mancos', worksAt: 'Zapatería el Centro' },
+        { name: 'Aquí si entienden castellano', img: require('../../assets/images/user/08.jpg'), position: 'No son unos mancos', worksAt: 'Zapatería el Centro' },
+        { name: 'Aquí si entienden castellano', img: require('../../assets/images/user/09.jpg'), position: 'No son unos mancos', worksAt: 'Zapatería el Centro' },
+        { name: 'Aquí si entienden castellano', img: require('../../assets/images/user/10.jpg'), position: 'No son unos mancos', worksAt: 'Zapatería el Centro' }
       ]
     }
   },

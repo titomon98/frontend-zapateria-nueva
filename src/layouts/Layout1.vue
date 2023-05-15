@@ -59,15 +59,6 @@ import Loader from '../components/xray/loader/Loader'
 import SideBarStyle1 from '../components/xray/sidebars/SideBarStyle1'
 import NavBarStyle1 from '../components/xray/navbars/NavBarStyle1'
 import SideBarItems from '../FackApi/json/SideBar'
-import SidebarAccounting from '../FackApi/json/SidebarAccounting.json'
-import SidebarCash from '../FackApi/json/SidebarCash.json'
-import SidebarGalvez from '../FackApi/json/SidebarGalvez.json'
-import SidebarLaboratory from '../FackApi/json/SidebarLaboratory.json'
-import SidebarReception from '../FackApi/json/SidebarReception.json'
-import SidebarMarketing from '../FackApi/json/SidebarMarketing.json'
-// import SidebarMedicRecord from '../FackApi/json/SidebarMedicRecord.json'
-// import SidebarTherapy from '../FackApi/json/SidebarTherapy.json'
-// import PatientSideBar from '../FackApi/json/PatientSideBar'
 import HorizontalItems from '../FackApi/json/HorizontalMenu'
 import profile from '../assets/images/user/1.jpg'
 import loader from '../assets/images/logo.png'
@@ -90,18 +81,6 @@ export default {
     this.year = today.getFullYear()
     if (this.currentUser.user_type === 1) {
       this.verticalMenu = SideBarItems
-    } else if (this.currentUser.user_type === 2) {
-      this.verticalMenu = SidebarReception
-    } else if (this.currentUser.user_type === 3) {
-      this.verticalMenu = SidebarCash
-    } else if (this.currentUser.user_type === 4) {
-      this.verticalMenu = SidebarAccounting
-    } else if (this.currentUser.user_type === 5) {
-      this.verticalMenu = SidebarLaboratory
-    } else if (this.currentUser.user_type === 6) {
-      this.verticalMenu = SidebarGalvez
-    } else if (this.currentUser.user_type === 7) {
-      this.verticalMenu = SidebarMarketing
     }
   },
   computed: {

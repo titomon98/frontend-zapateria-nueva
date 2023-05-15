@@ -18,9 +18,9 @@
           </template>
           <template v-slot:body>
             <b-tabs>
-              <b-tab title="Terapia" active><Services/></b-tab> <!-- Aqui los maquete al reves xD -->
-              <b-tab title="Servicios" lazy><Therapy/></b-tab>
-              <b-tab title="Genética" lazy><Genetica/></b-tab>
+              <b-tab title="Tiendas" active><Tiendas/></b-tab> <!-- Aqui los maquete al reves xD -->
+              <b-tab title="Zapato" lazy><Zapato/></b-tab>
+              <b-tab title="Servicios (referencia)" lazy><Services/></b-tab>
             </b-tabs>
           </template>
         </iq-card>
@@ -33,15 +33,15 @@ import { xray } from '../../../config/pluginInit'
 import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
 import Services from './Services.vue'
-import Therapy from './Therapy.vue'
-import Genetica from './Genetica.vue'
+import Tiendas from './Tiendas.vue'
+import Zapato from './Zapato.vue'
 
 export default {
   name: 'ServicesParent',
   components: {
     Services,
-    Therapy,
-    Genetica
+    Tiendas,
+    Zapato
   },
   data () {
     return {

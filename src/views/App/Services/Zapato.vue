@@ -10,7 +10,7 @@
     >
       <div class="iq-alert-text">{{ alertText }}</div>
     </b-alert>
-    <b-modal id="modal-1-equipment" ref="modal-1-equipment" title="Agregar equipo">
+    <b-modal id="modal-1-services" ref="modal-1-services" title="Agregar terapia">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -20,59 +20,30 @@
       >
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
-      <b-form>
-        <b-form-group label="Tipo:">
-            <v-select
-              name="medicationType"
-              v-model="$v.form.type.$model"
-              :state="!$v.form.type.$error"
-              :options="types"
-              label="nombre"
-              placeholder="Seleccione el tipo de equipo"
-            />
-          <div v-if="$v.form.type.$error" class="invalid-feedback-vselect">
-            Debe seleccionar el tipo de equipo
-          </div>
-        </b-form-group>
+      <b-form @submit="$event.preventDefault()">
         <b-form-group label="Nombre:">
           <b-form-input
             v-model.trim="$v.form.name.$model"
             :state="!$v.form.name.$error"
-            placeholder="Ingresar nombre del equipo"
+            placeholder="Ingresar nombre de la terapia"
           ></b-form-input>
           <div v-if="$v.form.name.required.$invalid" class="invalid-feedback">
-            Debe ingresar el nombre del equipo
+            Debe ingresar el nombre
           </div>
         </b-form-group>
-        <b-form-group label="Codigo:">
+        <b-form-group label="Precio:">
           <b-form-input
-            v-model.trim="$v.form.code.$model"
-            :state="!$v.form.code.$error"
-            placeholder="Ingresar codigo"
+            v-model.trim="$v.form.precio.$model"
+            :state="!$v.form.precio.$error"
+            placeholder="Ingresar precio del servicio"
           ></b-form-input>
-          <template>
-            <b-button
-              class="mb-2"
-              block
-              variant="success default"
-              @click="openModal('code')"
-            >
-              Generar código <i class="zmdi zmdi-shuffle" />
-            </b-button>
-          </template>
-          <br />
-          <vue-barcode
-            :value="form.code"
-            align="center"
-            :options="{ lineColor: '#0000', text: 'Scan' }"
-          > </vue-barcode>
-          <div v-if="$v.form.code.required.$invalid" class="invalid-feedback">
-            Debe ingresar el codigo
+          <div v-if="$v.form.precio.required.$invalid" class="invalid-feedback">
+            Debe ingresar el precio
           </div>
         </b-form-group>
       </b-form>
       <template #modal-footer="{}">
-        <b-button  variant="primary" @click="onValidate('save')"
+        <b-button variant="primary" @click="onValidate('save')"
           >Guardar</b-button
         >
         <b-button variant="danger" @click="closeModal('save')"
@@ -80,7 +51,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-2-equipment" ref="modal-2-equipment" title="Editar equipo">
+    <b-modal id="modal-2-services" ref="modal-2-services" title="Editar terapia">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -90,59 +61,30 @@
       >
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
-      <b-form>
-        <b-form-group label="Tipo:">
-            <v-select
-              name="medicationType"
-              v-model="$v.form.type.$model"
-              :state="!$v.form.type.$error"
-              :options="types"
-              label="nombre"
-              placeholder="Seleccione el tipo de equipo"
-            />
-          <div v-if="$v.form.type.$error" class="invalid-feedback-vselect">
-            Debe seleccionar el tipo de equipo
-          </div>
-        </b-form-group>
+      <b-form @submit="$event.preventDefault()">
         <b-form-group label="Nombre:">
           <b-form-input
             v-model.trim="$v.form.name.$model"
             :state="!$v.form.name.$error"
-            placeholder="Ingresar nombre del equipo"
+            placeholder="Ingresar nombre de terapia"
           ></b-form-input>
           <div v-if="$v.form.name.required.$invalid" class="invalid-feedback">
-            Debe ingresar el nombre del equipo
+            Debe ingresar el nombre
           </div>
         </b-form-group>
-        <b-form-group label="Codigo:">
+        <b-form-group label="Precio:">
           <b-form-input
-            v-model.trim="$v.form.code.$model"
-            :state="!$v.form.code.$error"
-            placeholder="Ingresar codigo"
+            v-model.trim="$v.form.precio.$model"
+            :state="!$v.form.precio.$error"
+            placeholder="Ingresar precio del servicio"
           ></b-form-input>
-          <template>
-            <b-button
-              class="mb-2"
-              block
-              variant="success default"
-              @click="openModal('code')"
-            >
-              Generar código <i class="zmdi zmdi-shuffle" />
-            </b-button>
-          </template>
-          <br />
-          <vue-barcode
-            :value="form.code"
-            align="center"
-            :options="{ lineColor: '#0000', text: 'Scan' }"
-          > </vue-barcode>
-          <div v-if="$v.form.code.required.$invalid" class="invalid-feedback">
-            Debe ingresar el codigo
+          <div v-if="$v.form.precio.required.$invalid" class="invalid-feedback">
+            Debe ingresar el precio
           </div>
         </b-form-group>
       </b-form>
       <template #modal-footer="{}">
-        <b-button  variant="primary" @click="onValidate('update')"
+        <b-button variant="primary" @click="onValidate('update')"
           >Guardar</b-button
         >
         <b-button variant="danger" @click="closeModal('update')"
@@ -150,7 +92,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-3-equipment" ref="modal-3-equipment" title="Desactivar equipo">
+    <b-modal id="modal-3-services" ref="modal-3-services" title="Desactivar terapia">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -161,22 +103,22 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <h6 class="my-4">
-        ¿Desea desactivar el equipo: {{ form.name }} ?
+        ¿Desea desactivar la terapia: {{ form.name }} ?
       </h6>
       <template #modal-footer="{}">
         <b-button
           type="submit"
           variant="primary"
           @click="onState()
-                  $bvModal.hide('modal-3-equipment')"
+                  $bvModal.hide('modal-3-services')"
           >Desactivar</b-button
         >
-        <b-button variant="danger" @click="$bvModal.hide('modal-3-equipment')"
+        <b-button variant="danger" @click="$bvModal.hide('modal-3-services')"
           >Cancelar</b-button
         >
       </template>
     </b-modal>
-    <b-modal id="modal-4-equipment" ref="modal-4-equipment" title="Activar equipo">
+    <b-modal id="modal-4-services" ref="modal-4-services" title="Activar terapia">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -187,17 +129,17 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <h6 class="my-4">
-        ¿Desea activar el equipo: {{ form.name }} ?
+        ¿Desea activar la terapia: {{ form.name }} ?
       </h6>
       <template #modal-footer="{}">
         <b-button
           type="submit"
           variant="primary"
           @click="onState()
-                  $bvModal.hide('modal-4-equipment')"
+                  $bvModal.hide('modal-4-services')"
           >Activar</b-button
         >
-        <b-button variant="danger" @click="$bvModal.hide('modal-4-equipment')"
+        <b-button variant="danger" @click="$bvModal.hide('modal-4-services')"
           >Cancelar</b-button
         >
       </template>
@@ -206,36 +148,16 @@
       <b-col md="12">
         <iq-card>
             <template v-slot:headerTitle>
-              <h4 class="card-title mt-3">Equipo galo tech</h4>
-              <div class="iq-search-bar mt-2">
-                <div class="row">
-                      <div class="col-sm">
-                        <b-form action="#" class="searchbox">
-                            <b-input id="search" placeholder="Buscar..." @input="(val) => searchChange(val)" />
-                            <a class="search-link" href="#"><i class="ri-search-line"></i></a>
-                        </b-form>
-                      </div>
-                      <div class="col-sm">
-                        <b-dropdown
-                          id="ddown1"
-                          :text="columna.nombre"
-                          variant="outline-dark"
-                          class="mr-1 float-md-left btn-group"
-                          size="xs"
-                        >
-                          <b-dropdown-item
-                            v-for="(search, index) in options"
-                            :key="index"
-                            @click="changeTypeSearch(search)"
-                            >{{ search.nombre }}</b-dropdown-item
-                          >
-                        </b-dropdown>
-                      </div>
-                    </div>
+              <h4 class="card-title mt-3">Terapias</h4>
+               <div class="iq-search-bar mt-2">
+                <b-form action="#" class="searchbox">
+                    <b-input id="search" placeholder="Buscar..." @input="(val) => searchChange(val)" />
+                    <a class="search-link" href="#"><i class="ri-search-line"></i></a>
+                </b-form>
               </div>
             </template>
             <template v-slot:headerAction>
-            <b-button variant="primary"  v-b-modal.modal-1-equipment>AGREGAR NUEVO</b-button>
+            <b-button variant="primary"  v-b-modal.modal-1-services>AGREGAR NUEVO</b-button>
           </template>
           <template v-slot:body>
             <datatable-heading
@@ -277,7 +199,7 @@
                   <b-button
                     v-b-tooltip.top="'Editar'"
                     @click="setData(props.rowData)"
-                    v-b-modal.modal-2-equipment
+                    v-b-modal.modal-2-services
                     class="mb-2"
                     size="sm"
                     variant="outline-warning"
@@ -289,8 +211,8 @@
                     @click="
                       setData(props.rowData);
                       props.rowData.estado == 1
-                        ? $bvModal.show('modal-3-equipment')
-                        : $bvModal.show('modal-4-equipment');
+                        ? $bvModal.show('modal-3-services')
+                        : $bvModal.show('modal-4-services');
                     "
                     class="mb-2"
                     size="sm"
@@ -325,23 +247,16 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
-import VueBarcode from 'vue-barcode'
 
 export default {
-  name: 'Medicine',
+  name: 'Terapias',
   components: {
     vuetable: Vuetable,
     'vuetable-pagination-bootstrap': VuetablePaginationBootstrap,
-    'datatable-heading': DatatableHeading,
-    'vue-barcode': VueBarcode
+    'datatable-heading': DatatableHeading
   },
   setup () {
     return { $v: useVuelidate() }
-  },
-  beforeMount () {
-    axios.get(apiUrl + '/tipo_equipo/get').then((response) => {
-      this.types = response.data
-    })
   },
   mounted () {
     xray.index()
@@ -354,28 +269,18 @@ export default {
       perPage: 5,
       search: '',
       form: {
-        type: [],
         id: 0,
         name: '',
-        code: '',
+        precio: '',
         state: 1
       },
-      options: [
-        { value: 'nombre', nombre: 'Nombre' },
-        { value: 'codigo', nombre: 'Código' },
-        { value: 'Tipo', nombre: 'Tipo' }
-      ],
-      columna: { value: 'nombre', nombre: 'Nombre' },
-      brands: [],
-      types: [],
-      presentations: [],
       alertSecs: 5,
       alertCountDown: 0,
       alertCountDownError: 0,
       alertText: '',
       alertErrorText: '',
       alertVariant: '',
-      apiBase: apiUrl + '/equipo_galo_tech/list',
+      apiBase: apiUrl + '/terapias/list',
       fields: [
         {
           name: '__slot:actions',
@@ -390,21 +295,9 @@ export default {
           dataClass: 'list-item-heading'
         },
         {
-          name: 'codigo',
-          sortField: 'code',
-          title: 'Codigo',
-          dataClass: 'list-item-heading'
-        },
-        {
-          name: 'existencia_total',
-          sortField: 'existencia_total',
-          title: 'Existencia Total',
-          dataClass: 'list-item-heading'
-        },
-        {
-          name: 'tipo_equipo.nombre',
-          sortField: 'tipo_equipo.nombre',
-          title: 'Tipo de equipo',
+          name: 'precio',
+          sortField: 'precio',
+          title: 'Precio',
           dataClass: 'list-item-heading'
         },
         {
@@ -421,8 +314,7 @@ export default {
     return {
       form: {
         name: { required },
-        code: { required },
-        type: { required }
+        precio: { required }
       }
     }
   },
@@ -431,22 +323,10 @@ export default {
       switch (modal) {
         case 'save': {
           this.$v.$reset()
+          this.form.id = 0
           this.form.name = ''
-          this.form.code = ''
+          this.form.precio = ''
           this.form.state = 1
-          this.form.type = []
-          break
-        }
-        case 'code': {
-          this.form.code = ''
-          var characters =
-            'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-          var charactersLength = characters.length
-          for (var i = 0; i < 10; i++) {
-            this.form.code += characters.charAt(
-              Math.floor(Math.random() * charactersLength)
-            )
-          }
           break
         }
       }
@@ -455,21 +335,19 @@ export default {
       switch (action) {
         case 'save': {
           this.$v.$reset()
-          this.$refs['modal-1-equipment'].hide()
+          this.$refs['modal-1-services'].hide()
           this.form.id = 0
           this.form.name = ''
-          this.form.code = ''
-          this.form.existence = ''
+          this.form.precio = ''
           this.form.state = 1
-          this.form.type = []
           break
         }
         case 'update': {
           this.$v.$reset()
-          this.$refs['modal-2-equipment'].hide()
+          this.$refs['modal-2-services'].hide()
           this.form.id = 0
           this.form.name = ''
-          this.form.type = []
+          this.form.precio = ''
           this.form.state = 1
           break
         }
@@ -489,22 +367,20 @@ export default {
       }
     },
     setData (data) {
-      console.log(data)
       this.form.name = data.nombre
+      this.form.precio = data.precio
       this.form.state = data.estado
       this.form.id = data.id
-      this.form.code = data.codigo
-      this.form.type = data.tipo_equipo
     },
     /* Guardar */
     onSave () {
       const me = this
-      axios.post(apiUrl + '/equipo_galo_tech/create', {
+      axios.post(apiUrl + '/terapias/create', {
         form: me.form })
         .then((response) => {
           me.alertVariant = 'success'
           me.showAlert()
-          me.alertText = 'Se ha creado el equipo ' + me.form.name + ' exitosamente'
+          me.alertText = 'Se ha creado la terapia ' + me.form.name + ' exitosamente'
           me.$refs.vuetable.refresh()
           me.closeModal('save')
         })
@@ -519,12 +395,12 @@ export default {
     onUpdate () {
       const me = this
       // this.$refs["modalSave"].hide();
-      axios.put(apiUrl + '/equipo_galo_tech/update', {
+      axios.put(apiUrl + '/terapias/update', {
         form: me.form })
         .then((response) => {
           me.alertVariant = 'primary'
           me.showAlert()
-          me.alertText = 'Se ha actualizado el equipo ' + me.form.name + ' exitosamente'
+          me.alertText = 'Se ha actualizado la terapia ' + me.form.name + ' exitosamente'
           me.$refs.vuetable.refresh()
           me.closeModal('update')
         })
@@ -539,15 +415,15 @@ export default {
       let me = this
       if (this.form.state === 1) {
         axios
-          .put(apiUrl + '/equipo_galo_tech/deactivate', {
+          .put(apiUrl + '/terapias/deactivate', {
             id: this.form.id
           })
           .then((response) => {
             me.alertVariant = 'warning'
             me.showAlert()
-            me.alertText = 'Se ha desactivado el equipo ' + me.form.name + ' exitosamente'
+            me.alertText = 'Se ha desactivado la terapia ' + me.form.name + ' exitosamente'
             me.$refs.vuetable.refresh()
-            me.$refs['modal-3-equipment'].hide()
+            me.$refs['modal-3-services'].hide()
           })
           .catch((error) => {
             me.alertVariant = 'danger'
@@ -557,15 +433,15 @@ export default {
           })
       } else {
         axios
-          .put(apiUrl + '/equipo_galo_tech/activate', {
+          .put(apiUrl + '/terapias/activate', {
             id: this.form.id
           })
           .then((response) => {
             me.alertVariant = 'info'
             me.showAlert()
-            me.alertText = 'Se ha activado el equipo ' + me.form.name + ' exitosamente'
+            me.alertText = 'Se ha activado la terapia ' + me.form.name + ' exitosamente'
             me.$refs.vuetable.refresh()
-            me.$refs['modal-4-equipment'].hide()
+            me.$refs['modal-4-services'].hide()
           })
           .catch((error) => {
             me.alertVariant = 'danger'
@@ -582,16 +458,14 @@ export default {
           order: sortOrder[0] ? sortOrder[0].direction : 'desc',
           page: currentPage,
           limit: this.perPage,
-          search: this.search,
-          columna: this.columna.value
+          search: this.search
         }
         : {
           criterio: sortOrder[0] ? sortOrder[0].sortField : 'createdAt',
           order: sortOrder[0] ? sortOrder[0].direction : 'desc',
           page: currentPage,
           limit: this.perPage,
-          search: this.search,
-          columna: this.columna.value
+          search: this.search
         }
     },
     changePageSizes (perPage) {
@@ -618,9 +492,6 @@ export default {
     },
     showAlertError () {
       this.alertCountDownError = this.alertSecs
-    },
-    changeTypeSearch (columna) {
-      this.columna = columna
     }
   }
 }

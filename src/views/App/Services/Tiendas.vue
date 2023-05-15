@@ -10,7 +10,7 @@
     >
       <div class="iq-alert-text">{{ alertText }}</div>
     </b-alert>
-    <b-modal id="modal-1-payment-type" ref="modal-1-payment-type" title="Agregar tipo de cobro">
+    <b-modal id="modal-1-services" ref="modal-1-services" title="Agregar terapia">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -25,10 +25,20 @@
           <b-form-input
             v-model.trim="$v.form.name.$model"
             :state="!$v.form.name.$error"
-            placeholder="Ingresar nombre del tipo de cobro"
+            placeholder="Ingresar nombre de la terapia"
           ></b-form-input>
           <div v-if="$v.form.name.required.$invalid" class="invalid-feedback">
             Debe ingresar el nombre
+          </div>
+        </b-form-group>
+        <b-form-group label="Precio:">
+          <b-form-input
+            v-model.trim="$v.form.precio.$model"
+            :state="!$v.form.precio.$error"
+            placeholder="Ingresar precio del servicio"
+          ></b-form-input>
+          <div v-if="$v.form.precio.required.$invalid" class="invalid-feedback">
+            Debe ingresar el precio
           </div>
         </b-form-group>
       </b-form>
@@ -41,7 +51,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-2-payment-type" ref="modal-2-payment-type" title="Editar tipo de cobro">
+    <b-modal id="modal-2-services" ref="modal-2-services" title="Editar terapia">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -56,10 +66,20 @@
           <b-form-input
             v-model.trim="$v.form.name.$model"
             :state="!$v.form.name.$error"
-            placeholder="Ingresar nombre de tipo de cobro"
+            placeholder="Ingresar nombre de terapia"
           ></b-form-input>
           <div v-if="$v.form.name.required.$invalid" class="invalid-feedback">
             Debe ingresar el nombre
+          </div>
+        </b-form-group>
+        <b-form-group label="Precio:">
+          <b-form-input
+            v-model.trim="$v.form.precio.$model"
+            :state="!$v.form.precio.$error"
+            placeholder="Ingresar precio del servicio"
+          ></b-form-input>
+          <div v-if="$v.form.precio.required.$invalid" class="invalid-feedback">
+            Debe ingresar el precio
           </div>
         </b-form-group>
       </b-form>
@@ -72,7 +92,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-3-payment-type" ref="modal-3-payment-type" title="Desactivar tipo de cobro">
+    <b-modal id="modal-3-services" ref="modal-3-services" title="Desactivar terapia">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -83,22 +103,22 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <h6 class="my-4">
-        ¿Desea desactivar el tipo de cobro: {{ form.name }} ?
+        ¿Desea desactivar la terapia: {{ form.name }} ?
       </h6>
       <template #modal-footer="{}">
         <b-button
           type="submit"
           variant="primary"
           @click="onState()
-                  $bvModal.hide('modal-3-payment-type')"
+                  $bvModal.hide('modal-3-services')"
           >Desactivar</b-button
         >
-        <b-button variant="danger" @click="$bvModal.hide('modal-3-payment-type')"
+        <b-button variant="danger" @click="$bvModal.hide('modal-3-services')"
           >Cancelar</b-button
         >
       </template>
     </b-modal>
-    <b-modal id="modal-4-payment-type" ref="modal-4-payment-type" title="Activar tipo de cobro">
+    <b-modal id="modal-4-services" ref="modal-4-services" title="Activar terapia">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -109,17 +129,17 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <h6 class="my-4">
-        ¿Desea activar al tipo de cobro: {{ form.name }} ?
+        ¿Desea activar la terapia: {{ form.name }} ?
       </h6>
       <template #modal-footer="{}">
         <b-button
           type="submit"
           variant="primary"
           @click="onState()
-                  $bvModal.hide('modal-4-payment-type')"
+                  $bvModal.hide('modal-4-services')"
           >Activar</b-button
         >
-        <b-button variant="danger" @click="$bvModal.hide('modal-4-payment-type')"
+        <b-button variant="danger" @click="$bvModal.hide('modal-4-services')"
           >Cancelar</b-button
         >
       </template>
@@ -128,7 +148,7 @@
       <b-col md="12">
         <iq-card>
             <template v-slot:headerTitle>
-              <h4 class="card-title mt-3">Tipos de cobro</h4>
+              <h4 class="card-title mt-3">Terapias</h4>
                <div class="iq-search-bar mt-2">
                 <b-form action="#" class="searchbox">
                     <b-input id="search" placeholder="Buscar..." @input="(val) => searchChange(val)" />
@@ -137,7 +157,7 @@
               </div>
             </template>
             <template v-slot:headerAction>
-            <b-button variant="primary"  v-b-modal.modal-1-payment-type>AGREGAR NUEVO</b-button>
+            <b-button variant="primary"  v-b-modal.modal-1-services>AGREGAR NUEVO</b-button>
           </template>
           <template v-slot:body>
             <datatable-heading
@@ -179,7 +199,7 @@
                   <b-button
                     v-b-tooltip.top="'Editar'"
                     @click="setData(props.rowData)"
-                    v-b-modal.modal-2-payment-type
+                    v-b-modal.modal-2-services
                     class="mb-2"
                     size="sm"
                     variant="outline-warning"
@@ -191,8 +211,8 @@
                     @click="
                       setData(props.rowData);
                       props.rowData.estado == 1
-                        ? $bvModal.show('modal-3-payment-type')
-                        : $bvModal.show('modal-4-payment-type');
+                        ? $bvModal.show('modal-3-services')
+                        : $bvModal.show('modal-4-services');
                     "
                     class="mb-2"
                     size="sm"
@@ -229,7 +249,7 @@ import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
 
 export default {
-  name: 'TipoPago',
+  name: 'Terapias',
   components: {
     vuetable: Vuetable,
     'vuetable-pagination-bootstrap': VuetablePaginationBootstrap,
@@ -251,6 +271,7 @@ export default {
       form: {
         id: 0,
         name: '',
+        precio: '',
         state: 1
       },
       alertSecs: 5,
@@ -259,7 +280,7 @@ export default {
       alertText: '',
       alertErrorText: '',
       alertVariant: '',
-      apiBase: apiUrl + '/tipo_cobro/list',
+      apiBase: apiUrl + '/terapias/list',
       fields: [
         {
           name: '__slot:actions',
@@ -271,6 +292,12 @@ export default {
           name: 'nombre',
           sortField: 'name',
           title: 'Nombre',
+          dataClass: 'list-item-heading'
+        },
+        {
+          name: 'precio',
+          sortField: 'precio',
+          title: 'Precio',
           dataClass: 'list-item-heading'
         },
         {
@@ -286,7 +313,8 @@ export default {
   validations () {
     return {
       form: {
-        name: { required }
+        name: { required },
+        precio: { required }
       }
     }
   },
@@ -297,6 +325,7 @@ export default {
           this.$v.$reset()
           this.form.id = 0
           this.form.name = ''
+          this.form.precio = ''
           this.form.state = 1
           break
         }
@@ -306,17 +335,19 @@ export default {
       switch (action) {
         case 'save': {
           this.$v.$reset()
-          this.$refs['modal-1-payment-type'].hide()
+          this.$refs['modal-1-services'].hide()
           this.form.id = 0
           this.form.name = ''
+          this.form.precio = ''
           this.form.state = 1
           break
         }
         case 'update': {
           this.$v.$reset()
-          this.$refs['modal-2-payment-type'].hide()
+          this.$refs['modal-2-services'].hide()
           this.form.id = 0
           this.form.name = ''
+          this.form.precio = ''
           this.form.state = 1
           break
         }
@@ -337,18 +368,19 @@ export default {
     },
     setData (data) {
       this.form.name = data.nombre
+      this.form.precio = data.precio
       this.form.state = data.estado
       this.form.id = data.id
     },
     /* Guardar */
     onSave () {
       const me = this
-      axios.post(apiUrl + '/tipo_cobro/create', {
+      axios.post(apiUrl + '/terapias/create', {
         form: me.form })
         .then((response) => {
           me.alertVariant = 'success'
           me.showAlert()
-          me.alertText = 'Se ha creado el tipo de cobro ' + me.form.name + ' exitosamente'
+          me.alertText = 'Se ha creado la terapia ' + me.form.name + ' exitosamente'
           me.$refs.vuetable.refresh()
           me.closeModal('save')
         })
@@ -363,12 +395,12 @@ export default {
     onUpdate () {
       const me = this
       // this.$refs["modalSave"].hide();
-      axios.put(apiUrl + '/tipo_cobro/update', {
+      axios.put(apiUrl + '/terapias/update', {
         form: me.form })
         .then((response) => {
           me.alertVariant = 'primary'
           me.showAlert()
-          me.alertText = 'Se ha actualizado el tipo de cobro ' + me.form.name + ' exitosamente'
+          me.alertText = 'Se ha actualizado la terapia ' + me.form.name + ' exitosamente'
           me.$refs.vuetable.refresh()
           me.closeModal('update')
         })
@@ -383,15 +415,15 @@ export default {
       let me = this
       if (this.form.state === 1) {
         axios
-          .put(apiUrl + '/tipo_cobro/deactivate', {
+          .put(apiUrl + '/terapias/deactivate', {
             id: this.form.id
           })
           .then((response) => {
             me.alertVariant = 'warning'
             me.showAlert()
-            me.alertText = 'Se ha desactivado el tipo de cobro ' + me.form.name + ' exitosamente'
+            me.alertText = 'Se ha desactivado la terapia ' + me.form.name + ' exitosamente'
             me.$refs.vuetable.refresh()
-            me.$refs['modal-3-payment-type'].hide()
+            me.$refs['modal-3-services'].hide()
           })
           .catch((error) => {
             me.alertVariant = 'danger'
@@ -401,15 +433,15 @@ export default {
           })
       } else {
         axios
-          .put(apiUrl + '/tipo_cobro/activate', {
+          .put(apiUrl + '/terapias/activate', {
             id: this.form.id
           })
           .then((response) => {
             me.alertVariant = 'info'
             me.showAlert()
-            me.alertText = 'Se ha activado el tipo de cobro ' + me.form.name + ' exitosamente'
+            me.alertText = 'Se ha activado la terapia ' + me.form.name + ' exitosamente'
             me.$refs.vuetable.refresh()
-            me.$refs['modal-4-payment-type'].hide()
+            me.$refs['modal-4-services'].hide()
           })
           .catch((error) => {
             me.alertVariant = 'danger'
