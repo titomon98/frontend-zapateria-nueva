@@ -1,0 +1,603 @@
+<template>
+  <b-container fluid>
+    <b-alert
+      :variant="alertVariant"
+      :show="alertCountDown"
+      dismissible
+      fade
+      @dismissed="alertCountDown=0"
+      class="bg-white"
+    >
+      <div class="iq-alert-text">{{ alertText }}</div>
+    </b-alert>
+    <LabModal
+      ref="labAppointmentModal"
+      @savedAppointment="savedAppointment"
+      @updatedAppointment="updatedAppointment"
+      @closeModal="closeModal"
+      @deleteAppointment="deleteAppointment"
+      :eventClick="handleEventClick"
+      :patient="patient"
+      :saveEdit="saveEdit"
+    />
+    <AppointmentModal
+      ref="appointmentModal"
+      @savedAppointment="savedAppointment"
+      @updatedAppointment="updatedAppointment"
+      @closeModal="closeModal"
+      @deleteAppointment="deleteAppointment"
+      :eventClick="handleEventClick"
+      :patient="patient"
+      :doctor="doctor"
+      :saveEdit="saveEdit"
+    />
+    <QuickAppointmentModal
+      ref="quickAppointmentModal"
+      @savedAppointment="savedAppointment"
+      @updatedAppointment="updatedAppointment"
+      @closeModal="closeModal"
+      @deleteAppointment="deleteAppointment"
+      :eventClick="handleEventClick"
+      :patient="patient"
+      :doctor="doctor"
+      :saveEdit="saveEdit"
+    />
+    <QuickLabAppointmentModal
+      ref="quickLabAppointmentModal"
+      @savedAppointment="savedAppointment"
+      @updatedAppointment="updatedAppointment"
+      @closeModal="closeModal"
+      @deleteAppointment="deleteAppointment"
+      :eventClick="handleEventClick"
+      :patient="patient"
+      :doctor="doctor"
+      :saveEdit="saveEdit"
+    />
+    <b-row>
+      <b-col md="12">
+        <iq-card class="calender-small">
+          <template v-slot:headerTitle>
+            <h4 class="card-title">{{ checkText }}</h4>
+          </template>
+          <template v-slot:headerAction>
+            <span>{{ checkText }}</span>
+            <b-form-checkbox class="ml-2" v-model="check" @change="changeCheck" name="check-button" switch size="lg"></b-form-checkbox>
+            <span>{{ checkTextApp }}</span>
+            <b-form-checkbox class="ml-2" v-model="checkApp" @change="changeCheckApp" name="check-button" switch size="lg"></b-form-checkbox>
+            <a href="#" class="btn btn-primary" @click="openModal('appointment')"><i class="ri-add-line mr-2"></i>Añadir consulta</a>
+          </template>
+          <template v-slot:body>
+            <VueFullCalendar ref="calendar" :options="calendarOptions" />
+          </template>
+        </iq-card>
+      </b-col>
+    </b-row>
+  </b-container>
+</template>
+<script>
+import esLocale from '@fullcalendar/core/locales/es'
+import VueFullCalendar from '@fullcalendar/vue'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import listPlugin from '@fullcalendar/list'
+import { xray } from '../../../../config/pluginInit'
+import QuickAppointmentModal from './components/QuickAppointmentModal'
+import QuickLabAppointmentModal from './components/QuickLabAppointmentModal'
+import AppointmentModal from './components/AppointmentModal'
+import LabModal from './components/LabAppointmentModal'
+import useVuelidate from '@vuelidate/core'
+import axios from 'axios'
+import { apiUrl } from '../../../../config/constant'
+import moment from 'moment'
+
+export default {
+  name: 'Appointment',
+  components: {
+    AppointmentModal,
+    VueFullCalendar,
+    LabModal,
+    QuickAppointmentModal,
+    QuickLabAppointmentModal
+  },
+  setup () {
+    return { $v: useVuelidate() }
+  },
+  mounted () {
+    xray.index()
+    let calendarApi = this.$refs.calendar.getApi()
+    setTimeout(() => {
+      calendarApi.changeView('timeGridWeek')
+    }, 800)
+  },
+  data () {
+    return {
+      calendarOptions: {
+        timeZone: 'America/Guatemala',
+        locales: [ esLocale ],
+        plugins: [
+          dayGridPlugin,
+          timeGridPlugin,
+          interactionPlugin,
+          listPlugin
+        ],
+        initialView: 'listWeek',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        },
+        eventClick: this.handleEventClick,
+        events: this.handleEvent,
+        dateClick: this.handleDateClick
+      },
+      events: [
+      ],
+      config: {
+        dateFormat: 'Y-m-d',
+        inline: true
+      },
+      from: 0,
+      to: 0,
+      total: 0,
+      perPage: 5,
+      search: '',
+      form: {
+        id: 0,
+        startDate: new Date('today').toString(),
+        startTime: '',
+        start: '',
+        end: '',
+        title: '',
+        patient: null,
+        medic: {},
+        state: 1,
+        referred: ''
+      },
+      checkText: 'Consultas Laboratorio',
+      check: false,
+      checkTextApp: 'Consulta normal',
+      checkApp: false,
+      patient: null,
+      doctor: null,
+      examen: null,
+      options: [
+        { value: '1', nombre: 'Clínicia' },
+        { value: '2', nombre: 'Centro' }
+      ],
+      columna: { value: '1', nombre: 'Clínica' },
+      centros: [],
+      alertSecs: 5,
+      alertCountDown: 0,
+      alertCountDownError: 0,
+      alertText: '',
+      alertErrorText: '',
+      alertVariant: '',
+      apiBase: apiUrl + '/clinica/list',
+      fields: [
+        {
+          name: '__slot:actions',
+          title: 'Acciones',
+          titleClass: '',
+          dataClass: 'text-muted'
+        },
+        {
+          name: 'numero',
+          sortField: 'number',
+          title: 'Número',
+          dataClass: 'list-item-heading'
+        },
+        {
+          name: 'centro.nombre',
+          sortField: 'centro.nombre',
+          title: 'Centro',
+          dataClass: 'list-item-heading'
+        },
+        {
+          name: '__slot:estado',
+          title: 'Estado',
+          titleClass: '',
+          dataClass: 'text-muted',
+          width: '25%'
+        }
+      ],
+      saveEdit: '',
+      etapa: 'Mes'
+    }
+  },
+  validations () {
+    return {
+      form: {
+        start: { /* required */ },
+        end: { /* required */ }
+      }
+    }
+  },
+  methods: {
+    changeCheck () {
+      const calendarApi = this.$refs.calendar.getApi()
+      if (this.check) {
+        this.checkText = 'Consultas Medicos'
+        calendarApi.refetchEvents()
+      } else {
+        this.checkText = 'Consultas Laboratorio'
+        calendarApi.refetchEvents()
+      }
+    },
+    changeCheckApp () {
+      if (this.checkApp) {
+        this.checkTextApp = 'Primera consulta'
+      } else {
+        this.checkTextApp = 'Consulta normal'
+      }
+    },
+    prueba () {
+      console.log('holaaaaaa')
+    },
+    openModal (modal) {
+      switch (modal) {
+        case 'appointment': {
+          if (this.check) {
+            if (this.checkApp) {
+              this.saveEdit = 'save'
+              this.$refs.quickAppointmentModal.openModal()
+              break
+            } else {
+              this.saveEdit = 'save'
+              this.$refs.appointmentModal.openModal()
+              break
+            }
+          } else {
+            if (this.checkApp) {
+              this.saveEdit = 'save'
+              this.$refs.quickLabAppointmentModal.openModal()
+              break
+            } else {
+              this.saveEdit = 'save'
+              this.$refs.labAppointmentModal.openModal()
+              break
+            }
+          }
+        }
+      }
+    },
+    closeModal () {
+      this.patient = null
+      this.doctor = null
+    },
+    onValidate (action) {
+
+    },
+    setData (data) {
+      this.form.number = data.numero
+      this.form.state = data.estado
+      this.form.id = data.id
+      this.form.site = data.centro
+    },
+    /* Guardar */
+    onSave () {
+      const me = this
+      axios.post(apiUrl + '/clinica/create', {
+        form: me.form })
+        .then((response) => {
+          me.alertVariant = 'success'
+          me.showAlert()
+          me.alertText = 'Se ha creado la clinca ' + me.form.number + ' exitosamente'
+          me.$refs.vuetable.refresh()
+          me.closeModal('save')
+        })
+        .catch((error) => {
+          me.alertVariant = 'danger'
+          me.showAlertError()
+          me.alertErrorText = error.response.data.msg
+          console.error('Error!', error)
+        })
+    },
+    /* Guardar */
+    onUpdate () {
+      const me = this
+      axios.put(apiUrl + '/clinica/update', {
+        form: me.form })
+        .then((response) => {
+          me.alertVariant = 'primary'
+          me.showAlert()
+          me.alertText = 'Se ha actualizado la clinica ' + me.form.number + ' exitosamente'
+          me.$refs.vuetable.refresh()
+          me.closeModal('update')
+        })
+        .catch((error) => {
+          me.alertVariant = 'danger'
+          me.showAlertError()
+          me.alertErrorText = 'Ha ocurrido un error, por favor intente más tarde'
+          console.error('Error!', error)
+        })
+    },
+    onState () {
+      let me = this
+      if (this.form.state === 1) {
+        axios
+          .put(apiUrl + '/clinica/deactivate', {
+            id: this.form.id
+          })
+          .then((response) => {
+            me.alertVariant = 'warning'
+            me.showAlert()
+            me.alertText = 'Se ha desactivado la clinica ' + me.form.number + ' exitosamente'
+            me.$refs.vuetable.refresh()
+            me.$refs['modal-3'].hide()
+          })
+          .catch((error) => {
+            me.alertVariant = 'danger'
+            me.showAlertError()
+            me.alertErrorText = 'Ha ocurrido un error, por favor intente más tarde'
+            console.error('There was an error!', error)
+          })
+      } else {
+        axios
+          .put(apiUrl + '/clinica/activate', {
+            id: this.form.id
+          })
+          .then((response) => {
+            me.alertVariant = 'info'
+            me.showAlert()
+            me.alertText = 'Se ha activado el clinica ' + me.form.number + ' exitosamente'
+            me.$refs.vuetable.refresh()
+            me.$refs['modal-4'].hide()
+          })
+          .catch((error) => {
+            me.alertVariant = 'danger'
+            me.showAlertError()
+            me.alertErrorText = 'Ha ocurrido un error, por favor intente más tarde'
+            console.error('There was an error!', error)
+          })
+      }
+    },
+    makeQueryParams (sortOrder, currentPage, perPage) {
+      return sortOrder[0]
+        ? {
+          criterio: sortOrder[0] ? sortOrder[0].sortField : 'createdAt',
+          order: sortOrder[0] ? sortOrder[0].direction : 'desc',
+          page: currentPage,
+          limit: this.perPage,
+          search: this.search,
+          columna: this.columna.value
+        }
+        : {
+          criterio: sortOrder[0] ? sortOrder[0].sortField : 'createdAt',
+          order: sortOrder[0] ? sortOrder[0].direction : 'desc',
+          page: currentPage,
+          limit: this.perPage,
+          search: this.search,
+          columna: this.columna.value
+        }
+    },
+    changePageSizes (perPage) {
+      this.perPage = perPage
+      this.$refs.vuetable.refresh()
+    },
+    searchChange (val) {
+      this.search = val.toLowerCase()
+      this.$refs.vuetable.refresh()
+    },
+    onPaginationData (paginationData) {
+      this.from = paginationData.from
+      this.to = paginationData.to
+      this.total = paginationData.total
+      this.lastPage = paginationData.last_page
+      this.items = paginationData.data
+      this.$refs.pagination.setPaginationData(paginationData)
+    },
+    onChangePage (page) {
+      this.$refs.vuetable.changePage(page)
+    },
+    showAlert () {
+      this.alertCountDown = this.alertSecs
+    },
+    showAlertError () {
+      this.alertCountDownError = this.alertSecs
+    },
+    changeTypeSearch (columna) {
+      this.columna = columna
+    },
+    savedAppointment (appointment) {
+      // console.log(appointment)
+      let calendarApi = this.$refs.calendar.getApi()
+      calendarApi.refetchEvents()
+      this.alertVariant = 'success'
+      this.showAlert()
+      this.alertText = 'Se ha creado la consulta de: ' + appointment.title + ' exitosamente'
+    },
+    updatedAppointment (appointment) {
+      let calendarApi = this.$refs.calendar.getApi()
+      calendarApi.refetchEvents()
+      this.alertVariant = 'warning'
+      this.showAlert()
+      this.alertText = 'Se ha actualizado la consulta exitosamente'
+    },
+    deleteAppointment () {
+      let calendarApi = this.$refs.calendar.getApi()
+      calendarApi.refetchEvents()
+      this.alertVariant = 'danger'
+      this.showAlert()
+      this.alertText = 'Se ha eliminado la consulta'
+    },
+    handleEventClick (arg) {
+      if (this.check) {
+        let event = arg.event
+        let date = moment(event.start).add(6, 'hour')
+        let startDate = moment(date).format('yyyy-MM-DD')
+        let startTime = moment(date).format('h:mm:ss')
+        let form = {
+          id: event.id,
+          title: event.title,
+          startDate: startDate,
+          startTime: startTime,
+          patient: event.extendedProps.paciente,
+          doctor: event.extendedProps.medico,
+          referred: event.extendedProps.referido
+        }
+        // console.log(form)
+        this.patient = event.extendedProps.paciente
+        this.doctor = event.extendedProps.medico
+        this.saveEdit = 'edit'
+        this.$refs.appointmentModal.openEditModal(form)
+      } else {
+        let event = arg.event
+        console.log(event)
+        let date = moment(event.start).add(6, 'hour')
+        let startDate = moment(date).format('yyyy-MM-DD')
+        let startTime = moment(date).format('h:mm:ss')
+        let form = {
+          id: event.id,
+          title: event.title,
+          startDate: startDate,
+          startTime: startTime,
+          patient: event.extendedProps.paciente,
+          examen: event.extendedProps.examene,
+          referred: event.extendedProps.referido
+        }
+        // // console.log(form)
+        this.patient = event.extendedProps.paciente
+        this.examen = event.extendedProps.examene
+        // this.doctor = event.extendedProps.medico
+        this.saveEdit = 'edit'
+        this.$refs.labAppointmentModal.openEditModal(form)
+      }
+    },
+    handleEvent (payload, successCallback, failureCallback) {
+      const { startStr, endStr } = payload
+      if (this.check) {
+        axios.get(apiUrl + '/consulta/calendar', {
+          params: {
+            start: startStr,
+            end: endStr
+          }
+        })
+          .then((response, error) => {
+            if (error) {
+              failureCallback(error)
+            } else {
+              successCallback(
+                response.data.map(function (event) {
+                  if (event.estado_consulta === 1) {
+                    return {
+                      ...event,
+                      // startt: event.start,
+                      backgroundColor: '#7ddc1f'
+                    }
+                  } else if (event.estado_consulta === 2) {
+                    return {
+                      ...event,
+                      // startt: event.start,
+                      backgroundColor: '#f6d42a'
+                    }
+                  } else if (event.estado_consulta === 3) {
+                    return {
+                      ...event,
+                      // startt: event.start,
+                      backgroundColor: '#ec1802'
+                    }
+                  }
+                })
+              )
+            }
+          })
+      } else {
+        axios.get(apiUrl + '/consulta/laboratorio/calendar', {
+          params: {
+            start: startStr,
+            end: endStr
+          }
+        })
+          .then((response, error) => {
+            if (error) {
+              failureCallback(error)
+            } else {
+              successCallback(
+                response.data.map(function (event) {
+                  if (event.estado_consulta === 1) {
+                    return {
+                      ...event,
+                      // startt: event.start,
+                      backgroundColor: '#7ddc1f'
+                    }
+                  } else if (event.estado_consulta === 2) {
+                    return {
+                      ...event,
+                      // startt: event.start,
+                      backgroundColor: '#f6d42a'
+                    }
+                  } else if (event.estado_consulta === 3) {
+                    return {
+                      ...event,
+                      // startt: event.start,
+                      backgroundColor: '#ec1802'
+                    }
+                  }
+                })
+              )
+            }
+          })
+      }
+    },
+    handleDateClick (event) {
+      if (this.check) {
+        if (this.checkApp) {
+          let date = event.dateStr
+          let startDate = moment(date).format('yyyy-MM-DD')
+          let startTime = moment(date).format('h:mm:ss')
+          let form = {
+            startDate: startDate,
+            startTime: startTime
+          }
+          this.saveEdit = 'save'
+          this.$refs.quickAppointmentModal.openModalClick(form)
+        } else {
+          let date = event.dateStr
+          let startDate = moment(date).format('yyyy-MM-DD')
+          let startTime = moment(date).format('h:mm:ss')
+          let form = {
+            startDate: startDate,
+            startTime: startTime
+          }
+          this.saveEdit = 'save'
+          this.$refs.appointmentModal.openModalClick(form)
+        }
+      } else {
+        if (this.checkApp) {
+          let date = event.dateStr
+          let startDate = moment(date).format('yyyy-MM-DD')
+          let startTime = moment(date).format('h:mm:ss')
+          let form = {
+            startDate: startDate,
+            startTime: startTime
+          }
+          this.saveEdit = 'save'
+          this.$refs.quickLabAppointmentModal.openModalClick(form)
+        } else {
+          let date = event.dateStr
+          let startDate = moment(date).format('yyyy-MM-DD')
+          let startTime = moment(date).format('h:mm:ss')
+          let form = {
+            startDate: startDate,
+            startTime: startTime
+          }
+          this.saveEdit = 'save'
+          this.$refs.labAppointmentModal.openModalClick(form)
+        }
+      }
+    }
+  }
+}
+</script>
+
+<style lang='scss'>
+  .fc-event-time, .fc-event-title{
+    color: black !important;
+  }
+  // .fc-view-harness {}
+  @import '~@fullcalendar/core/main.css';
+  @import '~@fullcalendar/daygrid/main.css';
+  @import '~@fullcalendar/timegrid/main.css';
+  @import '~@fullcalendar/list/main.min.css';
+</style>

@@ -1,0 +1,14 @@
+[
+  {
+    "title": "Pacientes",
+    "name": "sidebar.patients",
+    "is_heading": false,
+    "is_active": false,
+    "link": {
+      "name": "patient.patientsmarketing"
+    },
+    "class_name": "",
+    "is_icon_class": true,
+    "icon": "ri-user-settings-fill"
+  }
+]
