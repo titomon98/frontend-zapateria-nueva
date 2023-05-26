@@ -110,12 +110,12 @@ export default {
         prevArrow: '<a href="#" class="ri-arrow-right-s-line right"></a>'
       },
       doctorList: [
-        { name: 'Aquí si entienden castellano', img: require('../../assets/images/user/05.jpg'), position: 'No son unos mancos', worksAt: 'Zapatería el Centro' },
-        { name: 'Aquí si entienden castellano', img: require('../../assets/images/user/06.jpg'), position: 'No son unos mancos', worksAt: 'Zapatería el Centro' },
-        { name: 'Aquí si entienden castellano', img: require('../../assets/images/user/07.jpg'), position: 'No son unos mancos', worksAt: 'Zapatería el Centro' },
-        { name: 'Aquí si entienden castellano', img: require('../../assets/images/user/08.jpg'), position: 'No son unos mancos', worksAt: 'Zapatería el Centro' },
-        { name: 'Aquí si entienden castellano', img: require('../../assets/images/user/09.jpg'), position: 'No son unos mancos', worksAt: 'Zapatería el Centro' },
-        { name: 'Aquí si entienden castellano', img: require('../../assets/images/user/10.jpg'), position: 'No son unos mancos', worksAt: 'Zapatería el Centro' }
+        { name: 'Datos de prueba', img: require('../../assets/images/user/05.jpg'), position: 'Para limpieza', worksAt: 'Zapatería el Centro' },
+        { name: 'Datos de prueba', img: require('../../assets/images/user/06.jpg'), position: 'Para limpieza', worksAt: 'Zapatería el Centro' },
+        { name: 'Datos de prueba', img: require('../../assets/images/user/07.jpg'), position: 'Para limpieza', worksAt: 'Zapatería el Centro' },
+        { name: 'Datos de prueba', img: require('../../assets/images/user/08.jpg'), position: 'Para limpieza', worksAt: 'Zapatería el Centro' },
+        { name: 'Datos de prueba', img: require('../../assets/images/user/09.jpg'), position: 'Para limpieza', worksAt: 'Zapatería el Centro' },
+        { name: 'Datos de prueba', img: require('../../assets/images/user/10.jpg'), position: 'Para limpieza', worksAt: 'Zapatería el Centro' }
       ]
     }
   },

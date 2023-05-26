@@ -10,7 +10,7 @@
     >
       <div class="iq-alert-text">{{ alertText }}</div>
     </b-alert>
-    <b-modal id="modal-1-services" ref="modal-1-services" title="Agregar terapia">
+    <b-modal id="modal-1-tiendas" ref="modal-1-tiendas" title="Agregar tienda">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -25,20 +25,20 @@
           <b-form-input
             v-model.trim="$v.form.name.$model"
             :state="!$v.form.name.$error"
-            placeholder="Ingresar nombre de la terapia"
+            placeholder="Ingresar nombre de la tienda"
           ></b-form-input>
           <div v-if="$v.form.name.required.$invalid" class="invalid-feedback">
             Debe ingresar el nombre
           </div>
         </b-form-group>
-        <b-form-group label="Precio:">
+        <b-form-group label="Dirección:">
           <b-form-input
-            v-model.trim="$v.form.precio.$model"
-            :state="!$v.form.precio.$error"
-            placeholder="Ingresar precio del servicio"
+            v-model.trim="$v.form.direccion.$model"
+            :state="!$v.form.direccion.$error"
+            placeholder="Ingresar direccion de la tienda"
           ></b-form-input>
-          <div v-if="$v.form.precio.required.$invalid" class="invalid-feedback">
-            Debe ingresar el precio
+          <div v-if="$v.form.direccion.required.$invalid" class="invalid-feedback">
+            Debe ingresar el direccion
           </div>
         </b-form-group>
       </b-form>
@@ -51,7 +51,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-2-services" ref="modal-2-services" title="Editar terapia">
+    <b-modal id="modal-2-tiendas" ref="modal-2-tiendas" title="Editar tienda">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -66,20 +66,20 @@
           <b-form-input
             v-model.trim="$v.form.name.$model"
             :state="!$v.form.name.$error"
-            placeholder="Ingresar nombre de terapia"
+            placeholder="Ingresar nombre de tienda"
           ></b-form-input>
           <div v-if="$v.form.name.required.$invalid" class="invalid-feedback">
             Debe ingresar el nombre
           </div>
         </b-form-group>
-        <b-form-group label="Precio:">
+        <b-form-group label="Dirección:">
           <b-form-input
-            v-model.trim="$v.form.precio.$model"
-            :state="!$v.form.precio.$error"
-            placeholder="Ingresar precio del servicio"
+            v-model.trim="$v.form.direccion.$model"
+            :state="!$v.form.direccion.$error"
+            placeholder="Ingresar direccion de la tienda"
           ></b-form-input>
-          <div v-if="$v.form.precio.required.$invalid" class="invalid-feedback">
-            Debe ingresar el precio
+          <div v-if="$v.form.direccion.required.$invalid" class="invalid-feedback">
+            Debe ingresar dirección
           </div>
         </b-form-group>
       </b-form>
@@ -92,7 +92,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-3-services" ref="modal-3-services" title="Desactivar terapia">
+    <b-modal id="modal-3-tiendas" ref="modal-3-tiendas" title="Desactivar tienda">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -103,22 +103,22 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <h6 class="my-4">
-        ¿Desea desactivar la terapia: {{ form.name }} ?
+        ¿Desea desactivar la tienda: {{ form.name }} ?
       </h6>
       <template #modal-footer="{}">
         <b-button
           type="submit"
           variant="primary"
           @click="onState()
-                  $bvModal.hide('modal-3-services')"
+                  $bvModal.hide('modal-3-tiendas')"
           >Desactivar</b-button
         >
-        <b-button variant="danger" @click="$bvModal.hide('modal-3-services')"
+        <b-button variant="danger" @click="$bvModal.hide('modal-3-tiendas')"
           >Cancelar</b-button
         >
       </template>
     </b-modal>
-    <b-modal id="modal-4-services" ref="modal-4-services" title="Activar terapia">
+    <b-modal id="modal-4-tiendas" ref="modal-4-tiendas" title="Activar tienda">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -129,17 +129,17 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <h6 class="my-4">
-        ¿Desea activar la terapia: {{ form.name }} ?
+        ¿Desea activar la tienda: {{ form.name }} ?
       </h6>
       <template #modal-footer="{}">
         <b-button
           type="submit"
           variant="primary"
           @click="onState()
-                  $bvModal.hide('modal-4-services')"
+                  $bvModal.hide('modal-4-tiendas')"
           >Activar</b-button
         >
-        <b-button variant="danger" @click="$bvModal.hide('modal-4-services')"
+        <b-button variant="danger" @click="$bvModal.hide('modal-4-tiendas')"
           >Cancelar</b-button
         >
       </template>
@@ -148,7 +148,7 @@
       <b-col md="12">
         <iq-card>
             <template v-slot:headerTitle>
-              <h4 class="card-title mt-3">Terapias</h4>
+              <h4 class="card-title mt-3">Tiendas</h4>
                <div class="iq-search-bar mt-2">
                 <b-form action="#" class="searchbox">
                     <b-input id="search" placeholder="Buscar..." @input="(val) => searchChange(val)" />
@@ -157,7 +157,7 @@
               </div>
             </template>
             <template v-slot:headerAction>
-            <b-button variant="primary"  v-b-modal.modal-1-services>AGREGAR NUEVO</b-button>
+            <b-button variant="primary"  v-b-modal.modal-1-tiendas>AGREGAR NUEVO</b-button>
           </template>
           <template v-slot:body>
             <datatable-heading
@@ -199,7 +199,7 @@
                   <b-button
                     v-b-tooltip.top="'Editar'"
                     @click="setData(props.rowData)"
-                    v-b-modal.modal-2-services
+                    v-b-modal.modal-2-tiendas
                     class="mb-2"
                     size="sm"
                     variant="outline-warning"
@@ -211,8 +211,8 @@
                     @click="
                       setData(props.rowData);
                       props.rowData.estado == 1
-                        ? $bvModal.show('modal-3-services')
-                        : $bvModal.show('modal-4-services');
+                        ? $bvModal.show('modal-3-tiendas')
+                        : $bvModal.show('modal-4-tiendas');
                     "
                     class="mb-2"
                     size="sm"
@@ -249,7 +249,7 @@ import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
 
 export default {
-  name: 'Terapias',
+  name: 'Tiendas',
   components: {
     vuetable: Vuetable,
     'vuetable-pagination-bootstrap': VuetablePaginationBootstrap,
@@ -271,7 +271,7 @@ export default {
       form: {
         id: 0,
         name: '',
-        precio: '',
+        direccion: '',
         state: 1
       },
       alertSecs: 5,
@@ -280,7 +280,7 @@ export default {
       alertText: '',
       alertErrorText: '',
       alertVariant: '',
-      apiBase: apiUrl + '/terapias/list',
+      apiBase: apiUrl + '/tiendas/list',
       fields: [
         {
           name: '__slot:actions',
@@ -295,9 +295,9 @@ export default {
           dataClass: 'list-item-heading'
         },
         {
-          name: 'precio',
-          sortField: 'precio',
-          title: 'Precio',
+          name: 'direccion',
+          sortField: 'direccion',
+          title: 'Dirección',
           dataClass: 'list-item-heading'
         },
         {
@@ -314,7 +314,7 @@ export default {
     return {
       form: {
         name: { required },
-        precio: { required }
+        direccion: { required }
       }
     }
   },
@@ -325,7 +325,7 @@ export default {
           this.$v.$reset()
           this.form.id = 0
           this.form.name = ''
-          this.form.precio = ''
+          this.form.direccion = ''
           this.form.state = 1
           break
         }
@@ -335,19 +335,19 @@ export default {
       switch (action) {
         case 'save': {
           this.$v.$reset()
-          this.$refs['modal-1-services'].hide()
+          this.$refs['modal-1-tiendas'].hide()
           this.form.id = 0
           this.form.name = ''
-          this.form.precio = ''
+          this.form.direccion = ''
           this.form.state = 1
           break
         }
         case 'update': {
           this.$v.$reset()
-          this.$refs['modal-2-services'].hide()
+          this.$refs['modal-2-tiendas'].hide()
           this.form.id = 0
           this.form.name = ''
-          this.form.precio = ''
+          this.form.direccion = ''
           this.form.state = 1
           break
         }
@@ -368,19 +368,19 @@ export default {
     },
     setData (data) {
       this.form.name = data.nombre
-      this.form.precio = data.precio
+      this.form.direccion = data.direccion
       this.form.state = data.estado
       this.form.id = data.id
     },
     /* Guardar */
     onSave () {
       const me = this
-      axios.post(apiUrl + '/terapias/create', {
+      axios.post(apiUrl + '/tiendas/create', {
         form: me.form })
         .then((response) => {
           me.alertVariant = 'success'
           me.showAlert()
-          me.alertText = 'Se ha creado la terapia ' + me.form.name + ' exitosamente'
+          me.alertText = 'Se ha creado la tienda ' + me.form.name + ' exitosamente'
           me.$refs.vuetable.refresh()
           me.closeModal('save')
         })
@@ -395,12 +395,12 @@ export default {
     onUpdate () {
       const me = this
       // this.$refs["modalSave"].hide();
-      axios.put(apiUrl + '/terapias/update', {
+      axios.put(apiUrl + '/tiendas/update', {
         form: me.form })
         .then((response) => {
           me.alertVariant = 'primary'
           me.showAlert()
-          me.alertText = 'Se ha actualizado la terapia ' + me.form.name + ' exitosamente'
+          me.alertText = 'Se ha actualizado la tienda ' + me.form.name + ' exitosamente'
           me.$refs.vuetable.refresh()
           me.closeModal('update')
         })
@@ -415,15 +415,15 @@ export default {
       let me = this
       if (this.form.state === 1) {
         axios
-          .put(apiUrl + '/terapias/deactivate', {
+          .put(apiUrl + '/tiendas/deactivate', {
             id: this.form.id
           })
           .then((response) => {
             me.alertVariant = 'warning'
             me.showAlert()
-            me.alertText = 'Se ha desactivado la terapia ' + me.form.name + ' exitosamente'
+            me.alertText = 'Se ha desactivado la tienda ' + me.form.name + ' exitosamente'
             me.$refs.vuetable.refresh()
-            me.$refs['modal-3-services'].hide()
+            me.$refs['modal-3-tiendas'].hide()
           })
           .catch((error) => {
             me.alertVariant = 'danger'
@@ -433,15 +433,15 @@ export default {
           })
       } else {
         axios
-          .put(apiUrl + '/terapias/activate', {
+          .put(apiUrl + '/tiendas/activate', {
             id: this.form.id
           })
           .then((response) => {
             me.alertVariant = 'info'
             me.showAlert()
-            me.alertText = 'Se ha activado la terapia ' + me.form.name + ' exitosamente'
+            me.alertText = 'Se ha activado la tienda ' + me.form.name + ' exitosamente'
             me.$refs.vuetable.refresh()
-            me.$refs['modal-4-services'].hide()
+            me.$refs['modal-4-tiendas'].hide()
           })
           .catch((error) => {
             me.alertVariant = 'danger'

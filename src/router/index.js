@@ -94,7 +94,7 @@ import AdminParent from '../views/App/Admin/AdminParent'
 
 // Services
 import ServicesParent from '../views/App/Services/ServicesParent'
-import Services from '../views/App/Services/Services'
+import Tallas from '../views/App/Services/Tallas'
 import Zapato from '../views/App/Services/Zapato'
 import Tiendas from '../views/App/Services/Tiendas'
 
@@ -125,8 +125,8 @@ const ServicesRoutes = (prop, mode) => [
   {
     path: 'services',
     name: prop + '.services',
-    meta: { dark: mode, auth: true, name: 'Services' },
-    component: Services
+    meta: { dark: mode, auth: true, name: 'Tallas' },
+    component: Tallas
   },
   {
     path: 'services',

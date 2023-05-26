@@ -10,7 +10,7 @@
     >
       <div class="iq-alert-text">{{ alertText }}</div>
     </b-alert>
-    <b-modal id="modal-1-services" ref="modal-1-services" title="Agregar terapia">
+    <b-modal id="modal-1-services" ref="modal-1-services" title="Agregar talla">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -25,7 +25,7 @@
           <b-form-input
             v-model.trim="$v.form.name.$model"
             :state="!$v.form.name.$error"
-            placeholder="Ingresar nombre de la terapia"
+            placeholder="Ingresar nombre de la talla"
           ></b-form-input>
           <div v-if="$v.form.name.required.$invalid" class="invalid-feedback">
             Debe ingresar el nombre
@@ -51,7 +51,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-2-services" ref="modal-2-services" title="Editar terapia">
+    <b-modal id="modal-2-services" ref="modal-2-services" title="Editar talla">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -66,7 +66,7 @@
           <b-form-input
             v-model.trim="$v.form.name.$model"
             :state="!$v.form.name.$error"
-            placeholder="Ingresar nombre de terapia"
+            placeholder="Ingresar nombre de talla"
           ></b-form-input>
           <div v-if="$v.form.name.required.$invalid" class="invalid-feedback">
             Debe ingresar el nombre
@@ -92,7 +92,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-3-services" ref="modal-3-services" title="Desactivar terapia">
+    <b-modal id="modal-3-services" ref="modal-3-services" title="Desactivar talla">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -103,7 +103,7 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <h6 class="my-4">
-        ¿Desea desactivar la terapia: {{ form.name }} ?
+        ¿Desea desactivar la talla: {{ form.name }} ?
       </h6>
       <template #modal-footer="{}">
         <b-button
@@ -118,7 +118,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-4-services" ref="modal-4-services" title="Activar terapia">
+    <b-modal id="modal-4-services" ref="modal-4-services" title="Activar talla">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -129,7 +129,7 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <h6 class="my-4">
-        ¿Desea activar la terapia: {{ form.name }} ?
+        ¿Desea activar la talla: {{ form.name }} ?
       </h6>
       <template #modal-footer="{}">
         <b-button
@@ -148,7 +148,7 @@
       <b-col md="12">
         <iq-card>
             <template v-slot:headerTitle>
-              <h4 class="card-title mt-3">Terapias</h4>
+              <h4 class="card-title mt-3">Tallas</h4>
                <div class="iq-search-bar mt-2">
                 <b-form action="#" class="searchbox">
                     <b-input id="search" placeholder="Buscar..." @input="(val) => searchChange(val)" />
@@ -249,7 +249,7 @@ import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
 
 export default {
-  name: 'Terapias',
+  name: 'Tallas',
   components: {
     vuetable: Vuetable,
     'vuetable-pagination-bootstrap': VuetablePaginationBootstrap,
@@ -280,7 +280,7 @@ export default {
       alertText: '',
       alertErrorText: '',
       alertVariant: '',
-      apiBase: apiUrl + '/terapias/list',
+      apiBase: apiUrl + '/tallas/list',
       fields: [
         {
           name: '__slot:actions',
@@ -375,12 +375,12 @@ export default {
     /* Guardar */
     onSave () {
       const me = this
-      axios.post(apiUrl + '/terapias/create', {
+      axios.post(apiUrl + '/tallas/create', {
         form: me.form })
         .then((response) => {
           me.alertVariant = 'success'
           me.showAlert()
-          me.alertText = 'Se ha creado la terapia ' + me.form.name + ' exitosamente'
+          me.alertText = 'Se ha creado la talla ' + me.form.name + ' exitosamente'
           me.$refs.vuetable.refresh()
           me.closeModal('save')
         })
@@ -395,12 +395,12 @@ export default {
     onUpdate () {
       const me = this
       // this.$refs["modalSave"].hide();
-      axios.put(apiUrl + '/terapias/update', {
+      axios.put(apiUrl + '/tallas/update', {
         form: me.form })
         .then((response) => {
           me.alertVariant = 'primary'
           me.showAlert()
-          me.alertText = 'Se ha actualizado la terapia ' + me.form.name + ' exitosamente'
+          me.alertText = 'Se ha actualizado la talla ' + me.form.name + ' exitosamente'
           me.$refs.vuetable.refresh()
           me.closeModal('update')
         })
@@ -415,13 +415,13 @@ export default {
       let me = this
       if (this.form.state === 1) {
         axios
-          .put(apiUrl + '/terapias/deactivate', {
+          .put(apiUrl + '/tallas/deactivate', {
             id: this.form.id
           })
           .then((response) => {
             me.alertVariant = 'warning'
             me.showAlert()
-            me.alertText = 'Se ha desactivado la terapia ' + me.form.name + ' exitosamente'
+            me.alertText = 'Se ha desactivado la talla ' + me.form.name + ' exitosamente'
             me.$refs.vuetable.refresh()
             me.$refs['modal-3-services'].hide()
           })
@@ -433,13 +433,13 @@ export default {
           })
       } else {
         axios
-          .put(apiUrl + '/terapias/activate', {
+          .put(apiUrl + '/tallas/activate', {
             id: this.form.id
           })
           .then((response) => {
             me.alertVariant = 'info'
             me.showAlert()
-            me.alertText = 'Se ha activado la terapia ' + me.form.name + ' exitosamente'
+            me.alertText = 'Se ha activado la talla ' + me.form.name + ' exitosamente'
             me.$refs.vuetable.refresh()
             me.$refs['modal-4-services'].hide()
           })

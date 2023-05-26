@@ -20,7 +20,7 @@
             <b-tabs>
               <b-tab title="Tiendas" active><Tiendas/></b-tab> <!-- Aqui los maquete al reves xD -->
               <b-tab title="Zapato" lazy><Zapato/></b-tab>
-              <b-tab title="Servicios (referencia)" lazy><Services/></b-tab>
+              <b-tab title="Tallas" lazy><Tallas/></b-tab>
             </b-tabs>
           </template>
         </iq-card>
@@ -32,14 +32,14 @@
 import { xray } from '../../../config/pluginInit'
 import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
-import Services from './Services.vue'
+import Tallas from './Tallas.vue'
 import Tiendas from './Tiendas.vue'
 import Zapato from './Zapato.vue'
 
 export default {
   name: 'ServicesParent',
   components: {
-    Services,
+    Tallas,
     Tiendas,
     Zapato
   },
