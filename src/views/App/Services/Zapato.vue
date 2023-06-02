@@ -10,7 +10,7 @@
     >
       <div class="iq-alert-text">{{ alertText }}</div>
     </b-alert>
-    <b-modal id="modal-1-zapatos" ref="modal-1-zapatos" title="Agregar zapato">
+    <b-modal id="modal-1-zapatos" size="lg" ref="modal-1-zapatos" title="Agregar zapato">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -42,7 +42,7 @@
           </div>
         </b-form-group>
         <b-row>
-          <b-col md="6">
+          <b-col md="3">
             <b-form-group label="Precio costo:">
               <b-form-input
                 type="number"
@@ -51,7 +51,7 @@
               ></b-form-input>
             </b-form-group>
           </b-col>
-          <b-col md="6">
+          <b-col md="3">
             <b-form-group label="Precio venta:">
               <b-form-input
                 type="number"
@@ -60,9 +60,7 @@
               ></b-form-input>
             </b-form-group>
           </b-col>
-        </b-row>
-        <b-row>
-        <b-col md="6">
+          <b-col md="3">
             <b-form-group label="Precio mínimo:">
               <b-form-input
                 type="number"
@@ -71,7 +69,7 @@
               ></b-form-input>
             </b-form-group>
           </b-col>
-          <b-col md="6">
+          <b-col md="3">
             <b-form-group label="Precio mayorista:">
               <b-form-input
                 type="number"
@@ -79,6 +77,76 @@
                 placeholder="Ingresar precio mayorista"
               ></b-form-input>
             </b-form-group>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col md="4">
+            <b-form-group label="Color:">
+              <v-select
+                name="colores"
+                v-model="form.color"
+                :options="colores"
+                :filterable="false"
+                placeholder="Seleccione el color"
+                @search="onSearchColors"
+              >
+                <template v-slot:spinner="{ loading }">
+                  <div v-show="loading">Cargando...</div>
+                </template>
+                <template v-slot:option="option">
+                  {{ option.nombre }}
+                </template>
+                <template slot="selected-option" slot-scope="option">
+                  {{ option.nombre }}
+                </template>
+              </v-select>
+            </b-form-group>
+          </b-col>
+          <b-col md="4">
+            <b-form-group label="Marca:">
+              <v-select
+                name="marcas"
+                v-model="form.marca"
+                :options="marcas"
+                :filterable="false"
+                placeholder="Seleccione la marca"
+                @search="onSearchMarcas"
+              >
+                <template v-slot:spinner="{ loading }">
+                  <div v-show="loading">Cargando...</div>
+                </template>
+                <template v-slot:option="option">
+                  {{ option.nombre }}
+                </template>
+                <template slot="selected-option" slot-scope="option">
+                  {{ option.nombre }}
+                </template>
+              </v-select>
+            </b-form-group>
+
+          </b-col>
+          <b-col md="4">
+            <b-form-group label="Clasificaciones:">
+              <v-select
+                name="clasificaciones"
+                v-model="form.clasificacion"
+                :options="clasificaciones"
+                :filterable="false"
+                placeholder="Seleccione la clasificacion"
+                @search="onSearchClasificaciones"
+              >
+                <template v-slot:spinner="{ loading }">
+                  <div v-show="loading">Cargando...</div>
+                </template>
+                <template v-slot:option="option">
+                  {{ option.nombre }}
+                </template>
+                <template slot="selected-option" slot-scope="option">
+                  {{ option.nombre }}
+                </template>
+              </v-select>
+            </b-form-group>
+
           </b-col>
         </b-row>
       </b-form>
@@ -91,7 +159,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-2-zapatos" ref="modal-2-zapatos" title="Editar zapato">
+    <b-modal id="modal-2-zapatos" size="lg" ref="modal-2-zapatos" title="Editar zapato">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -123,7 +191,7 @@
           </div>
         </b-form-group>
         <b-row>
-          <b-col md="6">
+          <b-col md="3">
             <b-form-group label="Precio costo:">
               <b-form-input
                 type="number"
@@ -132,7 +200,7 @@
               ></b-form-input>
             </b-form-group>
           </b-col>
-          <b-col md="6">
+          <b-col md="3">
             <b-form-group label="Precio venta:">
               <b-form-input
                 type="number"
@@ -141,9 +209,7 @@
               ></b-form-input>
             </b-form-group>
           </b-col>
-        </b-row>
-        <b-row>
-        <b-col md="6">
+          <b-col md="3">
             <b-form-group label="Precio mínimo:">
               <b-form-input
                 type="number"
@@ -152,7 +218,7 @@
               ></b-form-input>
             </b-form-group>
           </b-col>
-          <b-col md="6">
+          <b-col md="3">
             <b-form-group label="Precio mayorista:">
               <b-form-input
                 type="number"
@@ -160,6 +226,76 @@
                 placeholder="Ingresar precio mayorista"
               ></b-form-input>
             </b-form-group>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col md="4">
+            <b-form-group label="Color:">
+              <v-select
+                name="colores"
+                v-model="form.color"
+                :options="colores"
+                :filterable="false"
+                placeholder="Seleccione el color"
+                @search="onSearchColors"
+              >
+                <template v-slot:spinner="{ loading }">
+                  <div v-show="loading">Cargando...</div>
+                </template>
+                <template v-slot:option="option">
+                  {{ option.nombre }}
+                </template>
+                <template slot="selected-option" slot-scope="option">
+                  {{ option.nombre }}
+                </template>
+              </v-select>
+            </b-form-group>
+          </b-col>
+          <b-col md="4">
+            <b-form-group label="Marca:">
+              <v-select
+                name="marcas"
+                v-model="form.marca"
+                :options="marcas"
+                :filterable="false"
+                placeholder="Seleccione la marca"
+                @search="onSearchMarcas"
+              >
+                <template v-slot:spinner="{ loading }">
+                  <div v-show="loading">Cargando...</div>
+                </template>
+                <template v-slot:option="option">
+                  {{ option.nombre }}
+                </template>
+                <template slot="selected-option" slot-scope="option">
+                  {{ option.nombre }}
+                </template>
+              </v-select>
+            </b-form-group>
+
+          </b-col>
+          <b-col md="4">
+            <b-form-group label="Clasificaciones:">
+              <v-select
+                name="clasificaciones"
+                v-model="form.clasificacion"
+                :options="clasificaciones"
+                :filterable="false"
+                placeholder="Seleccione la clasificacion"
+                @search="onSearchClasificaciones"
+              >
+                <template v-slot:spinner="{ loading }">
+                  <div v-show="loading">Cargando...</div>
+                </template>
+                <template v-slot:option="option">
+                  {{ option.nombre }}
+                </template>
+                <template slot="selected-option" slot-scope="option">
+                  {{ option.nombre }}
+                </template>
+              </v-select>
+            </b-form-group>
+
           </b-col>
         </b-row>
       </b-form>
@@ -348,6 +484,9 @@ export default {
       total: 0,
       perPage: 5,
       search: '',
+      colores: [],
+      marcas: [],
+      clasificaciones: [],
       form: {
         id: 0,
         estilo: '',
@@ -356,6 +495,9 @@ export default {
         precio_venta: '',
         precio_minimo: '',
         precio_mayorista: '',
+        color: null,
+        marca: null,
+        clasificacion: null,
         state: 1
       },
       alertSecs: 5,
@@ -481,6 +623,7 @@ export default {
       }
     },
     setData (data) {
+      console.log(data)
       this.form.estilo = data.estilo
       this.form.caracteristicas = data.caracteristicas
       this.form.precio_costo = data.precio_costo
@@ -488,6 +631,9 @@ export default {
       this.form.precio_minimo = data.precio_minimo
       this.form.precio_mayorista = data.precio_mayorista
       this.form.state = data.estado
+      this.form.color = data.colore
+      this.form.marca = data.marca
+      this.form.clasificacion = data.clasificacione
       this.form.id = data.id
     },
     /* Guardar */
@@ -610,6 +756,60 @@ export default {
     },
     showAlertError () {
       this.alertCountDownError = this.alertSecs
+    },
+    searchingClasificaciones (search, loading) {
+      axios.get(apiUrl + '/clasificaciones/getSelect',
+        {
+          params: {
+            search: search
+          }
+        }
+      ).then((response) => {
+        this.clasificaciones = response.data
+        loading(false)
+      })
+    },
+    onSearchClasificaciones (search, loading) {
+      if (search.length) {
+        loading(true)
+        this.searchingClasificaciones(search, loading)
+      }
+    },
+    searchingColors (search, loading) {
+      axios.get(apiUrl + '/colores/getSelect',
+        {
+          params: {
+            search: search
+          }
+        }
+      ).then((response) => {
+        this.colores = response.data
+        loading(false)
+      })
+    },
+    onSearchColors (search, loading) {
+      if (search.length) {
+        loading(true)
+        this.searchingColors(search, loading)
+      }
+    },
+    searchingMarcas (search, loading) {
+      axios.get(apiUrl + '/marcas/getSelect',
+        {
+          params: {
+            search: search
+          }
+        }
+      ).then((response) => {
+        this.marcas = response.data
+        loading(false)
+      })
+    },
+    onSearchMarcas (search, loading) {
+      if (search.length) {
+        loading(true)
+        this.searchingMarcas(search, loading)
+      }
     }
   }
 }
