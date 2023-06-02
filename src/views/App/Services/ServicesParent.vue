@@ -21,9 +21,9 @@
               <b-tab title="Tiendas" active><Tiendas/></b-tab> <!-- Aqui los maquete al reves xD -->
               <b-tab title="Zapato" lazy><Zapato/></b-tab>
               <b-tab title="Tallas" lazy><Tallas/></b-tab>
-              <b-tab title="Marcas" lazy><Tallas/></b-tab>
-              <b-tab title="Colores" lazy><Tallas/></b-tab>
-              <b-tab title="Clasificación" lazy><Tallas/></b-tab>
+              <b-tab title="Marcas" lazy><Marcas/></b-tab>
+              <b-tab title="Colores" lazy><Colores/></b-tab>
+              <b-tab title="Clasificación" lazy><Clasificaciones/></b-tab>
             </b-tabs>
           </template>
         </iq-card>
@@ -35,6 +35,9 @@
 import { xray } from '../../../config/pluginInit'
 import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
+import Clasificaciones from './Clasificaciones.vue'
+import Colores from './Colores.vue'
+import Marcas from './Marcas.vue'
 import Tallas from './Tallas.vue'
 import Tiendas from './Tiendas.vue'
 import Zapato from './Zapato.vue'
@@ -42,6 +45,9 @@ import Zapato from './Zapato.vue'
 export default {
   name: 'ServicesParent',
   components: {
+    Clasificaciones,
+    Colores,
+    Marcas,
     Tallas,
     Tiendas,
     Zapato
