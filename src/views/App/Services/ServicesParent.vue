@@ -21,6 +21,9 @@
               <b-tab title="Tiendas" active><Tiendas/></b-tab> <!-- Aqui los maquete al reves xD -->
               <b-tab title="Zapato" lazy><Zapato/></b-tab>
               <b-tab title="Tallas" lazy><Tallas/></b-tab>
+              <b-tab title="Marcas" lazy><Tallas/></b-tab>
+              <b-tab title="Colores" lazy><Tallas/></b-tab>
+              <b-tab title="Clasificación" lazy><Tallas/></b-tab>
             </b-tabs>
           </template>
         </iq-card>

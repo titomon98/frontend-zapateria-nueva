@@ -10,7 +10,7 @@
     >
       <div class="iq-alert-text">{{ alertText }}</div>
     </b-alert>
-    <b-modal id="modal-1-zapatos" ref="modal-1-zapatos" title="Agregar tienda">
+    <b-modal id="modal-1-zapatos" ref="modal-1-zapatos" title="Agregar zapato">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -21,16 +21,6 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <b-form @submit="$event.preventDefault()">
-        <b-form-group label="Nombre:">
-          <b-form-input
-            v-model.trim="$v.form.name.$model"
-            :state="!$v.form.name.$error"
-            placeholder="Ingresar nombre del zapato"
-          ></b-form-input>
-          <div v-if="$v.form.name.required.$invalid" class="invalid-feedback">
-            Debe ingresar el nombre
-          </div>
-        </b-form-group>
         <b-form-group label="Estilo:">
           <b-form-input
             v-model.trim="$v.form.estilo.$model"
@@ -101,7 +91,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-2-zapatos" ref="modal-2-zapatos" title="Editar tienda">
+    <b-modal id="modal-2-zapatos" ref="modal-2-zapatos" title="Editar zapato">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -112,16 +102,6 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <b-form @submit="$event.preventDefault()">
-        <b-form-group label="Nombre:">
-          <b-form-input
-            v-model.trim="$v.form.name.$model"
-            :state="!$v.form.name.$error"
-            placeholder="Ingresar nombre del zapato"
-          ></b-form-input>
-          <div v-if="$v.form.name.required.$invalid" class="invalid-feedback">
-            Debe ingresar el nombre
-          </div>
-        </b-form-group>
         <b-form-group label="Estilo:">
           <b-form-input
             v-model.trim="$v.form.estilo.$model"
@@ -192,7 +172,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-3-zapatos" ref="modal-3-zapatos" title="Desactivar tienda">
+    <b-modal id="modal-3-zapatos" ref="modal-3-zapatos" title="Desactivar zapato">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -203,7 +183,7 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <h6 class="my-4">
-        ¿Desea desactivar el zapato: {{ form.name }} ?
+        ¿Desea desactivar el zapato: {{ form.estilo }} ?
       </h6>
       <template #modal-footer="{}">
         <b-button
@@ -218,7 +198,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-4-zapatos" ref="modal-4-zapatos" title="Activar tienda">
+    <b-modal id="modal-4-zapatos" ref="modal-4-zapatos" title="Activar zapato">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -229,7 +209,7 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <h6 class="my-4">
-        ¿Desea activar el zapato: {{ form.name }} ?
+        ¿Desea activar el zapato: {{ form.estilo }} ?
       </h6>
       <template #modal-footer="{}">
         <b-button
@@ -370,7 +350,6 @@ export default {
       search: '',
       form: {
         id: 0,
-        name: '',
         estilo: '',
         caracteristicas: '',
         precio_costo: '',
@@ -392,12 +371,6 @@ export default {
           title: 'Acciones',
           titleClass: '',
           dataClass: 'text-muted'
-        },
-        {
-          name: 'nombre',
-          sortField: 'name',
-          title: 'Nombre',
-          dataClass: 'list-item-heading'
         },
         {
           name: 'estilo',
@@ -442,7 +415,6 @@ export default {
   validations () {
     return {
       form: {
-        name: { required },
         estilo: { required },
         caracteristicas: { required }
       }
@@ -454,7 +426,6 @@ export default {
         case 'save': {
           this.$v.$reset()
           this.form.id = 0
-          this.form.name = ''
           this.form.estilo = ''
           this.form.caracteristicas = ''
           this.form.precio_costo = ''
@@ -472,7 +443,6 @@ export default {
           this.$v.$reset()
           this.$refs['modal-1-zapatos'].hide()
           this.form.id = 0
-          this.form.name = ''
           this.form.estilo = ''
           this.form.caracteristicas = ''
           this.form.precio_costo = ''
@@ -486,7 +456,6 @@ export default {
           this.$v.$reset()
           this.$refs['modal-2-zapatos'].hide()
           this.form.id = 0
-          this.form.name = ''
           this.form.estilo = ''
           this.form.caracteristicas = ''
           this.form.precio_costo = ''
@@ -512,13 +481,12 @@ export default {
       }
     },
     setData (data) {
-      this.form.name = data.nombre
-      this.form.estilo = ''
-      this.form.caracteristicas = ''
-      this.form.precio_costo = ''
-      this.form.precio_venta = ''
-      this.form.precio_minimo = ''
-      this.form.precio_mayorista = ''
+      this.form.estilo = data.estilo
+      this.form.caracteristicas = data.caracteristicas
+      this.form.precio_costo = data.precio_costo
+      this.form.precio_venta = data.precio_venta
+      this.form.precio_minimo = data.precio_minimo
+      this.form.precio_mayorista = data.precio_mayorista
       this.form.state = data.estado
       this.form.id = data.id
     },
@@ -530,7 +498,7 @@ export default {
         .then((response) => {
           me.alertVariant = 'success'
           me.showAlert()
-          me.alertText = 'Se ha creado el zapato ' + me.form.name + ' exitosamente'
+          me.alertText = 'Se ha creado el zapato ' + me.form.estilo + ' exitosamente'
           me.$refs.vuetable.refresh()
           me.closeModal('save')
         })
@@ -550,7 +518,7 @@ export default {
         .then((response) => {
           me.alertVariant = 'primary'
           me.showAlert()
-          me.alertText = 'Se ha actualizado el zapato ' + me.form.name + ' exitosamente'
+          me.alertText = 'Se ha actualizado el zapato ' + me.form.estilo + ' exitosamente'
           me.$refs.vuetable.refresh()
           me.closeModal('update')
         })
@@ -571,7 +539,7 @@ export default {
           .then((response) => {
             me.alertVariant = 'warning'
             me.showAlert()
-            me.alertText = 'Se ha desactivado el zapato ' + me.form.name + ' exitosamente'
+            me.alertText = 'Se ha desactivado el zapato ' + me.form.estilo + ' exitosamente'
             me.$refs.vuetable.refresh()
             me.$refs['modal-3-zapatos'].hide()
           })
@@ -589,7 +557,7 @@ export default {
           .then((response) => {
             me.alertVariant = 'info'
             me.showAlert()
-            me.alertText = 'Se ha activado el zapato ' + me.form.name + ' exitosamente'
+            me.alertText = 'Se ha activado el zapato ' + me.form.estilo + ' exitosamente'
             me.$refs.vuetable.refresh()
             me.$refs['modal-4-zapatos'].hide()
           })
