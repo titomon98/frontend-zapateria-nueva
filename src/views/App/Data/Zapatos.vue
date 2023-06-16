@@ -367,7 +367,7 @@
       <b-col md="12">
         <iq-card>
             <template v-slot:headerTitle>
-              <h4 class="card-title mt-3">Zapatos</h4>
+              <h4 class="card-title mt-3">Reportes de zapatos</h4>
                <div class="iq-search-bar mt-2">
                 <b-form action="#" class="searchbox">
                     <b-input id="search" placeholder="Buscar..." @input="(val) => searchChange(val)" />
@@ -416,32 +416,22 @@
               <template slot="actions" slot-scope="props">
                 <b-button-group>
                   <b-button
-                    v-b-tooltip.top="'Editar'"
-                    @click="setData(props.rowData)"
-                    v-b-modal.modal-2-zapatos
+                    v-b-tooltip.top="'Reporte de general de zapatos por mes'"
+                    @click="setDataConciliacion(props.rowData)"
+                    v-b-modal.modal-date-2-conciliacion
                     class="mb-2"
                     size="sm"
-                    variant="outline-warning"
-                    ><i :class="'fas fa-pencil-alt'"
+                    variant="outline-dark"
+                    ><i :class="'fas fa-print'"
                   /></b-button>
                   <b-button
-                    v-b-tooltip.top="
-                      props.rowData.estado == 1 ? 'Desactivar' : 'Activar'"
-                    @click="
-                      setData(props.rowData);
-                      props.rowData.estado == 1
-                        ? $bvModal.show('modal-3-zapatos')
-                        : $bvModal.show('modal-4-zapatos');
-                    "
+                    v-b-tooltip.top="'Reporte de general de zapatos por fechas'"
+                    @click="setDataConciliacionCuadratica(props.rowData)"
+                    v-b-modal.modal-date-4
                     class="mb-2"
                     size="sm"
-                    :variant="
-                      props.rowData.estado == 1 ? 'outline-danger' : 'outline-info'">
-                    <i
-                      :class="
-                        props.rowData.estado == 1
-                          ? 'fas fa-trash-alt'
-                          : 'fas fa-check'"
+                    variant="outline-info"
+                    ><i :class="'fas fa-file'"
                   /></b-button>
                 </b-button-group>
               </template>
@@ -468,7 +458,7 @@ import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
 
 export default {
-  name: 'Zapatos',
+  name: 'ZapatosData',
   components: {
     vuetable: Vuetable,
     'vuetable-pagination-bootstrap': VuetablePaginationBootstrap,

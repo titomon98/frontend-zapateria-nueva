@@ -10,88 +10,7 @@
     >
       <div class="iq-alert-text">{{ alertText }}</div>
     </b-alert>
-    <b-modal id="modal-1-tallas" size="lg" ref="modal-1-tallas" title="Agregar tallas">
-      <b-alert
-        :show="alertCountDownError"
-        dismissible
-        fade
-        @dismissed="alertCountDownError=0"
-        class="text-white bg-danger"
-      >
-        <div class="iq-alert-text">{{ alertErrorText }}</div>
-      </b-alert>
-      <b-form @submit="$event.preventDefault()">
-        <b-row class="ml-2">
-          <b-col md="4">
-            <b-form-group label="Tienda:">
-              <v-select
-                name="tienda"
-                v-model="form.tienda"
-                :options="tiendas"
-                :filterable="false"
-                placeholder="Seleccione la tienda"
-                @search="onSearchTiendas"
-              >
-                <template v-slot:spinner="{ loading }">
-                  <div v-show="loading">Cargando...</div>
-                </template>
-                <template v-slot:option="option">
-                  {{ option.nombre }}
-                </template>
-                <template slot="selected-option" slot-scope="option">
-                  {{ option.nombre }}
-                </template>
-              </v-select>
-            </b-form-group>
-          </b-col>
-          <b-col md="4">
-            <b-form-radio v-model="form.corrida" value="PRIMERA" name="customRadio1">Primera corrida</b-form-radio>
-            <b-form-radio v-model="form.corrida" value="SEGUNDA" name="customRadio1">Segunda corrida</b-form-radio>
-            <b-form-radio v-model="form.corrida" value="TERCERA" name="customRadio1">Tercera corrida</b-form-radio>
-            <b-form-radio v-model="form.corrida" value="CUARTA1" name="customRadio1">Cuarta corrida dama</b-form-radio>
-            <b-form-radio v-model="form.corrida" value="CUARTA2" name="customRadio1">Cuarta corrida caballero</b-form-radio>
-            <b-form-radio v-model="form.corrida" value="QUINTA" name="customRadio1">Quinta corrida caballero</b-form-radio>
-          </b-col>
-          <b-col md="4">
-            <b-button  variant="dark" @click="addTallas()"
-              >Generar tallas</b-button
-            >
-          </b-col>
-        </b-row>
-        <b-row class="ml-2">
-          <br>
-          <br>
-          <table class="table table-hover product_item_list c_table theme-color mb-0">
-            <thead>
-                <tr>
-                    <th>Talla</th>
-                    <th>Cantidad</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="details in corridas" :key="details.id">
-                  <td v-text="details.talla"></td>
-                  <td>
-                    <b-form-input
-                      v-model="details.cantidad"
-                      placeholder="Ingresar cantidad"
-                    ></b-form-input>
-                  </td>
-                </tr>
-            </tbody>
-          </table>
-        </b-row>
-      </b-form>
-      <template #modal-footer="{}">
-        <b-button variant="primary" @click="onValidate('save')"
-          >Guardar</b-button
-        >
-        <b-button variant="danger" @click="closeModal('save')"
-          >Cancelar</b-button
-        >
-      </template>
-    </b-modal>
-    <b-modal id="modal-2-tallas" ref="modal-2-tallas" title="Ver tallas">
+    <b-modal id="modal-1-tiendas" ref="modal-1-tiendas" title="Agregar tienda">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -104,12 +23,65 @@
       <b-form @submit="$event.preventDefault()">
         <b-form-group label="Nombre:">
           <b-form-input
-            v-model.trim="form.name"
-            placeholder="Ingresar nombre de talla"
+            v-model.trim="$v.form.name.$model"
+            :state="!$v.form.name.$error"
+            placeholder="Ingresar nombre de la tienda"
           ></b-form-input>
-
+          <div v-if="$v.form.name.required.$invalid" class="invalid-feedback">
+            Debe ingresar el nombre
+          </div>
         </b-form-group>
-
+        <b-form-group label="Dirección:">
+          <b-form-input
+            v-model.trim="$v.form.direccion.$model"
+            :state="!$v.form.direccion.$error"
+            placeholder="Ingresar direccion de la tienda"
+          ></b-form-input>
+          <div v-if="$v.form.direccion.required.$invalid" class="invalid-feedback">
+            Debe ingresar el direccion
+          </div>
+        </b-form-group>
+      </b-form>
+      <template #modal-footer="{}">
+        <b-button variant="primary" @click="onValidate('save')"
+          >Guardar</b-button
+        >
+        <b-button variant="danger" @click="closeModal('save')"
+          >Cancelar</b-button
+        >
+      </template>
+    </b-modal>
+    <b-modal id="modal-2-tiendas" ref="modal-2-tiendas" title="Editar tienda">
+      <b-alert
+        :show="alertCountDownError"
+        dismissible
+        fade
+        @dismissed="alertCountDownError=0"
+        class="text-white bg-danger"
+      >
+        <div class="iq-alert-text">{{ alertErrorText }}</div>
+      </b-alert>
+      <b-form @submit="$event.preventDefault()">
+        <b-form-group label="Nombre:">
+          <b-form-input
+            v-model.trim="$v.form.name.$model"
+            :state="!$v.form.name.$error"
+            placeholder="Ingresar nombre de tienda"
+          ></b-form-input>
+          <div v-if="$v.form.name.required.$invalid" class="invalid-feedback">
+            Debe ingresar el nombre
+          </div>
+        </b-form-group>
+        <b-form-group label="Dirección:">
+          <b-form-input
+            v-model.trim="$v.form.direccion.$model"
+            :state="!$v.form.direccion.$error"
+            placeholder="Ingresar direccion de la tienda"
+          ></b-form-input>
+          <div v-if="$v.form.direccion.required.$invalid" class="invalid-feedback">
+            Debe ingresar dirección
+          </div>
+        </b-form-group>
       </b-form>
       <template #modal-footer="{}">
         <b-button variant="primary" @click="onValidate('update')"
@@ -120,7 +92,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-3-tallas" ref="modal-3-tallas" title="Desactivar talla">
+    <b-modal id="modal-3-tiendas" ref="modal-3-tiendas" title="Desactivar tienda">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -131,22 +103,22 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <h6 class="my-4">
-        ¿Desea desactivar la talla: {{ form.name }} ?
+        ¿Desea desactivar la tienda: {{ form.name }} ?
       </h6>
       <template #modal-footer="{}">
         <b-button
           type="submit"
           variant="primary"
           @click="onState()
-                  $bvModal.hide('modal-3-tallas')"
+                  $bvModal.hide('modal-3-tiendas')"
           >Desactivar</b-button
         >
-        <b-button variant="danger" @click="$bvModal.hide('modal-3-tallas')"
+        <b-button variant="danger" @click="$bvModal.hide('modal-3-tiendas')"
           >Cancelar</b-button
         >
       </template>
     </b-modal>
-    <b-modal id="modal-4-tallas" ref="modal-4-tallas" title="Activar talla">
+    <b-modal id="modal-4-tiendas" ref="modal-4-tiendas" title="Activar tienda">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -157,17 +129,17 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <h6 class="my-4">
-        ¿Desea activar la talla: {{ form.name }} ?
+        ¿Desea activar la tienda: {{ form.name }} ?
       </h6>
       <template #modal-footer="{}">
         <b-button
           type="submit"
           variant="primary"
           @click="onState()
-                  $bvModal.hide('modal-4-tallas')"
+                  $bvModal.hide('modal-4-tiendas')"
           >Activar</b-button
         >
-        <b-button variant="danger" @click="$bvModal.hide('modal-4-tallas')"
+        <b-button variant="danger" @click="$bvModal.hide('modal-4-tiendas')"
           >Cancelar</b-button
         >
       </template>
@@ -176,7 +148,7 @@
       <b-col md="12">
         <iq-card>
             <template v-slot:headerTitle>
-              <h4 class="card-title mt-3">Tallas</h4>
+              <h4 class="card-title mt-3">Reportes de tiendas</h4>
                <div class="iq-search-bar mt-2">
                 <b-form action="#" class="searchbox">
                     <b-input id="search" placeholder="Buscar..." @input="(val) => searchChange(val)" />
@@ -185,6 +157,7 @@
               </div>
             </template>
             <template v-slot:headerAction>
+            <b-button variant="primary"  v-b-modal.modal-1-tiendas>AGREGAR NUEVO</b-button>
           </template>
           <template v-slot:body>
             <datatable-heading
@@ -224,41 +197,22 @@
               <template slot="actions" slot-scope="props">
                 <b-button-group>
                   <b-button
-                    v-b-tooltip.top="'Ver tallas'"
-                    @click="setData(props.rowData)"
-                    v-b-modal.modal-2-tallas
-                    class="mb-2"
-                    size="sm"
-                    variant="outline-success"
-                    ><i :class="'fas fa-eye'"
-                  /></b-button>
-                  <b-button
-                    v-b-tooltip.top="'Agregar tallas'"
-                    @click="setData(props.rowData)"
-                    v-b-modal.modal-1-tallas
+                    v-b-tooltip.top="'Reporte de general de tienda por mes'"
+                    @click="setDataConciliacion(props.rowData)"
+                    v-b-modal.modal-date-2-conciliacion
                     class="mb-2"
                     size="sm"
                     variant="outline-dark"
-                    ><i :class="'fas fa-plus'"
+                    ><i :class="'fas fa-print'"
                   /></b-button>
                   <b-button
-                    v-b-tooltip.top="
-                      props.rowData.estado == 1 ? 'Desactivar' : 'Activar'"
-                    @click="
-                      setData(props.rowData);
-                      props.rowData.estado == 1
-                        ? $bvModal.show('modal-3-tallas')
-                        : $bvModal.show('modal-4-tallas');
-                    "
+                    v-b-tooltip.top="'Reporte de general de tienda por fechas'"
+                    @click="setDataConciliacionCuadratica(props.rowData)"
+                    v-b-modal.modal-date-4
                     class="mb-2"
                     size="sm"
-                    :variant="
-                      props.rowData.estado == 1 ? 'outline-danger' : 'outline-info'">
-                    <i
-                      :class="
-                        props.rowData.estado == 1
-                          ? 'fas fa-trash-alt'
-                          : 'fas fa-check'"
+                    variant="outline-info"
+                    ><i :class="'fas fa-file'"
                   /></b-button>
                 </b-button-group>
               </template>
@@ -285,7 +239,7 @@ import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
 
 export default {
-  name: 'Tallas',
+  name: 'TiendasData',
   components: {
     vuetable: Vuetable,
     'vuetable-pagination-bootstrap': VuetablePaginationBootstrap,
@@ -304,12 +258,10 @@ export default {
       total: 0,
       perPage: 5,
       search: '',
-      corridas: [],
-      tiendas: [],
       form: {
         id: 0,
-        corrida: 'PRIMERA',
-        tienda: null,
+        name: '',
+        direccion: '',
         state: 1
       },
       alertSecs: 5,
@@ -318,7 +270,7 @@ export default {
       alertText: '',
       alertErrorText: '',
       alertVariant: '',
-      apiBase: apiUrl + '/zapatos/list',
+      apiBase: apiUrl + '/tiendas/list',
       fields: [
         {
           name: '__slot:actions',
@@ -327,33 +279,15 @@ export default {
           dataClass: 'text-muted'
         },
         {
-          name: 'estilo',
-          sortField: 'estilo',
-          title: 'Estilo',
+          name: 'nombre',
+          sortField: 'name',
+          title: 'Nombre',
           dataClass: 'list-item-heading'
         },
         {
-          name: 'precio_costo',
-          sortField: 'precio_costo',
-          title: 'Costo',
-          dataClass: 'list-item-heading'
-        },
-        {
-          name: 'precio_venta',
-          sortField: 'precio_venta',
-          title: 'Precio venta',
-          dataClass: 'list-item-heading'
-        },
-        {
-          name: 'precio_minimo',
-          sortField: 'precio_minimo',
-          title: 'Precio minimo',
-          dataClass: 'list-item-heading'
-        },
-        {
-          name: 'precio_mayorista',
-          sortField: 'precio_mayorista',
-          title: 'Precio mayorista',
+          name: 'direccion',
+          sortField: 'direccion',
+          title: 'Dirección',
           dataClass: 'list-item-heading'
         },
         {
@@ -369,82 +303,20 @@ export default {
   validations () {
     return {
       form: {
-        corrida: { required }
+        name: { required },
+        direccion: { required }
       }
     }
   },
   methods: {
-    addTallas () {
-      let me = this
-      if (me.form.corrida === 'PRIMERA') {
-        me.corridas = [
-          { id: 1, talla: '14', cantidad: 0 },
-          { id: 2, talla: '15', cantidad: 0 },
-          { id: 3, talla: '16', cantidad: 0 },
-          { id: 4, talla: '17', cantidad: 0 },
-          { id: 5, talla: '18', cantidad: 0 },
-          { id: 6, talla: '19', cantidad: 0 },
-          { id: 7, talla: '20', cantidad: 0 },
-          { id: 8, talla: '21', cantidad: 0 }
-        ]
-      } else if (me.form.corrida === 'SEGUNDA') {
-        me.corridas = [
-          { id: 1, talla: '22', cantidad: 0 },
-          { id: 2, talla: '23', cantidad: 0 },
-          { id: 3, talla: '24', cantidad: 0 },
-          { id: 4, talla: '25', cantidad: 0 },
-          { id: 5, talla: '26', cantidad: 0 }
-        ]
-      } else if (me.form.corrida === 'TERCERA') {
-        me.corridas = [
-          { id: 1, talla: '27', cantidad: 0 },
-          { id: 2, talla: '28', cantidad: 0 },
-          { id: 3, talla: '29', cantidad: 0 },
-          { id: 4, talla: '30', cantidad: 0 },
-          { id: 5, talla: '31', cantidad: 0 },
-          { id: 6, talla: '32', cantidad: 0 }
-        ]
-      } else if (me.form.corrida === 'CUARTA1') {
-        me.corridas = [
-          { id: 1, talla: '33', cantidad: 0 },
-          { id: 2, talla: '34', cantidad: 0 },
-          { id: 3, talla: '35', cantidad: 0 },
-          { id: 4, talla: '36', cantidad: 0 },
-          { id: 5, talla: '37', cantidad: 0 },
-          { id: 6, talla: '38', cantidad: 0 },
-          { id: 7, talla: '39', cantidad: 0 },
-          { id: 8, talla: '40', cantidad: 0 }
-        ]
-      } else if (me.form.corrida === 'CUARTA2') {
-        me.corridas = [
-          { id: 1, talla: '33', cantidad: 0 },
-          { id: 2, talla: '34', cantidad: 0 },
-          { id: 3, talla: '35', cantidad: 0 },
-          { id: 4, talla: '36', cantidad: 0 }
-        ]
-      } else if (me.form.corrida === 'QUINTA') {
-        me.corridas = [
-          { id: 1, talla: '37', cantidad: 0 },
-          { id: 2, talla: '38', cantidad: 0 },
-          { id: 3, talla: '39', cantidad: 0 },
-          { id: 4, talla: '40', cantidad: 0 },
-          { id: 5, talla: '41', cantidad: 0 },
-          { id: 6, talla: '42', cantidad: 0 },
-          { id: 7, talla: '43', cantidad: 0 },
-          { id: 8, talla: '44', cantidad: 0 }
-        ]
-      }
-    },
     openModal (modal, action) {
       switch (modal) {
         case 'save': {
           this.$v.$reset()
           this.form.id = 0
           this.form.name = ''
-          this.form.precio = ''
+          this.form.direccion = ''
           this.form.state = 1
-          this.corridas = []
-          this.form.tienda = null
           break
         }
       }
@@ -453,24 +325,20 @@ export default {
       switch (action) {
         case 'save': {
           this.$v.$reset()
-          this.$refs['modal-1-tallas'].hide()
+          this.$refs['modal-1-tiendas'].hide()
           this.form.id = 0
           this.form.name = ''
-          this.form.precio = ''
+          this.form.direccion = ''
           this.form.state = 1
-          this.corridas = []
-          this.form.tienda = null
           break
         }
         case 'update': {
           this.$v.$reset()
-          this.$refs['modal-2-tallas'].hide()
+          this.$refs['modal-2-tiendas'].hide()
           this.form.id = 0
           this.form.name = ''
-          this.form.precio = ''
+          this.form.direccion = ''
           this.form.state = 1
-          this.corridas = []
-          this.form.tienda = null
           break
         }
       }
@@ -489,21 +357,20 @@ export default {
       }
     },
     setData (data) {
-      this.form.name = data.estilo
-      this.form.precio = data.precio
+      this.form.name = data.nombre
+      this.form.direccion = data.direccion
       this.form.state = data.estado
       this.form.id = data.id
     },
+    /* Guardar */
     onSave () {
       const me = this
-      axios.post(apiUrl + '/tallas/create', {
-        form: me.form,
-        corridas: me.corridas
-      })
+      axios.post(apiUrl + '/tiendas/create', {
+        form: me.form })
         .then((response) => {
           me.alertVariant = 'success'
           me.showAlert()
-          me.alertText = 'Se ha creado la talla ' + me.form.name + ' exitosamente'
+          me.alertText = 'Se ha creado la tienda ' + me.form.name + ' exitosamente'
           me.$refs.vuetable.refresh()
           me.closeModal('save')
         })
@@ -514,15 +381,16 @@ export default {
           console.error('Error!', error)
         })
     },
+    /* Guardar */
     onUpdate () {
       const me = this
       // this.$refs["modalSave"].hide();
-      axios.put(apiUrl + '/tallas/update', {
+      axios.put(apiUrl + '/tiendas/update', {
         form: me.form })
         .then((response) => {
           me.alertVariant = 'primary'
           me.showAlert()
-          me.alertText = 'Se ha actualizado la talla ' + me.form.name + ' exitosamente'
+          me.alertText = 'Se ha actualizado la tienda ' + me.form.name + ' exitosamente'
           me.$refs.vuetable.refresh()
           me.closeModal('update')
         })
@@ -537,15 +405,15 @@ export default {
       let me = this
       if (this.form.state === 1) {
         axios
-          .put(apiUrl + '/tallas/deactivate', {
+          .put(apiUrl + '/tiendas/deactivate', {
             id: this.form.id
           })
           .then((response) => {
             me.alertVariant = 'warning'
             me.showAlert()
-            me.alertText = 'Se ha desactivado la talla ' + me.form.name + ' exitosamente'
+            me.alertText = 'Se ha desactivado la tienda ' + me.form.name + ' exitosamente'
             me.$refs.vuetable.refresh()
-            me.$refs['modal-3-tallas'].hide()
+            me.$refs['modal-3-tiendas'].hide()
           })
           .catch((error) => {
             me.alertVariant = 'danger'
@@ -555,15 +423,15 @@ export default {
           })
       } else {
         axios
-          .put(apiUrl + '/tallas/activate', {
+          .put(apiUrl + '/tiendas/activate', {
             id: this.form.id
           })
           .then((response) => {
             me.alertVariant = 'info'
             me.showAlert()
-            me.alertText = 'Se ha activado la talla ' + me.form.name + ' exitosamente'
+            me.alertText = 'Se ha activado la tienda ' + me.form.name + ' exitosamente'
             me.$refs.vuetable.refresh()
-            me.$refs['modal-4-tallas'].hide()
+            me.$refs['modal-4-tiendas'].hide()
           })
           .catch((error) => {
             me.alertVariant = 'danger'
@@ -614,24 +482,6 @@ export default {
     },
     showAlertError () {
       this.alertCountDownError = this.alertSecs
-    },
-    searchingTiendas (search, loading) {
-      axios.get(apiUrl + '/tiendas/getSelect',
-        {
-          params: {
-            search: search
-          }
-        }
-      ).then((response) => {
-        this.tiendas = response.data
-        loading(false)
-      })
-    },
-    onSearchTiendas (search, loading) {
-      if (search.length) {
-        loading(true)
-        this.searchingTiendas(search, loading)
-      }
     }
   }
 }

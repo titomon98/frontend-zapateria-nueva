@@ -92,11 +92,30 @@ import AppTreeView from '../views/Plugins/AppTreeView'
 import Users from '../views/App/Admin/Users'
 import AdminParent from '../views/App/Admin/AdminParent'
 
+// Compras
+import Compras from '../views/App/Compras/Compras'
+import ListadoCompras from '../views/App/Compras/ListadoCompras'
+import ComprasParent from '../views/App/Compras/ComprasParent'
+
 // Services
 import ServicesParent from '../views/App/Services/ServicesParent'
 import Tallas from '../views/App/Services/Tallas'
 import Zapato from '../views/App/Services/Zapato'
 import Tiendas from '../views/App/Services/Tiendas'
+
+// Datos
+
+import DataParent from '../views/App/Data/DataParent'
+import TallasData from '../views/App/Data/Tallas'
+import ZapatoData from '../views/App/Data/Zapatos'
+import TiendasData from '../views/App/Data/Tiendas'
+import MarcasData from '../views/App/Data/Marcas'
+
+// Ventas
+
+import VentaIndividual from '../views/App/Ventas/VentaIndividual'
+import ListadoVentas from '../views/App/Ventas/ListadoVentas'
+import VentasParent from '../views/App/Ventas/VentasParent'
 
 Vue.use(VueRouter)
 
@@ -139,6 +158,81 @@ const ServicesRoutes = (prop, mode) => [
     name: prop + '.zapatos',
     meta: { dark: mode, auth: true, name: 'Zapatos' },
     component: Zapato
+  }
+]
+
+const DataRoutes = (prop, mode) => [
+  {
+    path: 'data',
+    name: prop + '.data',
+    meta: { dark: mode, auth: true, name: 'DataParent' },
+    component: DataParent
+  },
+  {
+    path: 'data',
+    name: prop + '.tallas',
+    meta: { dark: mode, auth: true, name: 'Tallas' },
+    component: TallasData
+  },
+  {
+    path: 'data',
+    name: prop + '.marcas',
+    meta: { dark: mode, auth: true, name: 'marcas' },
+    component: MarcasData
+  },
+  {
+    path: 'data',
+    name: prop + '.tiendas',
+    meta: { dark: mode, auth: true, name: 'Tiendas' },
+    component: TiendasData
+  },
+  {
+    path: 'data',
+    name: prop + '.zapatos',
+    meta: { dark: mode, auth: true, name: 'Zapatos' },
+    component: ZapatoData
+  }
+]
+
+const VentasRoutes = (prop, mode) => [
+  {
+    path: 'ventas',
+    name: prop + '.listado',
+    meta: { dark: mode, auth: true, name: 'ListadoVentas' },
+    component: ListadoVentas
+  },
+  {
+    path: 'ventas',
+    name: prop + '.venta',
+    meta: { dark: mode, auth: true, name: 'VentaIndividual' },
+    component: VentaIndividual
+  },
+  {
+    path: 'ventas',
+    name: prop + '.ventasparent',
+    meta: { dark: mode, auth: true, name: 'VentasParent' },
+    component: VentasParent
+  }
+]
+
+const ComprasRoutes = (prop, mode) => [
+  {
+    path: 'compras',
+    name: prop + '.listado',
+    meta: { dark: mode, auth: true, name: 'ListadoCompras' },
+    component: ListadoCompras
+  },
+  {
+    path: 'compras',
+    name: prop + '.compra',
+    meta: { dark: mode, auth: true, name: 'Compras' },
+    component: Compras
+  },
+  {
+    path: 'compras',
+    name: prop + '.comprasparent',
+    meta: { dark: mode, auth: true, name: 'ComprasParent' },
+    component: ComprasParent
   }
 ]
 
@@ -621,6 +715,27 @@ const routes = [
     component: Layout1,
     meta: { auth: true },
     children: ServicesRoutes('services')
+  },
+  {
+    path: '/data',
+    name: 'data',
+    component: Layout1,
+    meta: { auth: true },
+    children: DataRoutes('data')
+  },
+  {
+    path: '/ventas',
+    name: 'ventas',
+    component: Layout1,
+    meta: { auth: true },
+    children: VentasRoutes('ventas')
+  },
+  {
+    path: '/compras',
+    name: 'compras',
+    component: Layout1,
+    meta: { auth: true },
+    children: ComprasRoutes('compras')
   },
   {
     path: '/',

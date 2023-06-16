@@ -31,5 +31,41 @@
     "class_name": "",
     "is_icon_class": true,
     "icon": "ri-file-list-fill"
+  },
+  {
+    "title": "Ventas",
+    "name": "Ventas",
+    "is_heading": false,
+    "is_active": false,
+    "link": {
+      "name": "ventas.ventasparent"
+    },
+    "class_name": "",
+    "is_icon_class": true,
+    "icon": "ri-file-list-fill"
+  },
+  {
+    "title": "Compras",
+    "name": "Compras",
+    "is_heading": false,
+    "is_active": false,
+    "link": {
+      "name": "compras.comprasparent"
+    },
+    "class_name": "",
+    "is_icon_class": true,
+    "icon": "ri-file-list-fill"
+  },
+  {
+    "title": "Control de datos",
+    "name": "Control de datos",
+    "is_heading": false,
+    "is_active": false,
+    "link": {
+      "name": "data.data"
+    },
+    "class_name": "",
+    "is_icon_class": true,
+    "icon": "ri-file-list-fill"
   }
 ]

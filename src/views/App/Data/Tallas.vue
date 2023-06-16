@@ -48,9 +48,8 @@
             <b-form-radio v-model="form.corrida" value="PRIMERA" name="customRadio1">Primera corrida</b-form-radio>
             <b-form-radio v-model="form.corrida" value="SEGUNDA" name="customRadio1">Segunda corrida</b-form-radio>
             <b-form-radio v-model="form.corrida" value="TERCERA" name="customRadio1">Tercera corrida</b-form-radio>
-            <b-form-radio v-model="form.corrida" value="CUARTA1" name="customRadio1">Cuarta corrida dama</b-form-radio>
-            <b-form-radio v-model="form.corrida" value="CUARTA2" name="customRadio1">Cuarta corrida caballero</b-form-radio>
-            <b-form-radio v-model="form.corrida" value="QUINTA" name="customRadio1">Quinta corrida caballero</b-form-radio>
+            <b-form-radio v-model="form.corrida" value="CUARTA" name="customRadio1">Cuarta corrida</b-form-radio>
+            <b-form-radio v-model="form.corrida" value="QUINTA" name="customRadio1">Quinta corrida</b-form-radio>
           </b-col>
           <b-col md="4">
             <b-button  variant="dark" @click="addTallas()"
@@ -176,7 +175,7 @@
       <b-col md="12">
         <iq-card>
             <template v-slot:headerTitle>
-              <h4 class="card-title mt-3">Tallas</h4>
+              <h4 class="card-title mt-3">Reportes de tallas</h4>
                <div class="iq-search-bar mt-2">
                 <b-form action="#" class="searchbox">
                     <b-input id="search" placeholder="Buscar..." @input="(val) => searchChange(val)" />
@@ -221,47 +220,26 @@
                 </h5>
               </div>
               <!-- Botones -->
-              <template slot="actions" slot-scope="props">
-                <b-button-group>
+              <b-button-group>
                   <b-button
-                    v-b-tooltip.top="'Ver tallas'"
-                    @click="setData(props.rowData)"
-                    v-b-modal.modal-2-tallas
-                    class="mb-2"
-                    size="sm"
-                    variant="outline-success"
-                    ><i :class="'fas fa-eye'"
-                  /></b-button>
-                  <b-button
-                    v-b-tooltip.top="'Agregar tallas'"
-                    @click="setData(props.rowData)"
-                    v-b-modal.modal-1-tallas
+                    v-b-tooltip.top="'Reporte de general de tallas por mes'"
+                    @click="setDataConciliacion(props.rowData)"
+                    v-b-modal.modal-date-2-conciliacion
                     class="mb-2"
                     size="sm"
                     variant="outline-dark"
-                    ><i :class="'fas fa-plus'"
+                    ><i :class="'fas fa-print'"
                   /></b-button>
                   <b-button
-                    v-b-tooltip.top="
-                      props.rowData.estado == 1 ? 'Desactivar' : 'Activar'"
-                    @click="
-                      setData(props.rowData);
-                      props.rowData.estado == 1
-                        ? $bvModal.show('modal-3-tallas')
-                        : $bvModal.show('modal-4-tallas');
-                    "
+                    v-b-tooltip.top="'Reporte de general de tallas por fechas'"
+                    @click="setDataConciliacionCuadratica(props.rowData)"
+                    v-b-modal.modal-date-4
                     class="mb-2"
                     size="sm"
-                    :variant="
-                      props.rowData.estado == 1 ? 'outline-danger' : 'outline-info'">
-                    <i
-                      :class="
-                        props.rowData.estado == 1
-                          ? 'fas fa-trash-alt'
-                          : 'fas fa-check'"
+                    variant="outline-info"
+                    ><i :class="'fas fa-file'"
                   /></b-button>
                 </b-button-group>
-              </template>
               <!-- Paginacion -->
             </vuetable>
             <vuetable-pagination-bootstrap
@@ -285,7 +263,7 @@ import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
 
 export default {
-  name: 'Tallas',
+  name: 'TallasData',
   components: {
     vuetable: Vuetable,
     'vuetable-pagination-bootstrap': VuetablePaginationBootstrap,
@@ -404,35 +382,10 @@ export default {
           { id: 5, talla: '31', cantidad: 0 },
           { id: 6, talla: '32', cantidad: 0 }
         ]
-      } else if (me.form.corrida === 'CUARTA1') {
-        me.corridas = [
-          { id: 1, talla: '33', cantidad: 0 },
-          { id: 2, talla: '34', cantidad: 0 },
-          { id: 3, talla: '35', cantidad: 0 },
-          { id: 4, talla: '36', cantidad: 0 },
-          { id: 5, talla: '37', cantidad: 0 },
-          { id: 6, talla: '38', cantidad: 0 },
-          { id: 7, talla: '39', cantidad: 0 },
-          { id: 8, talla: '40', cantidad: 0 }
-        ]
-      } else if (me.form.corrida === 'CUARTA2') {
-        me.corridas = [
-          { id: 1, talla: '33', cantidad: 0 },
-          { id: 2, talla: '34', cantidad: 0 },
-          { id: 3, talla: '35', cantidad: 0 },
-          { id: 4, talla: '36', cantidad: 0 }
-        ]
+      } else if (me.form.corrida === 'CUARTA') {
+
       } else if (me.form.corrida === 'QUINTA') {
-        me.corridas = [
-          { id: 1, talla: '37', cantidad: 0 },
-          { id: 2, talla: '38', cantidad: 0 },
-          { id: 3, talla: '39', cantidad: 0 },
-          { id: 4, talla: '40', cantidad: 0 },
-          { id: 5, talla: '41', cantidad: 0 },
-          { id: 6, talla: '42', cantidad: 0 },
-          { id: 7, talla: '43', cantidad: 0 },
-          { id: 8, talla: '44', cantidad: 0 }
-        ]
+
       }
     },
     openModal (modal, action) {
@@ -489,17 +442,16 @@ export default {
       }
     },
     setData (data) {
-      this.form.name = data.estilo
+      this.form.name = data.nombre
       this.form.precio = data.precio
       this.form.state = data.estado
       this.form.id = data.id
     },
+    /* Guardar */
     onSave () {
       const me = this
       axios.post(apiUrl + '/tallas/create', {
-        form: me.form,
-        corridas: me.corridas
-      })
+        form: me.form })
         .then((response) => {
           me.alertVariant = 'success'
           me.showAlert()
@@ -514,6 +466,7 @@ export default {
           console.error('Error!', error)
         })
     },
+    /* Guardar */
     onUpdate () {
       const me = this
       // this.$refs["modalSave"].hide();

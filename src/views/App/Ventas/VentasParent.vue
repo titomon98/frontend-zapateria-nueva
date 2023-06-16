@@ -4,7 +4,7 @@
       <b-col md="12">
         <iq-card>
           <template v-slot:headerTitle>
-            <h4 class="card-title mt-3">Servicios</h4>
+            <h4 class="card-title mt-3">Control de ventas</h4>
             <div class="iq-search-bar mt-2">
               <div class="row">
                 <div class="col-sm">
@@ -18,13 +18,8 @@
           </template>
           <template v-slot:body>
             <b-tabs>
-              <b-tab title="Tiendas" active><Tiendas/></b-tab> <!-- Aqui los maquete al reves xD -->
-              <b-tab title="Zapato" lazy><Zapato/></b-tab>
-              <b-tab title="Generar tallas" lazy><Tallas/></b-tab>
-              <b-tab title="Listado de tallas" lazy><ListadoTallas/></b-tab>
-              <b-tab title="Marcas" lazy><Marcas/></b-tab>
-              <b-tab title="Colores" lazy><Colores/></b-tab>
-              <b-tab title="Clasificación" lazy><Clasificaciones/></b-tab>
+              <b-tab title="Ventas" active><Ventas/></b-tab>
+              <b-tab title="Listado de ventas" lazy><ListadoVentas/></b-tab>
             </b-tabs>
           </template>
         </iq-card>
@@ -36,24 +31,14 @@
 import { xray } from '../../../config/pluginInit'
 import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
-import Clasificaciones from './Clasificaciones.vue'
-import Colores from './Colores.vue'
-import Marcas from './Marcas.vue'
-import Tallas from './Tallas.vue'
-import ListadoTallas from './ListadoTallas.vue'
-import Tiendas from './Tiendas.vue'
-import Zapato from './Zapato.vue'
+import ListadoVentas from './ListadoVentas.vue'
+import Ventas from './VentaIndividual.vue'
 
 export default {
-  name: 'ServicesParent',
+  name: 'VentasParent',
   components: {
-    Clasificaciones,
-    Colores,
-    Marcas,
-    Tallas,
-    ListadoTallas,
-    Tiendas,
-    Zapato
+    ListadoVentas,
+    Ventas
   },
   data () {
     return {
