@@ -57,6 +57,54 @@
     "icon": "ri-file-list-fill"
   },
   {
+    "title": "Traslados entre tiendas",
+    "name": "Traslados entre tiendas",
+    "is_heading": false,
+    "is_active": false,
+    "link": {
+      "name": "traslados.traslados"
+    },
+    "class_name": "",
+    "is_icon_class": true,
+    "icon": "ri-file-list-fill"
+  },
+  {
+    "title": "Listado de traslados",
+    "name": "Listado de traslados",
+    "is_heading": false,
+    "is_active": false,
+    "link": {
+      "name": "traslados.listadotraslados"
+    },
+    "class_name": "",
+    "is_icon_class": true,
+    "icon": "ri-file-list-fill"
+  },
+  {
+    "title": "Pedidos pendientes",
+    "name": "Pedidos pendientes",
+    "is_heading": false,
+    "is_active": false,
+    "link": {
+      "name": "pedidos.pedidosparent"
+    },
+    "class_name": "",
+    "is_icon_class": true,
+    "icon": "ri-file-list-fill"
+  },
+  {
+    "title": "Alerta de tallas",
+    "name": "Alerta de tallas",
+    "is_heading": false,
+    "is_active": false,
+    "link": {
+      "name": "alertas.alertas"
+    },
+    "class_name": "",
+    "is_icon_class": true,
+    "icon": "ri-file-list-fill"
+  },
+  {
     "title": "Control de datos",
     "name": "Control de datos",
     "is_heading": false,

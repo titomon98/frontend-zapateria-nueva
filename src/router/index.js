@@ -93,9 +93,17 @@ import Users from '../views/App/Admin/Users'
 import AdminParent from '../views/App/Admin/AdminParent'
 
 // Compras
-import Compras from '../views/App/Compras/Compras'
-import ListadoCompras from '../views/App/Compras/ListadoCompras'
 import ComprasParent from '../views/App/Compras/ComprasParent'
+
+// Traslados
+import Traslados from '../views/App/Traslados/Traslados'
+import ListadoTraslados from '../views/App/Traslados/ListadoTraslados'
+
+// Pedidos
+import Pedidos from '../views/App/Pedidos/Pedidos'
+
+// Alertas
+import Alertas from '../views/App/Alertas/Alertas'
 
 // Services
 import ServicesParent from '../views/App/Services/ServicesParent'
@@ -112,9 +120,6 @@ import TiendasData from '../views/App/Data/Tiendas'
 import MarcasData from '../views/App/Data/Marcas'
 
 // Ventas
-
-import VentaIndividual from '../views/App/Ventas/VentaIndividual'
-import ListadoVentas from '../views/App/Ventas/ListadoVentas'
 import VentasParent from '../views/App/Ventas/VentasParent'
 
 Vue.use(VueRouter)
@@ -197,18 +202,6 @@ const DataRoutes = (prop, mode) => [
 const VentasRoutes = (prop, mode) => [
   {
     path: 'ventas',
-    name: prop + '.listado',
-    meta: { dark: mode, auth: true, name: 'ListadoVentas' },
-    component: ListadoVentas
-  },
-  {
-    path: 'ventas',
-    name: prop + '.venta',
-    meta: { dark: mode, auth: true, name: 'VentaIndividual' },
-    component: VentaIndividual
-  },
-  {
-    path: 'ventas',
     name: prop + '.ventasparent',
     meta: { dark: mode, auth: true, name: 'VentasParent' },
     component: VentasParent
@@ -218,21 +211,42 @@ const VentasRoutes = (prop, mode) => [
 const ComprasRoutes = (prop, mode) => [
   {
     path: 'compras',
-    name: prop + '.listado',
-    meta: { dark: mode, auth: true, name: 'ListadoCompras' },
-    component: ListadoCompras
-  },
-  {
-    path: 'compras',
-    name: prop + '.compra',
-    meta: { dark: mode, auth: true, name: 'Compras' },
-    component: Compras
-  },
-  {
-    path: 'compras',
     name: prop + '.comprasparent',
     meta: { dark: mode, auth: true, name: 'ComprasParent' },
     component: ComprasParent
+  }
+]
+
+const PedidosRoutes = (prop, mode) => [
+  {
+    path: 'pedidos',
+    name: prop + '.pedidos',
+    meta: { dark: mode, auth: true, name: 'Pedidos' },
+    component: Pedidos
+  }
+]
+
+const TrasladosRoutes = (prop, mode) => [
+  {
+    path: 'traslados',
+    name: prop + '.traslados',
+    meta: { dark: mode, auth: true, name: 'Traslados' },
+    component: Traslados
+  },
+  {
+    path: 'listadotraslados',
+    name: prop + '.listadotraslados',
+    meta: { dark: mode, auth: true, name: 'ListadoTraslados' },
+    component: ListadoTraslados
+  }
+]
+
+const AlertaRoutes = (prop, mode) => [
+  {
+    path: 'alertas',
+    name: prop + '.alertas',
+    meta: { dark: mode, auth: true, name: 'Alertas' },
+    component: Alertas
   }
 ]
 
@@ -736,6 +750,27 @@ const routes = [
     component: Layout1,
     meta: { auth: true },
     children: ComprasRoutes('compras')
+  },
+  {
+    path: '/traslados',
+    name: 'traslados',
+    component: Layout1,
+    meta: { auth: true },
+    children: TrasladosRoutes('traslados')
+  },
+  {
+    path: '/pedidos',
+    name: 'pedidos',
+    component: Layout1,
+    meta: { auth: true },
+    children: PedidosRoutes('pedidos')
+  },
+  {
+    path: '/alertas',
+    name: 'alertas',
+    component: Layout1,
+    meta: { auth: true },
+    children: AlertaRoutes('alertas')
   },
   {
     path: '/',

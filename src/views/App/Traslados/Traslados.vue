@@ -10,164 +10,90 @@
     >
       <div class="iq-alert-text">{{ alertText }}</div>
     </b-alert>
-    <b-modal id="modal-2" ref="modal-2" title="Agregar medicamento">
-      <b-alert
-        :show="alertCountDownError"
-        dismissible
-        fade
-        @dismissed="alertCountDownError=0"
-        class="text-white bg-danger"
-      >
-        <div class="iq-alert-text">{{ alertErrorText }}</div>
-      </b-alert>
-      <b-form>
-        <b-form-group label="Medicamento:">
-          <v-select
-            name="medicine"
-            v-model="$v.formMedicamento.medicine.$model"
-            :state="!$v.formMedicamento.medicine.$error"
-            :options="medicines"
-            :filterable="false"
-            placeholder="Seleccione el medicamento"
-            @search="onSearch"
-          >
-            <template v-slot:spinner="{ loading }">
-              <div v-show="loading">Cargando...</div>
-            </template>
-            <template v-slot:option="option">
-              {{ 'Nombre: '+ option.nombre +' Precio de compra: '+ option.precio_costo +  ' Existencia: '+ option.existencia_total}}
-            </template>
-            <template slot="selected-option" slot-scope="option">
-              {{ 'Nombre: '+ option.nombre +' Precio de compra: '+ option.precio_costo +  ' Existencia: '+ option.existencia_total}}
-            </template>
-          </v-select>
-          <div v-if="$v.formMedicamento.medicine.$error" class="invalid-feedback-vselect">
-            Debe seleccionar el medicamento
-          </div>
-         </b-form-group>
-        <div v-if="$v.formMedicamento.medicine.$invalid" class="invalid-feedback">
-          Debe ingresar el medicamento
-        </div>
-        <b-form-group label="Cantidad:">
-          <b-form-input
-            type="number"
-            v-model.trim="$v.formMedicamento.cantidad.$model"
-            :state="!$v.formMedicamento.cantidad.$error"
-            placeholder="Ingresar Cantidad"
-          ></b-form-input>
-        </b-form-group>
-        <div v-if="$v.formMedicamento.cantidad.$invalid" class="invalid-feedback">
-          Debe ingresar la cantidad
-        </div>
-      </b-form>
-      <template #modal-footer="{}">
-        <b-button  variant="primary" @click="onValidate('medicamento')"
-          >Guardar</b-button
-        >
-        <b-button variant="danger" @click="closeModal('medicamento')"
-          >Cancelar</b-button
-        >
-      </template>
-    </b-modal>
-    <b-modal id="modal-1" ref="modal-1" title="Agregar consumible">
-      <b-alert
-        :show="alertCountDownError"
-        dismissible
-        fade
-        @dismissed="alertCountDownError=0"
-        class="text-white bg-danger"
-      >
-        <div class="iq-alert-text">{{ alertErrorText }}</div>
-      </b-alert>
-      <b-form>
-        <b-form-group label="Descripción:">
-          <b-form-input
-            v-model.trim="$v.formConsumible.descripcion.$model"
-            :state="!$v.formConsumible.descripcion.$error"
-            placeholder="Ingresar descripción"
-          ></b-form-input>
-        </b-form-group>
-        <div v-if="$v.formConsumible.descripcion.$invalid" class="invalid-feedback">
-          Debe ingresar la descripción
-        </div>
-        <b-form-group label="Total:">
-          <b-form-input
-            type="number"
-            v-model.trim="$v.formConsumible.total.$model"
-            :state="!$v.formConsumible.total.$error"
-            placeholder="Ingresar total"
-          ></b-form-input>
-        </b-form-group>
-        <div v-if="$v.formConsumible.total.$invalid" class="invalid-feedback">
-          Debe ingresar el total
-        </div>
-      </b-form>
-      <template #modal-footer="{}">
-        <b-button  variant="primary" @click="onValidate('consumible')"
-          >Guardar</b-button
-        >
-        <b-button variant="danger" @click="closeModal('consumible')"
-          >Cancelar</b-button
-        >
-      </template>
-    </b-modal>
     <b-row>
       <b-col md="12">
         <iq-card>
             <template v-slot:headerTitle>
-              <h4 class="card-title mt-3">Compras</h4>
+              <h4 class="card-title mt-3">Traslado entre tiendas</h4>
             </template>
+            <template v-slot:headerAction>
+              <router-link
+                to='listadotraslados'
+              >
+                <b-button variant="primary">VER LISTADO DE TRASLADOS</b-button>
+              </router-link>
+          </template>
           <template v-slot:body>
+            <h5 class="card-title mt-3">Datos de generales de traslado</h5>
+            <hr>
             <b-row class="ml-2">
-              <b-col md="3">
-                <b-form-group label="Proveedor:">
+              <b-col md="3" v-if="check===false">
+                <b-form-group label="Tienda de origen:">
                   <v-select
-                    name="medicine"
-                    v-model="$v.formCompra.proveedor.$model"
-                    :state="!$v.formCompra.proveedor.$error"
-                    :options="proveedores"
+                    name="tienda1"
+                    v-model="$v.tienda1.$model"
+                    :state="!$v.tienda1.$error"
+                    :options="tiendas"
                     :filterable="false"
-                    placeholder="Seleccione el proveedor"
-                    @search="onSearchProviders"
+                    placeholder="Seleccione la tienda"
+                    @search="onSearchTiendas"
                   >
                     <template v-slot:spinner="{ loading }">
                       <div v-show="loading">Cargando...</div>
                     </template>
                     <template v-slot:option="option">
-                      {{ 'Nombre: '+ option.nombre }}
+                      {{ option.nombre }}
                     </template>
                     <template slot="selected-option" slot-scope="option">
-                      {{ 'Nombre: '+ option.nombre }}
+                      {{ option.nombre }}
                     </template>
                   </v-select>
-                  <div v-if="$v.formCompra.proveedor.$error" class="invalid-feedback-vselect">
-                    Debe seleccionar el proveedor
+                  <div v-if="$v.tienda1.$error" class="invalid-feedback-vselect">
+                    Debe seleccionar la tienda
                   </div>
                 </b-form-group>
               </b-col>
               <b-col md="3">
-                <b-form-group label="Dirección:">
+                <b-form-group label="Tienda de destino:">
+                  <v-select
+                    name="tienda2"
+                    v-model="$v.tienda2.$model"
+                    :state="!$v.tienda2.$error"
+                    :options="tiendas"
+                    :filterable="false"
+                    placeholder="Seleccione la tienda"
+                    @search="onSearchTiendas"
+                  >
+                    <template v-slot:spinner="{ loading }">
+                      <div v-show="loading">Cargando...</div>
+                    </template>
+                    <template v-slot:option="option">
+                      {{ option.nombre }}
+                    </template>
+                    <template slot="selected-option" slot-scope="option">
+                      {{ option.nombre }}
+                    </template>
+                  </v-select>
+                  <div v-if="$v.tienda2.$error" class="invalid-feedback-vselect">
+                    Debe seleccionar la tienda
+                  </div>
+                </b-form-group>
+              </b-col>
+              <b-col md="3">
+                <b-form-group label="Descripción:">
                   <b-form-input
-                    v-model.trim="$v.direccion.$model"
-                    :state="!$v.direccion.$error"
-                    placeholder="Ingresar dirección"
+                    v-model.trim="$v.descripcion.$model"
+                    :state="!$v.descripcion.$error"
+                    placeholder="Ingresar descripcion"
                   ></b-form-input>
                 </b-form-group>
-                <div v-if="$v.direccion.$invalid" class="invalid-feedback">
-                  Debe ingresar la dirección
+                <div v-if="$v.descripcion.$invalid" class="invalid-feedback">
+                  Debe ingresar la descripción del traslado
                 </div>
               </b-col>
               <b-col md="3">
-                <b-form-group label="Nombre comercial:">
-                  <b-form-input
-                    v-model.trim="$v.razon_social"
-                    placeholder="Ingresar nombre comercial"
-                  ></b-form-input>
-                </b-form-group>
-              </b-col>
-              <b-col md="3">
                 <b-form-group label="Agregar zapatos:">
-                  <b-button variant="info" v-b-modal.modal-2>AGREGAR ZAPATOS</b-button>
+                  <b-button variant="info" v-b-modal.modal-1>AGREGAR ZAPATOS</b-button>
                 </b-form-group>
               </b-col>
             </b-row>
@@ -200,7 +126,7 @@
             </table>
             <br>
             <br>
-            <b-button variant="warning" v-if="arrayDetalles.length > 0" @click="onValidateAll()">AGREGAR COMPRA</b-button>
+            <b-button variant="warning" v-if="arrayDetalles.length > 0" @click="onValidateAll()">AGREGAR VENTA</b-button>
           </template>
 
         </iq-card>
@@ -209,7 +135,6 @@
   </b-container>
 </template>
 <script>
-
 import { xray } from '../../../config/pluginInit'
 import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
@@ -219,7 +144,7 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask'
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'Purchases',
+  name: 'Sales',
   components: {
   },
   setup () {
@@ -227,6 +152,9 @@ export default {
   },
   mounted () {
     xray.index()
+  },
+  beforeDestroy () {
+    console.log('Aqui vamos a meter la validacion')
   },
   computed: {
     ...mapGetters([
@@ -240,34 +168,34 @@ export default {
       total: 0,
       perPage: 5,
       search: '',
+      search_exam: '',
+      paciente: null,
       id_usuario: 0,
-      direccion: 'Ciudad',
-      razon_social: '',
-      actividad_recreativa: '',
-      formMedicamento: {
-        id: 0,
-        cantidad: null,
-        medicine: [],
-        total: '',
-        is_medicine: null
-      },
-      formCompra: {
-        proveedor: '',
-        contribuyente: '',
-        destino: ''
-      },
-      formConsumible: {
+      tienda1: null,
+      tienda2: null,
+      tiendas: [],
+      descripcion: null,
+      formServicio: {
         id: 0,
         descripcion: '',
-        total: null
+        cantidad: null,
+        total: 0,
+        is_genetic: null,
+        is_therapy: null,
+        is_service: null
       },
+      checkText: 'Cliente externo',
+      check: false,
       medicine: [],
       existencia_medicina: 0,
+      exams: [],
+      therapys: [],
+      services: [],
+      geneticas: [],
+      tipos_de_cobro: [],
       arrayDetalles: [],
       medicines: [],
-      proveedores: [],
-      contribuyentes: [],
-      destinos: [],
+      pacientes: [],
       total_array: 0,
       fields: [
         {
@@ -317,48 +245,53 @@ export default {
   },
   validations () {
     return {
-      formMedicamento: {
-        medicine: {
-          required
-        },
-        cantidad: {
-          required
-        }
-      },
-      formCompra: {
-        proveedor: {
-          required
-        },
-        contribuyente: {
-          required
-        },
-        destino: {
-          required
-        }
-      },
-      formConsumible: {
-        descripcion: {
-          required
-        },
-        total: {
-          required
-        }
-      },
-      direccion: { required }
+      tienda1: { required },
+      tienda2: { required },
+      descripcion: { required }
     }
   },
   methods: {
-    addConsumible () {
+    addService () {
       let me = this
       me.total_array = me.total_array + 1
-      let consumible = {
-        cantidad: 1,
-        descripcion: me.formConsumible.descripcion,
-        total: me.formConsumible.total,
-        id: me.total_array
+      let nuevoTotal = (parseFloat(me.formServicio.descripcion.precio) * me.formServicio.cantidad)
+      let servicio = {
+        cantidad: me.formServicio.cantidad,
+        descripcion: me.formServicio.descripcion.nombre,
+        total: nuevoTotal,
+        id: me.total_array,
+        is_service: 1
       }
-      me.arrayDetalles.push(consumible)
-      me.closeModal('consumible')
+      me.arrayDetalles.push(servicio)
+      me.closeModal('servicios')
+    },
+    addTherapy () {
+      let me = this
+      me.total_array = me.total_array + 1
+      let nuevoTotal = (parseFloat(me.formServicio.descripcion.precio) * me.formServicio.cantidad)
+      let terapias = {
+        cantidad: me.formServicio.cantidad,
+        descripcion: me.formServicio.descripcion.nombre,
+        total: nuevoTotal,
+        id: me.total_array,
+        is_therapy: 1
+      }
+      me.arrayDetalles.push(terapias)
+      me.closeModal('terapias')
+    },
+    addGenetic () {
+      let me = this
+      me.total_array = me.total_array + 1
+      let nuevoTotal = (parseFloat(me.formServicio.descripcion.precio) * me.formServicio.cantidad)
+      let geneticas = {
+        cantidad: me.formServicio.cantidad,
+        descripcion: me.formServicio.descripcion.nombre,
+        total: nuevoTotal,
+        id: me.total_array,
+        is_genetic: 1
+      }
+      me.arrayDetalles.push(geneticas)
+      me.closeModal('geneticas')
     },
     addMedicine () {
       let me = this
@@ -376,6 +309,20 @@ export default {
       me.arrayDetalles.push(medicamento)
       me.closeModal('medicamento')
     },
+    addExam () {
+      let me = this
+      me.total_array = me.total_array + 1
+      let nuevoTotal = (parseFloat(me.formExamen.descripcion.precio) * me.formExamen.cantidad)
+      let examen = {
+        cantidad: me.formExamen.cantidad,
+        descripcion: (me.formExamen.descripcion.nombre + ' ' + me.formExamen.descripcion.tipo_examene.nombre),
+        total: nuevoTotal,
+        is_exam: 1,
+        id: me.total_array
+      }
+      me.arrayDetalles.push(examen)
+      me.closeModal('examen')
+    },
     deleteDetail (id) {
       let me = this
       const objWithIdIndex = me.arrayDetalles.findIndex((obj) => obj.id === id)
@@ -385,15 +332,33 @@ export default {
     },
     closeModal (action) {
       switch (action) {
+        case 'geneticas': {
+          this.$v.$reset()
+          this.$refs['modal-1'].hide()
+          this.resetData()
+          break
+        }
         case 'medicamento': {
           this.$v.$reset()
           this.$refs['modal-2'].hide()
           this.resetData()
           break
         }
-        case 'consumible': {
+        case 'examen': {
           this.$v.$reset()
-          this.$refs['modal-1'].hide()
+          this.$refs['modal-3'].hide()
+          this.resetData()
+          break
+        }
+        case 'servicios': {
+          this.$v.$reset()
+          this.$refs['modal-4'].hide()
+          this.resetData()
+          break
+        }
+        case 'terapias': {
+          this.$v.$reset()
+          this.$refs['modal-5'].hide()
           this.resetData()
           break
         }
@@ -405,30 +370,56 @@ export default {
       }
     },
     onValidate (action) {
-      this.$v.$touch()
-      if (action === 'consumible') {
-        this.formMedicamento.medicine = 'Consulta'
-        this.formMedicamento.cantidad = 'Consulta'
-      } else if (action === 'medicamento') {
-        this.formConsumible.descripcion = 'Medicamento'
-        this.formConsumible.total = 'Medicamento'
+      if (action === 'medicamento') {
+        this.formExamen.descripcion = 'Medicamento'
+        this.formExamen.cantidad = 'Medicamento'
+        this.formServicio.descripcion = 'Medicamento'
+        this.formServicio.cantidad = 'Medicamento'
+        this.formServicio.total = 'Medicamento'
+      } else if (action === 'examen') {
+        this.formMedicamento.medicine = 'Examen'
+        this.formMedicamento.cantidad = 'Examen'
+        this.formServicio.descripcion = 'Examen'
+        this.formServicio.cantidad = 'Examen'
+        this.formServicio.total = 'Examen'
+      } else if (action === 'servicios') {
+        this.formMedicamento.medicine = 'Servicios'
+        this.formMedicamento.cantidad = 'Servicios'
+        this.formExamen.descripcion = 'Servicios'
+        this.formExamen.cantidad = 'Servicios'
+      } else if (action === 'terapias') {
+        this.formMedicamento.medicine = 'Terapias'
+        this.formMedicamento.cantidad = 'Terapias'
+        this.formExamen.descripcion = 'Terapias'
+        this.formExamen.cantidad = 'Terapias'
+      } else if (action === 'geneticas') {
+        this.formMedicamento.medicine = 'Geneticas'
+        this.formMedicamento.cantidad = 'Geneticas'
+        this.formExamen.descripcion = 'Geneticas'
+        this.formExamen.cantidad = 'Geneticas'
       }
+      this.$v.$touch()
       if (this.$v.$error !== true) {
         if (action === 'medicamento') {
           if (this.formMedicamento.cantidad > 0) {
-            this.addMedicine()
+            if (parseInt(this.formMedicamento.cantidad) <= parseInt(this.formMedicamento.medicine.existencia_total)) {
+              this.addMedicine()
+            } else {
+              this.alertErrorText = 'No hay suficiente existencia del producto'
+              this.showAlertError()
+            }
           } else {
             this.alertErrorText = 'La cantidad del producto debe ser mayor a 0'
             this.showAlertError()
           }
-        }
-        if (action === 'consumible') {
-          if (this.formConsumible.total > 0) {
-            this.addConsumible()
-          } else {
-            this.alertErrorText = 'El total del consumible debe ser mayor a 0'
-            this.showAlertError()
-          }
+        } else if (action === 'examen') {
+          this.addExam()
+        } else if (action === 'servicios') {
+          this.addService()
+        } else if (action === 'terapias') {
+          this.addTherapy()
+        } else if (action === 'geneticas') {
+          this.addGenetic()
         }
       } else {
         this.alertErrorText = 'Revisa que todos los campos requeridos esten llenos'
@@ -440,19 +431,20 @@ export default {
       this.id_usuario = this.currentUser.id
       this.formMedicamento.medicine = 'General'
       this.formMedicamento.cantidad = 'General'
-      this.formConsumible.total = 'General'
-      this.formConsumible.descripcion = 'General'
+      this.formExamen.descripcion = 'General'
+      this.formExamen.cantidad = 'General'
+      this.formServicio.descripcion = 'General'
+      this.formServicio.cantidad = 'General'
+      this.formServicio.total = 'General'
       if (this.$v.$error !== true) {
         this.onSave()
       } else {
-        this.alertText = 'Ha ocurrido un error en la compra'
+        this.alertText = 'Ha ocurrido un error en la venta'
         this.showAlertError()
       }
     },
-    setData () {
-      this.formCompra.proveedor = ''
-      this.formCompra.contribuyente = ''
-      this.formCompra.destino = ''
+    setData (data) {
+
     },
     resetData () {
       this.formMedicamento.medicine = null
@@ -460,29 +452,37 @@ export default {
       this.formMedicamento.total = null
       this.formMedicamento.is_medicine = null
       this.formMedicamento.id = null
-      this.formConsumible.id = 0
-      this.formConsumible.descripcion = ''
-      this.formConsumible.total = null
+      this.formExamen.descripcion = ''
+      this.formExamen.cantidad = null
+      this.formExamen.total = null
+      this.formExamen.id = null
+      this.formExamen.is_exam = null
+      this.formServicio.is_genetic = null
+      this.formServicio.is_service = null
+      this.formServicio.is_therapy = null
+      this.formServicio.descripcion = null
+      this.formServicio.cantidad = null
     },
     /* Guardar */
     onSave () {
       const me = this
-      axios.post(apiUrl + '/compras/create', {
+      axios.post(apiUrl + '/ventas/create', {
+        nit: me.nit,
         direccion: me.direccion,
+        cliente: me.cliente,
         detalle: me.arrayDetalles,
-        proveedor: me.formCompra.proveedor,
-        contribuyente: me.formCompra.contribuyente,
-        destino: me.formCompra.destino,
+        serie: me.serie,
+        numero: me.numero,
+        tipo_cobro: me.tipo_cobro,
         id_usuario: me.id_usuario,
-        razon_social: me.razon_social
+        pertenencia: 'CENTRO GALO'
       })
         .then((response) => {
           me.alertVariant = 'success'
           me.showAlert()
-          me.alertText = 'Se ha creado la compra exitosamente'
+          me.alertText = 'Se ha creado la venta exitosamente'
           me.closeModal('save')
           me.arrayDetalles = []
-          me.setData()
         })
         .catch((error) => {
           me.alertVariant = 'danger'
@@ -499,6 +499,7 @@ export default {
           page: currentPage,
           limit: this.perPage,
           search: this.search,
+          search_exam: this.search_exam,
           columna: this.columna.value
         }
         : {
@@ -507,6 +508,7 @@ export default {
           page: currentPage,
           limit: this.perPage,
           search: this.search,
+          search_exam: this.search_exam,
           columna: this.columna.value
         }
     },
@@ -516,6 +518,7 @@ export default {
     },
     searchChange (val) {
       this.search = val.toLowerCase()
+      this.search_exam = val.toLowerCase()
       this.$refs.vuetable.refresh()
     },
     onPaginationData (paginationData) {
@@ -537,6 +540,12 @@ export default {
     },
     changeTypeSearch (columna) {
       this.columna = columna
+    },
+    onSearchTiendas (search, loading) {
+      if (search.length) {
+        loading(true)
+        this.searchingTiendas(search, loading)
+      }
     },
     converMaskToNumber (number) {
       var myNumber = ''
@@ -562,77 +571,17 @@ export default {
       formatted = num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
       return (amount = 'Q ' + formatted)
     },
-    searching (search, loading) {
-      axios.get(apiUrl + '/medicamento/getSelect',
+    searchingTiendas (search, loading) {
+      axios.get(apiUrl + '/tiendas/getSelect',
         {
           params: {
             search: search
           }
         }
       ).then((response) => {
-        this.medicines = response.data
+        this.tiendas = response.data
         loading(false)
       })
-    },
-    onSearch (search, loading) {
-      if (search.length) {
-        loading(true)
-        this.searching(search, loading)
-      }
-    },
-    searchingProviders (search, loading) {
-      axios.get(apiUrl + '/proveedor/getSelect',
-        {
-          params: {
-            search: search
-          }
-        }
-      ).then((response) => {
-        this.proveedores = response.data
-        loading(false)
-      })
-    },
-    onSearchProviders (search, loading) {
-      if (search.length) {
-        loading(true)
-        this.searchingProviders(search, loading)
-      }
-    },
-    searchingContribuyentes (search, loading) {
-      axios.get(apiUrl + '/contribuyente/getSelect',
-        {
-          params: {
-            search: search
-          }
-        }
-      ).then((response) => {
-        this.contribuyentes = response.data
-        loading(false)
-      })
-    },
-    onSearchContribuyentes (search, loading) {
-      if (search.length) {
-        loading(true)
-        this.searchingContribuyentes(search, loading)
-      }
-    },
-    searchingDestinys (search, loading) {
-      axios.get(apiUrl + '/destino/getSelect',
-        {
-          params: {
-            search: search
-          }
-        }
-      ).then((response) => {
-        this.destinos = response.data
-        loading(false)
-      })
-    },
-    onSearchDestinys (search, loading) {
-      if (search.length) {
-        loading(true)
-        this.searchingDestinys(search, loading)
-      }
     }
   }
 }

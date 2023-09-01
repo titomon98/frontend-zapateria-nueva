@@ -133,7 +133,7 @@
       <b-col md="12">
         <iq-card>
             <template v-slot:headerTitle>
-              <h4 class="card-title mt-3">Listado de ventas</h4>
+              <h4 class="card-title mt-3">Listado de traslados</h4>
               <div class="iq-search-bar mt-2">
                 <div class="row">
                       <div class="col-sm">
@@ -163,7 +163,7 @@
             </template>
             <template v-slot:headerAction>
               <router-link
-                to='Sales'
+                to='traslados'
               >
                 <b-button variant="primary">AGREGAR NUEVO</b-button>
               </router-link>
@@ -299,7 +299,6 @@ import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
 import DateRangePicker from 'vue2-daterange-picker'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-import ExcelJS from 'exceljs'
 export default {
   name: 'SalesList',
   components: {
@@ -363,7 +362,7 @@ export default {
       alertText: '',
       alertErrorText: '',
       alertVariant: '',
-      apiBase: apiUrl + '/ventas/list',
+      apiBase: apiUrl + '/traslados/list',
       options: [
         { value: '1', nombre: 'Cliente' }
       ],
@@ -423,7 +422,7 @@ export default {
       this.$refs['modal-2'].show()
     },
     getSalesToday () {
-      axios.get(apiUrl + '/ventas/getToday'
+      axios.get(apiUrl + '/traslados/getToday'
       ).then((response) => {
         this.arrayToday = response.data
       })
@@ -482,7 +481,7 @@ export default {
     /* Guardar */
     onUpdate () {
       const me = this
-      axios.put(apiUrl + '/ventas/update', {
+      axios.put(apiUrl + '/traslados/update', {
         form: me.form })
         .then((response) => {
           me.$refs.vuetable.refresh()
@@ -496,7 +495,7 @@ export default {
       let me = this
       if (this.form.state === 1) {
         axios
-          .put(apiUrl + '/ventas/deactivate', {
+          .put(apiUrl + '/traslados/deactivate', {
             id: this.form.id
           })
           .then((response) => {
@@ -552,23 +551,6 @@ export default {
     },
     changeTypeSearch (columna) {
       this.columna = columna
-    },
-    cierreDiarioExcel () {
-      const me = this
-      const workbook = new ExcelJS.Workbook()
-      const worksheet = workbook.addWorksheet('Cierre Diario')
-      worksheet.addRow(['No.', 'Nit', 'Nombre cliente', 'Total', 'Referencia SAT'])
-      for (let i = 0; i < me.arrayToday.length; i++) {
-        worksheet.addRow([me.arrayToday[i].id.toString(), me.arrayToday[i].nit, me.arrayToday[i].client, me.arrayToday[i].total, me.arrayToday[i].referencia_factura === null ? 'No ingresada' : me.arrayToday[i].referencia_factura])
-      }
-      workbook.xlsx.writeBuffer().then((buffer) => {
-        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = 'CierreDeHoyVentas.xlsx'
-        link.click()
-      })
     }
   }
 }

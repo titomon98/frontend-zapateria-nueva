@@ -1,0 +1,6 @@
+Menu de pedidos en transito - 
+Menu de traslados entre tiendas - check
+Menu de alertas de productos con tallas bajas y semaforos - check
+Caja
+Cambios de ventas
+Compras

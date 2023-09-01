@@ -40,7 +40,7 @@ import Clasificaciones from './Clasificaciones.vue'
 import Colores from './Colores.vue'
 import Marcas from './Marcas.vue'
 import Tallas from './Tallas.vue'
-import ListadoTallas from './ListadoTallas.vue'
+import ListadoTallas from './ListadoTallas'
 import Tiendas from './Tiendas.vue'
 import Zapato from './Zapato.vue'
 
