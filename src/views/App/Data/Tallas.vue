@@ -10,6 +10,19 @@
     >
       <div class="iq-alert-text">{{ alertText }}</div>
     </b-alert>
+    <b-modal id="modal-pdf" ref="modal-pdf" title="Generar PDF" size="xl">
+      <div id="previewContainer">
+        <iframe :src="previewURL" width="100%" height="700px"></iframe>
+      </div>
+      <template #modal-footer="{}">
+        <b-button  variant="primary" @click="descargarpdf()"
+          >Guardar</b-button
+        >
+        <b-button variant="danger" @click="closeModal('pdf')"
+          >Cancelar</b-button
+        >
+      </template>
+    </b-modal>
     <b-modal id="modal-1-tallas" size="lg" ref="modal-1-tallas" title="Agregar tallas">
       <b-alert
         :show="alertCountDownError"
@@ -220,7 +233,8 @@
                 </h5>
               </div>
               <!-- Botones -->
-              <b-button-group>
+              <template slot="actions" slot-scope="props">
+                <b-button-group>
                   <b-button
                     v-b-tooltip.top="'Reporte general de tallas por mes'"
                     @click="setDataConciliacion(props.rowData)"
@@ -236,7 +250,7 @@
                     class="mb-2"
                     size="sm"
                     variant="outline-success"
-                    ><i :class="'fas fa-excel'"
+                    ><i :class="'fas fa-table'"
                   /></b-button>
                   <b-button
                     v-b-tooltip.top="'Reporte de tallas de zapato pdf'"
@@ -244,7 +258,7 @@
                     class="mb-2"
                     size="sm"
                     variant="outline-danger"
-                    ><i :class="'fas fa-file'"
+                    ><i :class="'fa fa-file-pdf-o'"
                   /></b-button>
                   <b-button
                     v-b-tooltip.top="'Reporte de general de tallas por fechas'"
@@ -256,6 +270,8 @@
                     ><i :class="'fas fa-file'"
                   /></b-button>
                 </b-button-group>
+              </template>
+
               <!-- Paginacion -->
             </vuetable>
             <vuetable-pagination-bootstrap
@@ -277,8 +293,10 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
-// import ExcelJS from 'exceljs'
+import ExcelJS from 'exceljs'
 import JsPDF from 'jspdf'
+import { mapGetters } from 'vuex'
+import moment from 'moment'
 
 export default {
   name: 'TallasData',
@@ -293,11 +311,18 @@ export default {
   mounted () {
     xray.index()
   },
+  computed: {
+    ...mapGetters([
+      'currentUser'
+    ])
+  },
   data () {
     return {
       pdf: new JsPDF(),
       pdfName: '',
       previewURL: '',
+      currentDate: null,
+      tallas: [],
       from: 0,
       to: 0,
       total: 0,
@@ -409,6 +434,10 @@ export default {
           this.form.state = 1
           this.corridas = []
           this.form.tienda = null
+          break
+        }
+        case 'pdf': {
+          this.$refs['modal-pdf'].hide()
           break
         }
       }
@@ -572,10 +601,133 @@ export default {
       }
     },
     async setTallasExcel (data) {
+      await axios.get(apiUrl + '/reporte/tallas',
+        {
+          params: {
+            id_zapato: data.id
+          }
+        }).then((response) => {
+        this.tallas = response.data
+        this.currentDate = new Date().toLocaleDateString('es-ES')
+        // Inicio tamanio columnas
+        const workbook = new ExcelJS.Workbook()
+        const worksheet = workbook.addWorksheet('Reporte especifico')
+        let column
+        column = worksheet.getColumn('A')
+        column.width = 20
+        column = worksheet.getColumn('B')
+        column.width = 20
+        column = worksheet.getColumn('C')
+        column.width = 20
+        column = worksheet.getColumn('D')
+        column.width = 20
+        column = worksheet.getColumn('E')
+        column.width = 20
+        // Fin tamanio columnas
+        worksheet.mergeCells('A1:E1')
+        worksheet.mergeCells('A2:E2')
+        worksheet.getCell('A1').value = 'Reporte de tallas'
+        worksheet.getCell('A2').value = 'Generado por: ' + this.currentUser.user + ' con fecha ' + this.currentDate
+        worksheet.getCell('A3').font = { bold: true }
+        worksheet.getCell('B3').font = { bold: true }
+        worksheet.getCell('C3').font = { bold: true }
+        worksheet.getCell('D3').font = { bold: true }
+        worksheet.getCell('E3').font = { bold: true }
+        worksheet.getCell('A3').value = 'Estilo'
+        worksheet.getCell('B3').value = 'Código'
+        worksheet.getCell('C3').value = 'Cantidad'
+        worksheet.getCell('D3').value = 'Tienda'
+        worksheet.getCell('E3').value = 'Talla'
+        // Cuerpo del reporte
+        let fila = 4
+        for (let i = 0; i < this.tallas.length; i++) {
+          const element = this.tallas[i]
+          worksheet.getCell('A' + fila).value = element.zapato.estilo
+          worksheet.getCell('B' + fila).value = element.codigo
+          worksheet.getCell('C' + fila).value = element.cantidad
+          worksheet.getCell('D' + fila).value = element.tienda.nombre
+          worksheet.getCell('E' + fila).value = element.talla
+          fila++
+        }
 
+        workbook.xlsx.writeBuffer().then((buffer) => {
+          const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = 'Tallas.xlsx'
+          link.click()
+        })
+      })
     },
     async setTallasPdf (data) {
+      console.log(data)
+      await axios.get(apiUrl + '/reporte/tallas',
+        {
+          params: {
+            id_zapato: data.id
+          }
+        }).then((response) => {
+        console.log(response.data)
+        this.tallas = response.data
+        this.$refs['modal-pdf'].show()
+        var altura = 2
+        var ahora = new Date()
 
+        this.pdf = new JsPDF({
+          unit: 'cm',
+          format: [28, 21.5]
+        })
+        var ingreso = moment(ahora).format('DD/MM/YYYY')
+        this.pdf.setFontSize(10).setFont(undefined, 'bold')
+        this.pdf.text('Reporte de tallas', 6, altura)
+        altura = altura + 0.5
+        this.pdf.text('Fecha de generación: ' + ingreso, 6, altura)
+        altura = altura + 0.5
+        this.pdf.text('Generado por: ', 6, altura)
+        this.pdf.setFontSize(10).setFont(undefined, 'normal')
+        this.pdf.text(this.currentUser.user, 8.5, altura)
+        altura = altura + 0.5
+        this.pdf.setFontSize(10).setFont(undefined, 'bold')
+        altura = altura + 2
+        this.pdf.text('Estilo', 2, altura)
+        this.pdf.text('Código', 6, altura)
+        this.pdf.text('Cantidad', 10, altura)
+        this.pdf.text('Tienda', 14, altura)
+        this.pdf.text('Talla', 18, altura)
+        this.pdf.setFontSize(10).setFont(undefined, 'normal')
+        altura = altura + 0.5
+        for (let i = 0; i < this.tallas.length; i++) {
+          const element = this.tallas[i]
+
+          this.pdf.text(element.zapato.estilo, 2, altura)
+          this.pdf.text(element.codigo, 6, altura)
+          this.pdf.text(element.cantidad, 10, altura)
+          this.pdf.text(element.tienda.nombre, 14, altura)
+          this.pdf.text(element.talla, 18, altura)
+          altura = altura + 0.5
+          if (altura > 25) {
+            this.pdf.addPage()
+            altura = 2
+            this.pdf.setFontSize(12).setFont(undefined, 'bold')
+            this.pdf.text('Fecha de generación: ' + ingreso, 6, altura)
+            altura = altura + 0.5
+            this.pdf.text('Generado por: ', 6, altura)
+            this.pdf.setFontSize(10).setFont(undefined, 'normal')
+            this.pdf.text(this.currentUser.user, 8.5, altura)
+            altura = altura + 3
+          }
+        }
+        altura = altura + 0.5
+        var pdfData = this.pdf.output('blob')
+        // Convert PDF to data URL
+        var pdfURL = URL.createObjectURL(pdfData)
+        this.previewURL = pdfURL
+        this.pdfName = 'Tallas.pdf'
+      })
+    },
+    descargarpdf () {
+      this.pdf.save(this.pdfName)
     }
   }
 }
