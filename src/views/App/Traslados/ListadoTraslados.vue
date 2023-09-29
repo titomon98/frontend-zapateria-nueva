@@ -193,17 +193,17 @@
               <div slot="estado" slot-scope="props">
                 <h5 v-if="props.rowData.estado == 1">
                   <b-badge variant="light"
-                    ><h6 class="success"><strong>ACTIVO</strong></h6></b-badge
+                    ><h6 class="success"><strong>INGRESADO</strong></h6></b-badge
                   >
                 </h5>
                 <h5 v-else-if="props.rowData.estado == 2">
                   <b-badge variant="light"
-                    ><h6 class="success"><strong>PENDIENTE DE CONTABILIDAD</strong></h6></b-badge
+                    ><h6 class="success"><strong>PENDIENTE DE INGRESO</strong></h6></b-badge
                   >
                 </h5>
                 <h5 v-else>
                   <b-badge variant="light"
-                    ><h6 class="danger"><strong>INACTIVO</strong></h6></b-badge
+                    ><h6 class="danger"><strong>ANULADO</strong></h6></b-badge
                   >
                 </h5>
               </div>
@@ -219,6 +219,14 @@
                     ><i :class="'fas fa-pencil-alt'"
                   /></b-button>
                   <b-button
+                    v-b-tooltip.top="'Ingresar traslado'"
+                    @click="setData(props.rowData)"
+                    class="mb-2"
+                    size="sm"
+                    variant="outline-info"
+                    ><i :class="'fas fa-check'"
+                  /></b-button>
+                  <b-button
                     v-b-tooltip.top="'Ver detalles'"
                     @click="seeSale(props.rowData)"
                     v-b-modal.modal-2
@@ -228,22 +236,13 @@
                     ><i :class="'fas fa-eye'"
                   /></b-button>
                   <b-button
-                    v-b-tooltip.top="'Imprimir venta'"
+                    v-b-tooltip.top="'Imprimir traslado'"
                     @click="printSale(props.rowData)"
                     v-b-modal.modal-2
                     class="mb-2"
                     size="sm"
                     variant="outline-dark"
                     ><i :class="'fas fa-print'"
-                  /></b-button>
-                  <b-button
-                    v-b-tooltip.top="'Añadir documento'"
-                    @click="addDocument(props.rowData)"
-                    v-b-modal.modal-2
-                    class="mb-2"
-                    size="sm"
-                    variant="outline-info"
-                    ><i :class="'fas fa-file'"
                   /></b-button>
                   <b-button
                     v-b-tooltip.top="'Desactivar'"
@@ -257,16 +256,6 @@
                     :variant="'outline-danger'"
                   >
                   <i :class="'fas fa-trash-alt'"
-                  />
-                  </b-button>
-                  <b-button
-                    v-b-tooltip.top="'Comprobar contabilidad'"
-                    v-if="props.rowData.estado === 2"
-                    class="mb-2"
-                    size="sm"
-                    :variant="'outline-success'"
-                  >
-                  <i :class="'fas fa-arrow-right'"
                   />
                   </b-button>
                 </b-button-group>
@@ -383,13 +372,13 @@ export default {
         {
           name: 'fecha',
           sortField: 'fecha',
-          title: 'Fecha de venta',
+          title: 'Fecha de traslado',
           dataClass: 'list-item-heading'
         },
         {
-          name: 'client',
-          sortField: 'client',
-          title: 'Cliente',
+          name: 'descripcion',
+          sortField: 'descripcion',
+          title: 'Descripción',
           dataClass: 'list-item-heading'
         },
         {

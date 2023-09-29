@@ -27,7 +27,7 @@
             <h5 class="card-title mt-3">Datos de generales de traslado</h5>
             <hr>
             <b-row class="ml-2">
-              <b-col md="3" v-if="check===false">
+              <b-col md="4" v-if="check===false">
                 <b-form-group label="Tienda de origen:">
                   <v-select
                     name="tienda1"
@@ -53,7 +53,7 @@
                   </div>
                 </b-form-group>
               </b-col>
-              <b-col md="3">
+              <b-col md="4">
                 <b-form-group label="Tienda de destino:">
                   <v-select
                     name="tienda2"
@@ -79,22 +79,50 @@
                   </div>
                 </b-form-group>
               </b-col>
-              <b-col md="3">
+              <b-col md="4">
+                <b-form-group label="Agregar zapatos:">
+                  <b-button variant="info" v-b-modal.modal-1>AGREGAR ZAPATOS</b-button>
+                </b-form-group>
+              </b-col>
+            </b-row>
+            <b-row class="ml-2">
+              <b-col md="6" v-if="check===false">
+                <b-form-group label="Responsable de envío:">
+                  <v-select
+                    name="responsable"
+                    v-model="$v.responsable.$model"
+                    :state="!$v.responsable.$error"
+                    :options="responsables"
+                    :filterable="false"
+                    placeholder="Seleccione responsable de envío"
+                    @search="onSearchPersonas"
+                  >
+                    <template v-slot:spinner="{ loading }">
+                      <div v-show="loading">Cargando...</div>
+                    </template>
+                    <template v-slot:option="option">
+                      {{ option.nombre + ' ' + option.apellidos }}
+                    </template>
+                    <template slot="selected-option" slot-scope="option">
+                      {{ option.nombre + ' ' + option.apellidos }}
+                    </template>
+                  </v-select>
+                  <div v-if="$v.responsable.$error" class="invalid-feedback-vselect">
+                    Debe seleccionar el responsable
+                  </div>
+                </b-form-group>
+              </b-col>
+              <b-col md="6">
                 <b-form-group label="Descripción:">
-                  <b-form-input
+                  <b-form-textarea
                     v-model.trim="$v.descripcion.$model"
                     :state="!$v.descripcion.$error"
                     placeholder="Ingresar descripcion"
-                  ></b-form-input>
+                  ></b-form-textarea>
                 </b-form-group>
                 <div v-if="$v.descripcion.$invalid" class="invalid-feedback">
                   Debe ingresar la descripción del traslado
                 </div>
-              </b-col>
-              <b-col md="3">
-                <b-form-group label="Agregar zapatos:">
-                  <b-button variant="info" v-b-modal.modal-1>AGREGAR ZAPATOS</b-button>
-                </b-form-group>
               </b-col>
             </b-row>
             <!-- Aqui comenzar con detalles -->
@@ -173,6 +201,7 @@ export default {
       id_usuario: 0,
       tienda1: null,
       tienda2: null,
+      responsable: null,
       tiendas: [],
       descripcion: null,
       formServicio: {
@@ -188,14 +217,9 @@ export default {
       check: false,
       medicine: [],
       existencia_medicina: 0,
-      exams: [],
-      therapys: [],
-      services: [],
-      geneticas: [],
       tipos_de_cobro: [],
       arrayDetalles: [],
-      medicines: [],
-      pacientes: [],
+      responsables: [],
       total_array: 0,
       fields: [
         {
@@ -247,82 +271,11 @@ export default {
     return {
       tienda1: { required },
       tienda2: { required },
-      descripcion: { required }
+      descripcion: { required },
+      responsable: { required }
     }
   },
   methods: {
-    addService () {
-      let me = this
-      me.total_array = me.total_array + 1
-      let nuevoTotal = (parseFloat(me.formServicio.descripcion.precio) * me.formServicio.cantidad)
-      let servicio = {
-        cantidad: me.formServicio.cantidad,
-        descripcion: me.formServicio.descripcion.nombre,
-        total: nuevoTotal,
-        id: me.total_array,
-        is_service: 1
-      }
-      me.arrayDetalles.push(servicio)
-      me.closeModal('servicios')
-    },
-    addTherapy () {
-      let me = this
-      me.total_array = me.total_array + 1
-      let nuevoTotal = (parseFloat(me.formServicio.descripcion.precio) * me.formServicio.cantidad)
-      let terapias = {
-        cantidad: me.formServicio.cantidad,
-        descripcion: me.formServicio.descripcion.nombre,
-        total: nuevoTotal,
-        id: me.total_array,
-        is_therapy: 1
-      }
-      me.arrayDetalles.push(terapias)
-      me.closeModal('terapias')
-    },
-    addGenetic () {
-      let me = this
-      me.total_array = me.total_array + 1
-      let nuevoTotal = (parseFloat(me.formServicio.descripcion.precio) * me.formServicio.cantidad)
-      let geneticas = {
-        cantidad: me.formServicio.cantidad,
-        descripcion: me.formServicio.descripcion.nombre,
-        total: nuevoTotal,
-        id: me.total_array,
-        is_genetic: 1
-      }
-      me.arrayDetalles.push(geneticas)
-      me.closeModal('geneticas')
-    },
-    addMedicine () {
-      let me = this
-      me.total_array = me.total_array + 1
-      let nuevoTotal = (parseFloat(me.formMedicamento.medicine.precio_publico) * me.formMedicamento.cantidad)
-      let medicamento = {
-        cantidad: me.formMedicamento.cantidad,
-        descripcion: me.formMedicamento.medicine.nombre,
-        total: nuevoTotal,
-        id: me.total_array,
-        is_medicine: 1,
-        id_medicine: me.formMedicamento.medicine.id,
-        existencia_actual: me.formMedicamento.medicine.existencia_total
-      }
-      me.arrayDetalles.push(medicamento)
-      me.closeModal('medicamento')
-    },
-    addExam () {
-      let me = this
-      me.total_array = me.total_array + 1
-      let nuevoTotal = (parseFloat(me.formExamen.descripcion.precio) * me.formExamen.cantidad)
-      let examen = {
-        cantidad: me.formExamen.cantidad,
-        descripcion: (me.formExamen.descripcion.nombre + ' ' + me.formExamen.descripcion.tipo_examene.nombre),
-        total: nuevoTotal,
-        is_exam: 1,
-        id: me.total_array
-      }
-      me.arrayDetalles.push(examen)
-      me.closeModal('examen')
-    },
     deleteDetail (id) {
       let me = this
       const objWithIdIndex = me.arrayDetalles.findIndex((obj) => obj.id === id)
@@ -332,98 +285,11 @@ export default {
     },
     closeModal (action) {
       switch (action) {
-        case 'geneticas': {
-          this.$v.$reset()
-          this.$refs['modal-1'].hide()
-          this.resetData()
-          break
-        }
-        case 'medicamento': {
-          this.$v.$reset()
-          this.$refs['modal-2'].hide()
-          this.resetData()
-          break
-        }
-        case 'examen': {
-          this.$v.$reset()
-          this.$refs['modal-3'].hide()
-          this.resetData()
-          break
-        }
-        case 'servicios': {
-          this.$v.$reset()
-          this.$refs['modal-4'].hide()
-          this.resetData()
-          break
-        }
-        case 'terapias': {
-          this.$v.$reset()
-          this.$refs['modal-5'].hide()
-          this.resetData()
-          break
-        }
         case 'save': {
           this.$v.$reset()
           this.resetData()
           break
         }
-      }
-    },
-    onValidate (action) {
-      if (action === 'medicamento') {
-        this.formExamen.descripcion = 'Medicamento'
-        this.formExamen.cantidad = 'Medicamento'
-        this.formServicio.descripcion = 'Medicamento'
-        this.formServicio.cantidad = 'Medicamento'
-        this.formServicio.total = 'Medicamento'
-      } else if (action === 'examen') {
-        this.formMedicamento.medicine = 'Examen'
-        this.formMedicamento.cantidad = 'Examen'
-        this.formServicio.descripcion = 'Examen'
-        this.formServicio.cantidad = 'Examen'
-        this.formServicio.total = 'Examen'
-      } else if (action === 'servicios') {
-        this.formMedicamento.medicine = 'Servicios'
-        this.formMedicamento.cantidad = 'Servicios'
-        this.formExamen.descripcion = 'Servicios'
-        this.formExamen.cantidad = 'Servicios'
-      } else if (action === 'terapias') {
-        this.formMedicamento.medicine = 'Terapias'
-        this.formMedicamento.cantidad = 'Terapias'
-        this.formExamen.descripcion = 'Terapias'
-        this.formExamen.cantidad = 'Terapias'
-      } else if (action === 'geneticas') {
-        this.formMedicamento.medicine = 'Geneticas'
-        this.formMedicamento.cantidad = 'Geneticas'
-        this.formExamen.descripcion = 'Geneticas'
-        this.formExamen.cantidad = 'Geneticas'
-      }
-      this.$v.$touch()
-      if (this.$v.$error !== true) {
-        if (action === 'medicamento') {
-          if (this.formMedicamento.cantidad > 0) {
-            if (parseInt(this.formMedicamento.cantidad) <= parseInt(this.formMedicamento.medicine.existencia_total)) {
-              this.addMedicine()
-            } else {
-              this.alertErrorText = 'No hay suficiente existencia del producto'
-              this.showAlertError()
-            }
-          } else {
-            this.alertErrorText = 'La cantidad del producto debe ser mayor a 0'
-            this.showAlertError()
-          }
-        } else if (action === 'examen') {
-          this.addExam()
-        } else if (action === 'servicios') {
-          this.addService()
-        } else if (action === 'terapias') {
-          this.addTherapy()
-        } else if (action === 'geneticas') {
-          this.addGenetic()
-        }
-      } else {
-        this.alertErrorText = 'Revisa que todos los campos requeridos esten llenos'
-        this.showAlertError()
       }
     },
     onValidateAll () {
@@ -547,6 +413,12 @@ export default {
         this.searchingTiendas(search, loading)
       }
     },
+    onSearchPersonas (search, loading) {
+      if (search.length) {
+        loading(true)
+        this.searchingPersonas(search, loading)
+      }
+    },
     converMaskToNumber (number) {
       var myNumber = ''
       for (var i = 0; i < number.length; i += 1) {
@@ -580,6 +452,18 @@ export default {
         }
       ).then((response) => {
         this.tiendas = response.data
+        loading(false)
+      })
+    },
+    searchingPersonas (search, loading) {
+      axios.get(apiUrl + '/usuarios/getSelect',
+        {
+          params: {
+            search: search
+          }
+        }
+      ).then((response) => {
+        this.responsables = response.data
         loading(false)
       })
     }
