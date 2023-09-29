@@ -222,13 +222,29 @@
               <!-- Botones -->
               <b-button-group>
                   <b-button
-                    v-b-tooltip.top="'Reporte de general de tallas por mes'"
+                    v-b-tooltip.top="'Reporte general de tallas por mes'"
                     @click="setDataConciliacion(props.rowData)"
                     v-b-modal.modal-date-2-conciliacion
                     class="mb-2"
                     size="sm"
                     variant="outline-dark"
                     ><i :class="'fas fa-print'"
+                  /></b-button>
+                  <b-button
+                    v-b-tooltip.top="'Reporte de tallas de zapato excel'"
+                    @click="setTallasExcel(props.rowData)"
+                    class="mb-2"
+                    size="sm"
+                    variant="outline-success"
+                    ><i :class="'fas fa-excel'"
+                  /></b-button>
+                  <b-button
+                    v-b-tooltip.top="'Reporte de tallas de zapato pdf'"
+                    @click="setTallasPdf(props.rowData)"
+                    class="mb-2"
+                    size="sm"
+                    variant="outline-danger"
+                    ><i :class="'fas fa-file'"
                   /></b-button>
                   <b-button
                     v-b-tooltip.top="'Reporte de general de tallas por fechas'"
@@ -261,6 +277,8 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
+// import ExcelJS from 'exceljs'
+import JsPDF from 'jspdf'
 
 export default {
   name: 'TallasData',
@@ -277,6 +295,9 @@ export default {
   },
   data () {
     return {
+      pdf: new JsPDF(),
+      pdfName: '',
+      previewURL: '',
       from: 0,
       to: 0,
       total: 0,
@@ -352,42 +373,6 @@ export default {
     }
   },
   methods: {
-    addTallas () {
-      let me = this
-      if (me.form.corrida === 'PRIMERA') {
-        me.corridas = [
-          { id: 1, talla: '14', cantidad: 0 },
-          { id: 2, talla: '15', cantidad: 0 },
-          { id: 3, talla: '16', cantidad: 0 },
-          { id: 4, talla: '17', cantidad: 0 },
-          { id: 5, talla: '18', cantidad: 0 },
-          { id: 6, talla: '19', cantidad: 0 },
-          { id: 7, talla: '20', cantidad: 0 },
-          { id: 8, talla: '21', cantidad: 0 }
-        ]
-      } else if (me.form.corrida === 'SEGUNDA') {
-        me.corridas = [
-          { id: 1, talla: '22', cantidad: 0 },
-          { id: 2, talla: '23', cantidad: 0 },
-          { id: 3, talla: '24', cantidad: 0 },
-          { id: 4, talla: '25', cantidad: 0 },
-          { id: 5, talla: '26', cantidad: 0 }
-        ]
-      } else if (me.form.corrida === 'TERCERA') {
-        me.corridas = [
-          { id: 1, talla: '27', cantidad: 0 },
-          { id: 2, talla: '28', cantidad: 0 },
-          { id: 3, talla: '29', cantidad: 0 },
-          { id: 4, talla: '30', cantidad: 0 },
-          { id: 5, talla: '31', cantidad: 0 },
-          { id: 6, talla: '32', cantidad: 0 }
-        ]
-      } else if (me.form.corrida === 'CUARTA') {
-
-      } else if (me.form.corrida === 'QUINTA') {
-
-      }
-    },
     openModal (modal, action) {
       switch (modal) {
         case 'save': {
@@ -585,6 +570,12 @@ export default {
         loading(true)
         this.searchingTiendas(search, loading)
       }
+    },
+    async setTallasExcel (data) {
+
+    },
+    async setTallasPdf (data) {
+
     }
   }
 }

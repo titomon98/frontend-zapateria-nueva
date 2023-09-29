@@ -197,8 +197,8 @@
               <template slot="actions" slot-scope="props">
                 <b-button-group>
                   <b-button
-                    v-b-tooltip.top="'Reporte de general de tienda por mes'"
-                    @click="setDataConciliacion(props.rowData)"
+                    v-b-tooltip.top="'Reporte general de tienda por mes'"
+                    @click="generalTienda(props.rowData)"
                     v-b-modal.modal-date-2-conciliacion
                     class="mb-2"
                     size="sm"
@@ -207,7 +207,7 @@
                   /></b-button>
                   <b-button
                     v-b-tooltip.top="'Reporte de general de tienda por fechas'"
-                    @click="setDataConciliacionCuadratica(props.rowData)"
+                    @click="generalTiendaFechas(props.rowData)"
                     v-b-modal.modal-date-4
                     class="mb-2"
                     size="sm"
