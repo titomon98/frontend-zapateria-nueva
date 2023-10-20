@@ -115,5 +115,17 @@
     "class_name": "",
     "is_icon_class": true,
     "icon": "ri-equalizer-fill"
+  },
+  {
+    "title": "Clientes",
+    "name": "Clientes",
+    "is_heading": false,
+    "is_active": false,
+    "link": {
+      "name": "clientes.clientes"
+    },
+    "class_name": "",
+    "is_icon_class": true,
+    "icon": "ri-user-add-fill"
   }
 ]

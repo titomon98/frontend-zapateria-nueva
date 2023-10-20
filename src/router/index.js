@@ -92,6 +92,9 @@ import AppTreeView from '../views/Plugins/AppTreeView'
 import Users from '../views/App/Admin/Users'
 import AdminParent from '../views/App/Admin/AdminParent'
 
+// Clientes
+import ClientesParent from '../views/App/Clientes/ClientesParent'
+
 // Compras
 import ComprasParent from '../views/App/Compras/ComprasParent'
 
@@ -205,6 +208,15 @@ const VentasRoutes = (prop, mode) => [
     name: prop + '.ventasparent',
     meta: { dark: mode, auth: true, name: 'VentasParent' },
     component: VentasParent
+  }
+]
+
+const ClientesRoutes = (prop, mode) => [
+  {
+    path: 'clientes',
+    name: prop + '.clientes',
+    meta: { dark: mode, auth: true, name: 'ClientesParent' },
+    component: ClientesParent
   }
 ]
 
@@ -743,6 +755,13 @@ const routes = [
     component: Layout1,
     meta: { auth: true },
     children: VentasRoutes('ventas')
+  },
+  {
+    path: '/clientes',
+    name: 'clientes',
+    component: Layout1,
+    meta: { auth: true },
+    children: ClientesRoutes('clientes')
   },
   {
     path: '/compras',
