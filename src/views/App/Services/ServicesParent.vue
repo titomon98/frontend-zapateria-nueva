@@ -4,7 +4,7 @@
       <b-col md="12">
         <iq-card>
           <template v-slot:headerTitle>
-            <h4 class="card-title mt-3">Servicios</h4>
+            <h4 class="card-title mt-3">Productos</h4>
             <div class="iq-search-bar mt-2">
               <div class="row">
                 <div class="col-sm">

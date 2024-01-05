@@ -59,6 +59,7 @@ import Loader from '../components/xray/loader/Loader'
 import SideBarStyle1 from '../components/xray/sidebars/SideBarStyle1'
 import NavBarStyle1 from '../components/xray/navbars/NavBarStyle1'
 import SideBarItems from '../FackApi/json/SideBar'
+import SidebarVacacionistas from '../FackApi/json/SidebarVacacionistas'
 import HorizontalItems from '../FackApi/json/HorizontalMenu'
 import profile from '../assets/images/user/1.jpg'
 import loader from '../assets/images/logo.png'
@@ -81,6 +82,8 @@ export default {
     this.year = today.getFullYear()
     if (this.currentUser.user_type === 1) {
       this.verticalMenu = SideBarItems
+    } else if (this.currentUser.user_type === 3) {
+      this.verticalMenu = SidebarVacacionistas
     }
   },
   computed: {

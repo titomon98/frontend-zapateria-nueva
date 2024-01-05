@@ -282,6 +282,15 @@
                     ><i :class="'fas fa-pencil-alt'"
                   /></b-button>
                   <b-button
+                    v-b-tooltip.top="'Ver movimientos'"
+                    @click="setData(props.rowData)"
+                    v-b-modal.modal-6-clientes
+                    class="mb-2"
+                    size="sm"
+                    variant="outline-success"
+                    ><i :class="'fas fa-eye'"
+                  /></b-button>
+                  <b-button
                     v-b-tooltip.top="
                       props.rowData.estado == 1 ? 'Desactivar' : 'Activar'"
                     @click="
@@ -483,7 +492,7 @@ export default {
       this.form.correo = data.correo
       this.form.nit = data.correo
       this.form.direccion = data.direccion
-      this.form.tipo_cliente = data.tipo_cliente.nombre
+      this.form.tipo_cliente.nombre = data.tipo_cliente.nombre
       this.form.state = data.estado
       this.form.id = data.id
     },
