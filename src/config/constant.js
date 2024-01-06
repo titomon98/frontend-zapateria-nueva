@@ -3,7 +3,8 @@
 export default {
   webBaseURL: process.env.MIX_APP_URL
 }
-export const apiUrl = 'http://localhost:3000'
+//export const apiUrl = 'http://localhost:3000'
+export const apiUrl = 'https://backcorpo.xyz/'
 
 export const currentUser = {
   id: 1,
