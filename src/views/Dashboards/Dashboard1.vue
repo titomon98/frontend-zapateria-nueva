@@ -113,9 +113,9 @@ export default {
       let formato = moment(fecha).format('DD-MM-YYYY hh:mm')
       return formato
     },
-    getFormattedDate(date) {
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      return date.toLocaleDateString('es-ES', options); // Puedes ajustar el locale según lo necesites
+    getFormattedDate (date) {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' }
+      return date.toLocaleDateString('es-ES', options) // Puedes ajustar el locale según lo necesites
     }
   }
 }
