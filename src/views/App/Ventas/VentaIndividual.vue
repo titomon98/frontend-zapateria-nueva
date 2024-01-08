@@ -10,298 +10,155 @@
     >
       <div class="iq-alert-text">{{ alertText }}</div>
     </b-alert>
+    <b-modal id="modal-1" ref="modal-1" title="Agregar cliente">
+      <b-alert
+        :show="alertCountDownError"
+        dismissible
+        fade
+        @dismissed="alertCountDownError=0"
+        class="text-white bg-danger"
+      >
+        <div class="iq-alert-text">{{ alertErrorText }}</div>
+      </b-alert>
+      <b-form>
+        <b-form-group label="Nombre:">
+          <b-form-input
+            v-model.trim="formCliente.name"
+            placeholder="Ingresar nombre de cliente"
+          ></b-form-input>
+        </b-form-group>
+        <b-form-group label="Nombre:">
+          <b-form-input
+            v-model.trim="formCliente.telefono"
+            placeholder="Ingresar telefono de cliente"
+          ></b-form-input>
+        </b-form-group>
+        <b-form-group label="Nombre:">
+          <b-form-input
+            v-model.trim="formCliente.nit"
+            placeholder="Ingresar nit de cliente"
+          ></b-form-input>
+        </b-form-group>
+      </b-form>
+      <template #modal-footer="{}">
+        <b-button  variant="primary" @click="onValidate('cliente')"
+          >Guardar</b-button
+        >
+        <b-button variant="danger" @click="closeModal('cliente')"
+          >Cancelar</b-button
+        >
+      </template>
+    </b-modal>
+    <b-modal id="modal-3" ref="modal-3" size="xl" title="Agregar zapatos">
+      <b-alert
+        :show="alertCountDownError"
+        dismissible
+        fade
+        @dismissed="alertCountDownError=0"
+        class="text-white bg-danger"
+      >
+        <div class="iq-alert-text">{{ alertErrorText }}</div>
+      </b-alert>
+      <b-row class="ml-2">
 
-    <b-modal id="modal-1" ref="modal-1" title="Agregar genética">
-      <b-alert
-        :show="alertCountDownError"
-        dismissible
-        fade
-        @dismissed="alertCountDownError=0"
-        class="text-white bg-danger"
-      >
-        <div class="iq-alert-text">{{ alertErrorText }}</div>
-      </b-alert>
-      <b-form>
-        <b-form-group label="Genética:">
-          <v-select
-            name="geneticas"
-            v-model="$v.formServicio.descripcion.$model"
-            :state="!$v.formServicio.descripcion.$error"
-            :options="geneticas"
-            :filterable="false"
-            placeholder="Seleccione el servicio de genética"
-            @search="onSearchGenetics"
-          >
-            <template v-slot:spinner="{ loading }">
-              <div v-show="loading">Cargando...</div>
-            </template>
-            <template v-slot:option="option">
-              {{ 'Nombre: '+ option.nombre + ' Precio: '+ option.precio }}
-            </template>
-            <template slot="selected-option" slot-scope="option">
-              {{ 'Nombre: '+ option.nombre + ' Precio: '+ option.precio }}
-            </template>
-          </v-select>
-          <div v-if="$v.formServicio.descripcion.$error" class="invalid-feedback-vselect">
-            Debe seleccionar el servicio de genética
+          <b-col md="12">
+            <b-form-group label="Zapatos:">
+            <v-select
+              name="zapatos"
+              v-model="$v.zapato.$model"
+              :state="!$v.zapato.$error"
+              :options="zapatos"
+              :filterable="false"
+              placeholder="Seleccione el zapato a vender"
+              @search="onSearch"
+            >
+              <template v-slot:spinner="{ loading }">
+                <div v-show="loading">Cargando...</div>
+              </template>
+              <template v-slot:option="option">
+                {{ 'Nombre: '+ option.zapato.estilo + ' Talla: '+ option.talla + ' Color: '+ option.zapato.colore.nombre }}
+              </template>
+              <template slot="selected-option" slot-scope="option">
+                {{ 'Nombre: '+ option.zapato.estilo + ' Color: '+ option.talla + ' Color: '+ option.zapato.colore.nombre }}
+              </template>
+            </v-select>
+            <div v-if="$v.zapato.$error" class="invalid-feedback-vselect">
+              Debe seleccionar el zapato
+            </div>
+          </b-form-group>
+          <div v-if="$v.zapato.$invalid" class="invalid-feedback">
+            Debe ingresar el zapato
           </div>
-         </b-form-group>
-        <div v-if="$v.formServicio.descripcion.$invalid" class="invalid-feedback">
-          Debe ingresar el servicio de genética
-        </div>
-        <b-form-group label="Cantidad:">
-          <b-form-input
-            type="number"
-            v-model.trim="$v.formServicio.cantidad.$model"
-            :state="!$v.formServicio.cantidad.$error"
-            placeholder="Ingresar cantidad"
-          ></b-form-input>
-        </b-form-group>
-        <div v-if="$v.formExamen.cantidad.$invalid" class="invalid-feedback">
-          Debe ingresar la cantidad
-        </div>
-      </b-form>
+          </b-col>
+      </b-row>
+      <b-row class="ml-2">
+        <b-col md="6">
+          <b-form-group label="Nombre de zapato:">
+            <h6>{{ zapato.zapato.estilo }}</h6>
+          </b-form-group>
+        </b-col>
+        <b-col md="3">
+          <b-form-group label="Talla:">
+            <h6>{{ zapato.talla }}</h6>
+          </b-form-group>
+        </b-col>
+        <b-col md="3">
+          <b-form-group label="Color:">
+            <h6>{{ zapato.zapato.colore.nombre }}</h6>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row class="ml-2">
+        <b-col md="4">
+          <b-form-group label="Precio de venta:">
+            <h6>{{ zapato.zapato.precio_venta }}</h6>
+          </b-form-group>
+
+        </b-col>
+        <b-col md="4">
+          <b-form-group label="Precio mínimo:">
+            <h6>{{ zapato.zapato.precio_minimo }}</h6>
+          </b-form-group>
+        </b-col>
+        <b-col md="4">
+          <b-form-group label="Existencia actual:">
+            <h6>{{ zapato.cantidad }}</h6>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row class="ml-2">
+        <b-col md="6">
+          <b-form-group label="Cantidad:">
+            <b-form-input
+              type="number"
+              v-model.trim="$v.formZapato.cantidad.$model"
+              :state="!$v.formZapato.cantidad.$error"
+              placeholder="Ingresar cantidad a vender"
+            ></b-form-input>
+          </b-form-group>
+          <div v-if="$v.formZapato.cantidad.$invalid" class="invalid-feedback">
+            Debe ingresar la cantidad
+          </div>
+        </b-col>
+        <b-col md="6">
+          <b-form-group label="Precio a vender:">
+            <b-form-input
+              type="number"
+              v-model.trim="$v.formZapato.precio.$model"
+              :state="!$v.formZapato.precio.$error"
+              placeholder="Ingresar precio a vender"
+            ></b-form-input>
+          </b-form-group>
+          <div v-if="$v.formZapato.precio.$invalid" class="invalid-feedback">
+            Debe ingresar el precio
+          </div>
+        </b-col>
+      </b-row>
       <template #modal-footer="{}">
-        <b-button  variant="primary" @click="onValidate('geneticas')"
+        <b-button  variant="primary" @click="onValidate('zapato')"
           >Guardar</b-button
         >
-        <b-button variant="danger" @click="closeModal('geneticas')"
-          >Cancelar</b-button
-        >
-      </template>
-    </b-modal>
-    <b-modal id="modal-2" ref="modal-2" title="Agregar medicamento">
-      <b-alert
-        :show="alertCountDownError"
-        dismissible
-        fade
-        @dismissed="alertCountDownError=0"
-        class="text-white bg-danger"
-      >
-        <div class="iq-alert-text">{{ alertErrorText }}</div>
-      </b-alert>
-      <b-form>
-        <b-form-group label="Medicamento:">
-          <v-select
-            name="medicine"
-            v-model="$v.formMedicamento.medicine.$model"
-            :state="!$v.formMedicamento.medicine.$error"
-            :options="medicines"
-            :filterable="false"
-            placeholder="Seleccione el medicamento"
-            @search="onSearch"
-          >
-            <template v-slot:spinner="{ loading }">
-              <div v-show="loading">Cargando...</div>
-            </template>
-            <template v-slot:option="option">
-              {{ 'Nombre: '+ option.nombre +' Precio: '+ option.precio_publico +  ' Existencia: '+ option.existencia_total}}
-            </template>
-            <template slot="selected-option" slot-scope="option">
-              {{ 'Nombre: '+ option.nombre +' Precio: '+ option.precio_publico +  ' Existencia: '+ option.existencia_total}}
-            </template>
-          </v-select>
-          <div v-if="$v.formMedicamento.medicine.$error" class="invalid-feedback-vselect">
-            Debe seleccionar el medicamento
-          </div>
-         </b-form-group>
-        <div v-if="$v.formMedicamento.medicine.$invalid" class="invalid-feedback">
-          Debe ingresar el medicamento
-        </div>
-        <b-form-group label="Cantidad:">
-          <b-form-input
-            type="number"
-            v-model.trim="$v.formMedicamento.cantidad.$model"
-            :state="!$v.formMedicamento.cantidad.$error"
-            placeholder="Ingresar Cantidad"
-          ></b-form-input>
-        </b-form-group>
-        <div v-if="$v.formMedicamento.cantidad.$invalid" class="invalid-feedback">
-          Debe ingresar la cantidad
-        </div>
-      </b-form>
-      <template #modal-footer="{}">
-        <b-button  variant="primary" @click="onValidate('medicamento')"
-          >Guardar</b-button
-        >
-        <b-button variant="danger" @click="closeModal('medicamento')"
-          >Cancelar</b-button
-        >
-      </template>
-    </b-modal>
-    <b-modal id="modal-3" ref="modal-3" title="Agregar examen">
-      <b-alert
-        :show="alertCountDownError"
-        dismissible
-        fade
-        @dismissed="alertCountDownError=0"
-        class="text-white bg-danger"
-      >
-        <div class="iq-alert-text">{{ alertErrorText }}</div>
-      </b-alert>
-      <b-form>
-        <b-form-group label="Exámenes:">
-          <v-select
-            name="exams"
-            v-model="$v.formExamen.descripcion.$model"
-            :state="!$v.formExamen.descripcion.$error"
-            :options="exams"
-            :filterable="false"
-            placeholder="Seleccione el examen"
-            @search="onSearchExam"
-          >
-            <template v-slot:spinner="{ loading }">
-              <div v-show="loading">Cargando...</div>
-            </template>
-            <template v-slot:option="option">
-              {{ 'Nombre: '+ option.nombre + ' Tipo: '+ option.tipo_examene.nombre +' Precio: '+ option.precio }}
-            </template>
-            <template slot="selected-option" slot-scope="option">
-              {{ 'Nombre: '+ option.nombre + ' Tipo: '+ option.tipo_examene.nombre +' Precio: '+ option.precio }}
-            </template>
-          </v-select>
-          <div v-if="$v.formExamen.descripcion.$error" class="invalid-feedback-vselect">
-            Debe seleccionar el examen
-          </div>
-         </b-form-group>
-        <div v-if="$v.formExamen.descripcion.$invalid" class="invalid-feedback">
-          Debe ingresar el examen
-        </div>
-        <b-form-group label="Cantidad:">
-          <b-form-input
-            type="number"
-            v-model.trim="$v.formExamen.cantidad.$model"
-            :state="!$v.formExamen.cantidad.$error"
-            placeholder="Ingresar cantidad"
-          ></b-form-input>
-        </b-form-group>
-        <div v-if="$v.formExamen.cantidad.$invalid" class="invalid-feedback">
-          Debe ingresar la cantidad
-        </div>
-      </b-form>
-      <template #modal-footer="{}">
-        <b-button  variant="primary" @click="onValidate('examen')"
-          >Guardar</b-button
-        >
-        <b-button variant="danger" @click="closeModal('examen')"
-          >Cancelar</b-button
-        >
-      </template>
-    </b-modal>
-    <b-modal id="modal-4" ref="modal-4" title="Agregar servicio">
-      <b-alert
-        :show="alertCountDownError"
-        dismissible
-        fade
-        @dismissed="alertCountDownError=0"
-        class="text-white bg-danger"
-      >
-        <div class="iq-alert-text">{{ alertErrorText }}</div>
-      </b-alert>
-      <b-form>
-        <b-form-group label="Servicios:">
-          <v-select
-            name="services"
-            v-model="$v.formServicio.descripcion.$model"
-            :state="!$v.formServicio.descripcion.$error"
-            :options="services"
-            :filterable="false"
-            placeholder="Seleccione el servicio"
-            @search="onSearchService"
-          >
-            <template v-slot:spinner="{ loading }">
-              <div v-show="loading">Cargando...</div>
-            </template>
-            <template v-slot:option="option">
-              {{ 'Nombre: '+ option.nombre + ' Precio: '+ option.precio }}
-            </template>
-            <template slot="selected-option" slot-scope="option">
-              {{ 'Nombre: '+ option.nombre + ' Precio: '+ option.precio }}
-            </template>
-          </v-select>
-          <div v-if="$v.formServicio.descripcion.$error" class="invalid-feedback-vselect">
-            Debe seleccionar el servicio
-          </div>
-         </b-form-group>
-        <div v-if="$v.formServicio.descripcion.$invalid" class="invalid-feedback">
-          Debe ingresar el servicio
-        </div>
-        <b-form-group label="Cantidad:">
-          <b-form-input
-            type="number"
-            v-model.trim="$v.formServicio.cantidad.$model"
-            :state="!$v.formServicio.cantidad.$error"
-            placeholder="Ingresar cantidad"
-          ></b-form-input>
-        </b-form-group>
-        <div v-if="$v.formExamen.cantidad.$invalid" class="invalid-feedback">
-          Debe ingresar la cantidad
-        </div>
-      </b-form>
-      <template #modal-footer="{}">
-        <b-button  variant="primary" @click="onValidate('servicios')"
-          >Guardar</b-button
-        >
-        <b-button variant="danger" @click="closeModal('servicios')"
-          >Cancelar</b-button
-        >
-      </template>
-    </b-modal>
-    <b-modal id="modal-5" ref="modal-5" title="Agregar terapias">
-      <b-alert
-        :show="alertCountDownError"
-        dismissible
-        fade
-        @dismissed="alertCountDownError=0"
-        class="text-white bg-danger"
-      >
-        <div class="iq-alert-text">{{ alertErrorText }}</div>
-      </b-alert>
-      <b-form>
-        <b-form-group label="Terapias:">
-          <v-select
-            name="terapias"
-            v-model="$v.formServicio.descripcion.$model"
-            :state="!$v.formServicio.descripcion.$error"
-            :options="therapys"
-            :filterable="false"
-            placeholder="Seleccione la terapia"
-            @search="onSearchTherapy"
-          >
-            <template v-slot:spinner="{ loading }">
-              <div v-show="loading">Cargando...</div>
-            </template>
-            <template v-slot:option="option">
-              {{ 'Nombre: '+ option.nombre + ' Precio: '+ option.precio }}
-            </template>
-            <template slot="selected-option" slot-scope="option">
-              {{ 'Nombre: '+ option.nombre + ' Precio: '+ option.precio }}
-            </template>
-          </v-select>
-          <div v-if="$v.formServicio.descripcion.$error" class="invalid-feedback-vselect">
-            Debe seleccionar la terapia
-          </div>
-         </b-form-group>
-        <div v-if="$v.formServicio.descripcion.$invalid" class="invalid-feedback">
-          Debe ingresar la terapia
-        </div>
-        <b-form-group label="Cantidad:">
-          <b-form-input
-            type="number"
-            v-model.trim="$v.formServicio.cantidad.$model"
-            :state="!$v.formServicio.cantidad.$error"
-            placeholder="Ingresar cantidad"
-          ></b-form-input>
-        </b-form-group>
-        <div v-if="$v.formExamen.cantidad.$invalid" class="invalid-feedback">
-          Debe ingresar la cantidad
-        </div>
-      </b-form>
-      <template #modal-footer="{}">
-        <b-button  variant="primary" @click="onValidate('terapias')"
-          >Guardar</b-button
-        >
-        <b-button variant="danger" @click="closeModal('terapias')"
+        <b-button variant="danger" @click="closeModal('zapato')"
           >Cancelar</b-button
         >
       </template>
@@ -313,35 +170,36 @@
               <h4 class="card-title mt-3">Caja</h4>
             </template>
             <template v-slot:headerAction>
-              <router-link
-                to='saleslist'
-              >
-                <b-button variant="primary">VER LISTADO DE VENTAS</b-button>
-              </router-link>
-          </template>
+              <b-button variant="dark" v-b-modal.modal-1>AGREGAR CLIENTE</b-button>
+            </template>
           <template v-slot:body>
             <h5 class="card-title mt-3">Datos de generales de cobro</h5>
             <hr>
             <b-row class="ml-2">
-              <b-col md="2" v-if="check===false">
-                <b-form-group label="Nit:">
-                  <b-form-input
-                    v-model.trim="$v.nit.$model"
-                    :state="!$v.nit.$error"
-                    placeholder="Ingresar nit"
-                  ></b-form-input>
-                </b-form-group>
-                <div v-if="$v.nit.$invalid" class="invalid-feedback">
-                  Debe ingresar el nit
-                </div>
-              </b-col>
-              <b-col md="2">
+              <b-col md="4">
                 <b-form-group label="Cliente:">
-                  <b-form-input
-                    v-model.trim="$v.cliente.$model"
+                  <v-select
+                    name="clientes"
+                    v-model="$v.cliente.$model"
                     :state="!$v.cliente.$error"
-                    placeholder="Ingresar cliente"
-                  ></b-form-input>
+                    :options="clientes"
+                    :filterable="false"
+                    placeholder="Seleccione el cliente"
+                    @search="onSearchClients"
+                  >
+                    <template v-slot:spinner="{ loading }">
+                      <div v-show="loading">Cargando...</div>
+                    </template>
+                    <template v-slot:option="option">
+                      {{ 'Nombre: '+ option.nombre + ' Teléfono: '+ option.telefono + ' Nit: '+ option.nit }}
+                    </template>
+                    <template slot="selected-option" slot-scope="option">
+                      {{ 'Nombre: '+ option.nombre + ' Teléfono: '+ option.telefono + ' Nit: '+ option.nit }}
+                    </template>
+                  </v-select>
+                  <div v-if="$v.tipo_cobro.$error" class="invalid-feedback-vselect">
+                    Debe seleccionar el cliente
+                  </div>
                 </b-form-group>
                 <div v-if="$v.cliente.$invalid" class="invalid-feedback">
                   Debe ingresar el cliente
@@ -361,25 +219,7 @@
               </b-col>
               <b-col md="2">
                 <b-form-group label="Tipo de cobro:">
-                  <v-select
-                    name="tipo_cobro"
-                    v-model="$v.tipo_cobro.$model"
-                    :state="!$v.tipo_cobro.$error"
-                    :options="tipos_de_cobro"
-                    :filterable="false"
-                    placeholder="Seleccione el tipo de cobro"
-                    @search="onSearchPayment"
-                  >
-                    <template v-slot:spinner="{ loading }">
-                      <div v-show="loading">Cargando...</div>
-                    </template>
-                    <template v-slot:option="option">
-                      {{ option.nombre }}
-                    </template>
-                    <template slot="selected-option" slot-scope="option">
-                      {{ option.nombre }}
-                    </template>
-                  </v-select>
+                  <v-select v-model="tipo_cobro" :options="tipos_de_cobro" label="nombre" placeholder="Selecciona una opción" />
                   <div v-if="$v.tipo_cobro.$error" class="invalid-feedback-vselect">
                     Debe seleccionar el tipo de cobro
                   </div>
@@ -388,7 +228,7 @@
               </b-col>
               <b-col md="2">
                 <b-form-group label="Agregar zapatos:">
-                  <b-button variant="info" v-b-modal.modal-1>AGREGAR ZAPATOS</b-button>
+                  <b-button variant="info" v-b-modal.modal-3>AGREGAR ZAPATOS</b-button>
                 </b-form-group>
               </b-col>
               <b-col md="2">
@@ -409,7 +249,7 @@
                       <th>Acciones</th>
                       <th>Descripción</th>
                       <th>Cantidad</th>
-                      <th>Total</th>
+                      <th>Subtotal</th>
                   </tr>
               </thead>
               <tbody>
@@ -429,6 +269,14 @@
             </table>
             <br>
             <br>
+            <table class="table table-hover product_item_list c_table theme-color mb-0" v-if="arrayDetalles.length > 0">
+              <thead>
+                  <tr>
+                      <th>Total vendido: </th>
+                      <th>{{ formatQuetzales(total) }}</th>
+                  </tr>
+              </thead>
+            </table>
             <b-button variant="warning" v-if="arrayDetalles.length > 0" @click="onValidateAll()">AGREGAR VENTA</b-button>
           </template>
 
@@ -456,9 +304,6 @@ export default {
   mounted () {
     xray.index()
   },
-  beforeDestroy () {
-    console.log('Aqui vamos a meter la validacion')
-  },
   computed: {
     ...mapGetters([
       'currentUser'
@@ -471,50 +316,51 @@ export default {
       total: 0,
       perPage: 5,
       search: '',
-      search_exam: '',
-      paciente: null,
-      nit: 'CF',
       tipo_cobro: null,
       serie: '',
       numero: '',
       id_usuario: 0,
-      cliente: 'CF',
+      cliente: null,
       direccion: 'Ciudad',
-      formServicio: {
+      zapato: {
+        talla: '',
+        zapato: {
+          cantidad: 0,
+          estilo: '',
+          colore: {
+            nombre: ''
+          },
+          precio_venta: 0,
+          precio_minimo: 0
+        }
+      },
+      formZapato: {
         id: 0,
-        descripcion: '',
+        estilo: '',
         cantidad: null,
+        descripcion: '',
         total: 0,
-        is_genetic: null,
-        is_therapy: null,
-        is_service: null
+        precio: null
       },
-      formExamen: {
-        id: 0,
-        descripcion: '',
-        cantidad: null,
-        total: '',
-        is_exam: null
-      },
-      formMedicamento: {
-        id: 0,
-        cantidad: null,
-        medicine: [],
-        total: '',
-        is_medicine: null
+      formCliente: {
+        name: null,
+        telefono: null,
+        nit: null,
+        tipo_cliente: {
+          id: 1
+        }
       },
       checkText: 'Cliente externo',
       check: false,
-      medicine: [],
-      existencia_medicina: 0,
-      exams: [],
-      therapys: [],
-      services: [],
-      geneticas: [],
-      tipos_de_cobro: [],
+      tipos_de_cobro: [
+        { id: 1, nombre: 'EFECTIVO' },
+        { id: 2, nombre: 'TRANSFERENCIA' },
+        { id: 3, nombre: 'TARJETA' },
+        { id: 4, nombre: 'PAGARE' }
+      ],
       arrayDetalles: [],
-      medicines: [],
-      pacientes: [],
+      zapatos: [],
+      clientes: [],
       total_array: 0,
       fields: [
         {
@@ -564,111 +410,51 @@ export default {
   },
   validations () {
     return {
-      formMedicamento: {
-        medicine: {
-          required
-        },
-        cantidad: {
-          required
-        }
-      },
-      formExamen: {
-        descripcion: {
-          required
-        },
-        cantidad: {
-          required
-        }
-      },
-      formServicio: {
-        descripcion: {
-          required
-        },
-        cantidad: {
-          required
-        },
-        total: {
-          required
-        }
-      },
-      nit: { required },
       cliente: { required },
       direccion: { required },
-      tipo_cobro: { required }
+      tipo_cobro: { required },
+      formZapato: {
+        cantidad: { required },
+        precio: { required }
+      },
+      zapato: { required }
     }
   },
   methods: {
-    addService () {
+    addZapato () {
       let me = this
       me.total_array = me.total_array + 1
-      let nuevoTotal = (parseFloat(me.formServicio.descripcion.precio) * me.formServicio.cantidad)
-      let servicio = {
-        cantidad: me.formServicio.cantidad,
-        descripcion: me.formServicio.descripcion.nombre,
+      let nuevoTotal = (parseFloat(me.formZapato.precio) * parseInt(me.formZapato.cantidad))
+      let shoe = {
+        descripcion: me.zapato.zapato.estilo + ' talla ' + me.zapato.talla,
+        cantidad: me.formZapato.cantidad,
+        precio: me.formZapato.precio,
         total: nuevoTotal,
+        existencia_actual: me.zapato.cantidad,
         id: me.total_array,
-        is_service: 1
+        id_talla: me.zapato.id
       }
-      me.arrayDetalles.push(servicio)
-      me.closeModal('servicios')
+      me.total = (parseFloat(me.total) + parseFloat(nuevoTotal))
+      me.arrayDetalles.push(shoe)
+      me.closeModal('zapato')
     },
-    addTherapy () {
-      let me = this
-      me.total_array = me.total_array + 1
-      let nuevoTotal = (parseFloat(me.formServicio.descripcion.precio) * me.formServicio.cantidad)
-      let terapias = {
-        cantidad: me.formServicio.cantidad,
-        descripcion: me.formServicio.descripcion.nombre,
-        total: nuevoTotal,
-        id: me.total_array,
-        is_therapy: 1
-      }
-      me.arrayDetalles.push(terapias)
-      me.closeModal('terapias')
-    },
-    addGenetic () {
-      let me = this
-      me.total_array = me.total_array + 1
-      let nuevoTotal = (parseFloat(me.formServicio.descripcion.precio) * me.formServicio.cantidad)
-      let geneticas = {
-        cantidad: me.formServicio.cantidad,
-        descripcion: me.formServicio.descripcion.nombre,
-        total: nuevoTotal,
-        id: me.total_array,
-        is_genetic: 1
-      }
-      me.arrayDetalles.push(geneticas)
-      me.closeModal('geneticas')
-    },
-    addMedicine () {
-      let me = this
-      me.total_array = me.total_array + 1
-      let nuevoTotal = (parseFloat(me.formMedicamento.medicine.precio_publico) * me.formMedicamento.cantidad)
-      let medicamento = {
-        cantidad: me.formMedicamento.cantidad,
-        descripcion: me.formMedicamento.medicine.nombre,
-        total: nuevoTotal,
-        id: me.total_array,
-        is_medicine: 1,
-        id_medicine: me.formMedicamento.medicine.id,
-        existencia_actual: me.formMedicamento.medicine.existencia_total
-      }
-      me.arrayDetalles.push(medicamento)
-      me.closeModal('medicamento')
-    },
-    addExam () {
-      let me = this
-      me.total_array = me.total_array + 1
-      let nuevoTotal = (parseFloat(me.formExamen.descripcion.precio) * me.formExamen.cantidad)
-      let examen = {
-        cantidad: me.formExamen.cantidad,
-        descripcion: (me.formExamen.descripcion.nombre + ' ' + me.formExamen.descripcion.tipo_examene.nombre),
-        total: nuevoTotal,
-        is_exam: 1,
-        id: me.total_array
-      }
-      me.arrayDetalles.push(examen)
-      me.closeModal('examen')
+    addCliente () {
+      const me = this
+      axios.post(apiUrl + '/clientes/create', {
+        form: me.formCliente })
+        .then((response) => {
+          me.alertVariant = 'success'
+          me.showAlert()
+          me.alertText = 'Se ha creado el cliente ' + me.formCliente.name + ' exitosamente'
+          me.closeModal('saveCliente')
+        })
+        .catch((error) => {
+          console.log(error)
+          me.alertVariant = 'danger'
+          me.showAlertError()
+          me.alertErrorText = error.response.data.msg
+          console.error('Error!', error)
+        })
     },
     deleteDetail (id) {
       let me = this
@@ -676,36 +462,16 @@ export default {
       if (objWithIdIndex > -1) {
         me.arrayDetalles.splice(objWithIdIndex, 1)
       }
+      me.total = 0.0
+      me.arrayDetalles.forEach(element => {
+        me.total = (parseFloat(me.total) + parseFloat(element.total))
+      });
     },
     closeModal (action) {
       switch (action) {
-        case 'geneticas': {
-          this.$v.$reset()
-          this.$refs['modal-1'].hide()
-          this.resetData()
-          break
-        }
-        case 'medicamento': {
-          this.$v.$reset()
-          this.$refs['modal-2'].hide()
-          this.resetData()
-          break
-        }
-        case 'examen': {
+        case 'zapato': {
           this.$v.$reset()
           this.$refs['modal-3'].hide()
-          this.resetData()
-          break
-        }
-        case 'servicios': {
-          this.$v.$reset()
-          this.$refs['modal-4'].hide()
-          this.resetData()
-          break
-        }
-        case 'terapias': {
-          this.$v.$reset()
-          this.$refs['modal-5'].hide()
           this.resetData()
           break
         }
@@ -714,115 +480,76 @@ export default {
           this.resetData()
           break
         }
+        case 'saveCliente': {
+          this.$v.$reset()
+          this.resetData()
+          this.$refs['modal-1'].hide()
+          break
+        }
       }
     },
     onValidate (action) {
-      if (action === 'medicamento') {
-        this.formExamen.descripcion = 'Medicamento'
-        this.formExamen.cantidad = 'Medicamento'
-        this.formServicio.descripcion = 'Medicamento'
-        this.formServicio.cantidad = 'Medicamento'
-        this.formServicio.total = 'Medicamento'
-      } else if (action === 'examen') {
-        this.formMedicamento.medicine = 'Examen'
-        this.formMedicamento.cantidad = 'Examen'
-        this.formServicio.descripcion = 'Examen'
-        this.formServicio.cantidad = 'Examen'
-        this.formServicio.total = 'Examen'
-      } else if (action === 'servicios') {
-        this.formMedicamento.medicine = 'Servicios'
-        this.formMedicamento.cantidad = 'Servicios'
-        this.formExamen.descripcion = 'Servicios'
-        this.formExamen.cantidad = 'Servicios'
-      } else if (action === 'terapias') {
-        this.formMedicamento.medicine = 'Terapias'
-        this.formMedicamento.cantidad = 'Terapias'
-        this.formExamen.descripcion = 'Terapias'
-        this.formExamen.cantidad = 'Terapias'
-      } else if (action === 'geneticas') {
-        this.formMedicamento.medicine = 'Geneticas'
-        this.formMedicamento.cantidad = 'Geneticas'
-        this.formExamen.descripcion = 'Geneticas'
-        this.formExamen.cantidad = 'Geneticas'
-      }
       this.$v.$touch()
-      if (this.$v.$error !== true) {
-        if (action === 'medicamento') {
-          if (this.formMedicamento.cantidad > 0) {
-            if (parseInt(this.formMedicamento.cantidad) <= parseInt(this.formMedicamento.medicine.existencia_total)) {
-              this.addMedicine()
+      if (action === 'zapato') {
+        if (this.formZapato.cantidad > 0) {
+          if (parseInt(this.formZapato.cantidad) <= parseInt(this.zapato.cantidad)) {
+            if (parseFloat(this.formZapato.precio) >= parseFloat(this.zapato.zapato.precio_minimo) && parseFloat(this.formZapato.precio) <= parseFloat(this.zapato.zapato.precio_venta)) {
+              this.addZapato()
             } else {
-              this.alertErrorText = 'No hay suficiente existencia del producto'
+              this.alertErrorText = 'El precio de venta del producto debe estar dentro del rango de precios aprobado'
               this.showAlertError()
             }
           } else {
-            this.alertErrorText = 'La cantidad del producto debe ser mayor a 0'
+            this.alertErrorText = 'No hay suficiente existencia del producto'
             this.showAlertError()
           }
-        } else if (action === 'examen') {
-          this.addExam()
-        } else if (action === 'servicios') {
-          this.addService()
-        } else if (action === 'terapias') {
-          this.addTherapy()
-        } else if (action === 'geneticas') {
-          this.addGenetic()
+        } else {
+          this.alertErrorText = 'La cantidad del producto debe ser mayor a 0'
+          this.showAlertError()
         }
-      } else {
-        this.alertErrorText = 'Revisa que todos los campos requeridos esten llenos'
-        this.showAlertError()
+      } else if (action === 'cliente') {
+        if (this.formCliente.nombre !== null && this.formCliente.telefono !== null && this.formCliente.nit !== null) {
+          this.addCliente()
+        } else {
+          this.alertErrorText = 'Por favor ingrese datos de cliente'
+          this.showAlertError()
+        }
       }
     },
     onValidateAll () {
       this.$v.$touch()
       this.id_usuario = this.currentUser.id
-      this.formMedicamento.medicine = 'General'
-      this.formMedicamento.cantidad = 'General'
-      this.formExamen.descripcion = 'General'
-      this.formExamen.cantidad = 'General'
-      this.formServicio.descripcion = 'General'
-      this.formServicio.cantidad = 'General'
-      this.formServicio.total = 'General'
+      this.formZapato.cantidad = 0
+      this.formZapato.precio = 0
       if (this.$v.$error !== true) {
         this.onSave()
       } else {
+        this.alertVariant = 'danger'
+        this.showAlert()
         this.alertText = 'Ha ocurrido un error en la venta'
-        this.showAlertError()
       }
     },
-    setData (data) {
-
-    },
     resetData () {
-      this.formMedicamento.medicine = null
-      this.formMedicamento.cantidad = null
-      this.formMedicamento.total = null
-      this.formMedicamento.is_medicine = null
-      this.formMedicamento.id = null
-      this.formExamen.descripcion = ''
-      this.formExamen.cantidad = null
-      this.formExamen.total = null
-      this.formExamen.id = null
-      this.formExamen.is_exam = null
-      this.formServicio.is_genetic = null
-      this.formServicio.is_service = null
-      this.formServicio.is_therapy = null
-      this.formServicio.descripcion = null
-      this.formServicio.cantidad = null
+      this.formZapato.descripcion = ''
+      this.formZapato.cantidad = null
+      this.formZapato.total = null
+      this.formZapato.precio = null
+      this.formZapato.id = null
+      this.formCliente.name = null
+      this.formCliente.telefono = null
+      this.formCliente.nit = null
     },
     /* Guardar */
     onSave () {
       const me = this
       axios.post(apiUrl + '/ventas/create', {
-        nit: me.nit,
         direccion: me.direccion,
         cliente: me.cliente,
         detalle: me.arrayDetalles,
-        serie: me.serie,
         numero: me.numero,
         tipo_cobro: me.tipo_cobro,
-        id_usuario: me.id_usuario,
-        pertenencia: 'CENTRO GALO'
+        total: me.total,
+        id_usuario: me.id_usuario
       })
         .then((response) => {
           me.alertVariant = 'success'
@@ -830,6 +557,7 @@ export default {
           me.alertText = 'Se ha creado la venta exitosamente'
           me.closeModal('save')
           me.arrayDetalles = []
+          me.total = 0
         })
         .catch((error) => {
           me.alertVariant = 'danger'
@@ -846,7 +574,6 @@ export default {
           page: currentPage,
           limit: this.perPage,
           search: this.search,
-          search_exam: this.search_exam,
           columna: this.columna.value
         }
         : {
@@ -855,7 +582,6 @@ export default {
           page: currentPage,
           limit: this.perPage,
           search: this.search,
-          search_exam: this.search_exam,
           columna: this.columna.value
         }
     },
@@ -865,7 +591,6 @@ export default {
     },
     searchChange (val) {
       this.search = val.toLowerCase()
-      this.search_exam = val.toLowerCase()
       this.$refs.vuetable.refresh()
     },
     onPaginationData (paginationData) {
@@ -887,48 +612,6 @@ export default {
     },
     changeTypeSearch (columna) {
       this.columna = columna
-    },
-    onSearch (search, loading) {
-      if (search.length) {
-        loading(true)
-        this.searching(search, loading)
-      }
-    },
-    onSearchExam (search, loading) {
-      if (search.length) {
-        loading(true)
-        this.searchingExams(search, loading)
-      }
-    },
-    onSearchService (search, loading) {
-      if (search.length) {
-        loading(true)
-        this.searchingServices(search, loading)
-      }
-    },
-    onSearchTherapy (search, loading) {
-      if (search.length) {
-        loading(true)
-        this.searchingTherapys(search, loading)
-      }
-    },
-    onSearchGenetics (search, loading) {
-      if (search.length) {
-        loading(true)
-        this.searchingGenetics(search, loading)
-      }
-    },
-    onSearchPayment (search, loading) {
-      if (search.length) {
-        loading(true)
-        this.searchingPayments(search, loading)
-      }
-    },
-    onSearchPatient (search, loading) {
-      if (search.length) {
-        loading(true)
-        this.searchingPatients(search, loading)
-      }
     },
     converMaskToNumber (number) {
       var myNumber = ''
@@ -954,87 +637,40 @@ export default {
       formatted = num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
       return (amount = 'Q ' + formatted)
     },
+    onSearch (search, loading) {
+      if (search.length) {
+        loading(true)
+        this.searching(search, loading)
+      }
+    },
     searching (search, loading) {
-      axios.get(apiUrl + '/medicamento/getSelect',
+      axios.get(apiUrl + '/zapatos/getSelect',
         {
           params: {
-            search: search
+            search: search,
+            tienda: this.currentUser.tienda
           }
         }
       ).then((response) => {
-        this.medicines = response.data
+        this.zapatos = response.data
         loading(false)
       })
     },
-    searchingExams (search, loading) {
-      axios.get(apiUrl + '/examen/getSelect',
-        {
-          params: {
-            search: search
-          }
-        }
-      ).then((response) => {
-        this.exams = response.data
-        loading(false)
-      })
+    onSearchClients (search, loading) {
+      if (search.length) {
+        loading(true)
+        this.searchingClients(search, loading)
+      }
     },
-    searchingServices (search, loading) {
-      axios.get(apiUrl + '/servicios/getSelect',
+    searchingClients (search, loading) {
+      axios.get(apiUrl + '/clientes/getSelect',
         {
           params: {
             search: search
           }
         }
       ).then((response) => {
-        this.services = response.data
-        loading(false)
-      })
-    },
-    searchingTherapys (search, loading) {
-      axios.get(apiUrl + '/terapias/getSelect',
-        {
-          params: {
-            search: search
-          }
-        }
-      ).then((response) => {
-        this.therapys = response.data
-        loading(false)
-      })
-    },
-    searchingGenetics (search, loading) {
-      axios.get(apiUrl + '/genetica/getSelect',
-        {
-          params: {
-            search: search
-          }
-        }
-      ).then((response) => {
-        this.geneticas = response.data
-        loading(false)
-      })
-    },
-    searchingPayments (search, loading) {
-      axios.get(apiUrl + '/tipo_cobro/getSelect',
-        {
-          params: {
-            search: search
-          }
-        }
-      ).then((response) => {
-        this.tipos_de_cobro = response.data
-        loading(false)
-      })
-    },
-    searchingPatients (search, loading) {
-      axios.get(apiUrl + '/paciente/getSelect',
-        {
-          params: {
-            search: search
-          }
-        }
-      ).then((response) => {
-        this.pacientes = response.data
+        this.clientes = response.data
         loading(false)
       })
     }

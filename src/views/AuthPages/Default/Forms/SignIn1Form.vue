@@ -34,7 +34,6 @@
         </div>
       </ValidationProvider>
       <div class="d-inline-block w-100">
-
         <button type="submit" class="btn btn-primary float-right">Iniciar sesión</button>
       </div>
 

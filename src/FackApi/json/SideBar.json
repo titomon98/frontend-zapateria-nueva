@@ -127,5 +127,17 @@
     "class_name": "",
     "is_icon_class": true,
     "icon": "ri-user-add-fill"
+  },
+  {
+    "title": "Usuarios",
+    "name": "Usuarios",
+    "is_heading": false,
+    "is_active": false,
+    "link": {
+      "name": "admin.users"
+    },
+    "class_name": "",
+    "is_icon_class": true,
+    "icon": "ri-user-5-fill"
   }
 ]

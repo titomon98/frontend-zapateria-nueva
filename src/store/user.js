@@ -60,11 +60,9 @@ export default {
       auth.login(payload)
         .then(
           user => {
-            const item = { auth: true, authType: 'mysql', uid: user.data.id, user: user.data.usuario, user_type: user.data.tipo_usuario, token: user.data.token, ...currentUser }
+            const item = { auth: true, authType: 'mysql', uid: user.data.id, user: user.data.usuario, user_type: user.data.tipo_usuario, tienda: user.data.tienda, token: user.data.token, ...currentUser }
             setCurrentUser(item)
             commit('setUser', item)
-            // console.log('desde user.js', user)
-            // const item = {}
           }
         ).catch(
           err => {

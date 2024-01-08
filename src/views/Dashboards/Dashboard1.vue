@@ -1,36 +1,17 @@
 <template>
   <b-container fluid>
     <b-row>
-      <b-col sm="12">
-        <iq-card class-name="iq-card-block iq-card-stretch iq-card-height">
-          <template v-slot:headerTitle>
-            <h4 class="card-title">Este es el sistema de Zapateria</h4>
-          </template>
-          <template v-slot:body>
-              <Slick :option="slickOptions" id="doster-list-slide">
-                  <div class="docter-list-item-inner rounded text-center" v-for="doctors in doctorList" :key="doctors.id">
-                    <div class="donter-profile">
-                      <img :src="doctors.img" class="img-fluid rounded-circle" alt="user-img">
-                    </div>
-                    <div class="doctor-detail mt-3">
-                      <h5>{{doctors.name}}</h5>
-                      <h6>{{doctors.position}}</h6>
-                    </div>
-                    <hr>
-                    <div class="doctor-description">
-                      <p class="mb-0 text-center pl-2 pr-2">{{doctors.worksAt}}</p>
-                    </div>
-                  </div>
-              </Slick>
-          </template>
-        </iq-card>
-      </b-col>
       <b-col md="12" lg="12">
         <b-row>
           <b-col sm="12">
             <iq-card class-name="iq-card-block iq-card-stretch iq-card-height" body-class="">
               <template v-slot:headerTitle>
-                <h4 class="card-title">Últimos ingresos de producto</h4>
+                <br>
+                <h3 class="card-title">Corporación el Centro - ¡Bienvenido !</h3>
+                <br>
+                <h4 class="card-title">Fecha de hoy: {{ getFormattedDate(fechaActual) }}</h4>
+                <br>
+                <h5 class="card-title">Listado de los 10 productos más recientes</h5>
               </template>
 
               <template v-slot:body>
@@ -38,20 +19,20 @@
                   <table class="table mb-0 table-borderless">
                     <thead>
                     <tr>
-                      <th scope="col">Nombre del paciente </th>
-                      <th scope="col">Apellidos del paciente </th>
-                      <th scope="col">Doctor que solicitó</th>
-                      <th scope="col">Fecha de examen</th>
-                      <th scope="col">PDF</th>
+                      <th scope="col">Nombre del producto </th>
+                      <th scope="col">Precio de venta </th>
+                      <th scope="col">Precio mínimo de venta </th>
+                      <th scope="col">Marca </th>
+                      <th scope="col">Color </th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="results in resultsList" :key="results.id">
-                      <td v-text="results.ordene.paciente.nombre"></td>
-                      <td v-text="results.ordene.paciente.apellidos"></td>
-                      <td v-text="results.ordene.medico_tratante"></td>
-                      <td> {{ getFecha(results.createdAt) }}</td>
-                      <td><i class="ri-file-pdf-line font-size-16 text-danger"></i></td>
+                    <tr v-for="zapatos in zapatosList" :key="zapatos.id">
+                      <td v-text="zapatos.estilo"></td>
+                      <td v-text="zapatos.precio_venta"></td>
+                      <td v-text="zapatos.precio_minimo"></td>
+                      <td v-text="zapatos.marca.nombre"></td>
+                      <td v-text="zapatos.colore.nombre"></td>
                     </tr>
                     </tbody>
                   </table>
@@ -72,6 +53,7 @@ import IqCard from '../../components/xray/cards/iq-card'
 import axios from 'axios'
 import { apiUrl } from '../../config/constant'
 import moment from 'moment'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Dashboard1',
@@ -80,9 +62,15 @@ export default {
     xray.index()
     this.getResultados()
   },
+  computed: {
+    ...mapGetters([
+      'currentUser' // para extraer el usuario puedes usar currentUser.user
+    ])
+  },
   data: () => {
     return {
-      resultsList: [],
+      fechaActual: new Date(),
+      zapatosList: [],
       slickOptions: {
         centerMode: false,
         centerPadding: '60px',
@@ -108,23 +96,15 @@ export default {
         }],
         nextArrow: '<a href="#" class="ri-arrow-left-s-line left"></a>',
         prevArrow: '<a href="#" class="ri-arrow-right-s-line right"></a>'
-      },
-      doctorList: [
-        { name: 'Datos de prueba', img: require('../../assets/images/user/05.jpg'), position: 'Para limpieza', worksAt: 'Zapatería el Centro' },
-        { name: 'Datos de prueba', img: require('../../assets/images/user/06.jpg'), position: 'Para limpieza', worksAt: 'Zapatería el Centro' },
-        { name: 'Datos de prueba', img: require('../../assets/images/user/07.jpg'), position: 'Para limpieza', worksAt: 'Zapatería el Centro' },
-        { name: 'Datos de prueba', img: require('../../assets/images/user/08.jpg'), position: 'Para limpieza', worksAt: 'Zapatería el Centro' },
-        { name: 'Datos de prueba', img: require('../../assets/images/user/09.jpg'), position: 'Para limpieza', worksAt: 'Zapatería el Centro' },
-        { name: 'Datos de prueba', img: require('../../assets/images/user/10.jpg'), position: 'Para limpieza', worksAt: 'Zapatería el Centro' }
-      ]
+      }
     }
   },
   methods: {
     getResultados () {
       let me = this
-      var url = apiUrl + '/resultado/get/'
+      var url = apiUrl + '/zapatos/get/'
       axios.get(url).then(function (response) {
-        me.resultsList = response.data
+        me.zapatosList = response.data
       }).catch(function (error) {
         console.log(error)
       })
@@ -132,6 +112,10 @@ export default {
     getFecha (fecha) {
       let formato = moment(fecha).format('DD-MM-YYYY hh:mm')
       return formato
+    },
+    getFormattedDate(date) {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      return date.toLocaleDateString('es-ES', options); // Puedes ajustar el locale según lo necesites
     }
   }
 }

@@ -49,6 +49,21 @@
           </div>
           <div class="invalid-feedback">Example invalid feedback text</div>
         </div>
+        <div class="col-md-12 mb-3">
+          <label for="type">Tienda a la que está asignado</label>
+          <v-select
+            name="tienda"
+            v-model="$v.form.tienda.$model"
+            :state="!$v.form.tienda.$error"
+            :options="tiendas"
+            label="nombre"
+            placeholder="Seleccione tienda"
+          />
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+          <div class="invalid-feedback">Example invalid feedback text</div>
+        </div>
       </form>
       <template #modal-footer="{}">
         <b-button  variant="primary" @click="onValidate('save')"
@@ -102,6 +117,21 @@
             :options="typeOptions"
             label="nombre"
             placeholder="Seleccione tipo de usuario"
+          />
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+          <div class="invalid-feedback">Example invalid feedback text</div>
+        </div>
+        <div class="col-md-12 mb-3">
+          <label for="type">Tienda a la que está asignado</label>
+          <v-select
+            name="tienda"
+            v-model="$v.form.tienda.$model"
+            :state="!$v.form.tienda.$error"
+            :options="tiendas"
+            label="nombre"
+            placeholder="Seleccione tienda"
           />
           <div class="valid-feedback">
             Looks good!
@@ -293,6 +323,9 @@ export default {
     axios.get(apiUrl + '/type/get').then((response) => {
       this.typeOptions = response.data
     })
+    axios.get(apiUrl + '/tiendas/get').then((response) => {
+      this.tiendas = response.data
+    })
   },
   data () {
     return {
@@ -306,10 +339,12 @@ export default {
         user: '',
         password: '',
         userType: [],
-        state: 1
+        state: 1,
+        tienda: []
       },
       apiBase: apiUrl + '/user/list',
       typeOptions: [],
+      tiendas: [],
       options: [
         { value: '1', nombre: 'Usuario' },
         { value: '2', nombre: 'Tipo usuario' }
@@ -331,8 +366,14 @@ export default {
         },
         {
           name: 'tipo_usuario.nombre',
-          sortField: 'user',
+          sortField: 'tipo_usuario.nombre',
           title: 'Tipo de usuario',
+          dataClass: 'list-item-heading'
+        },
+        {
+          name: 'tienda.nombre',
+          sortField: 'tienda.nombre',
+          title: 'Tienda',
           dataClass: 'list-item-heading'
         },
         {
@@ -350,7 +391,8 @@ export default {
       form: {
         user: { required },
         password: { required },
-        userType: { required }
+        userType: { required },
+        tienda: { required }
       }
     }
   },
@@ -363,6 +405,7 @@ export default {
           this.form.user = ''
           this.form.password = ''
           this.form.userType = []
+          this.form.tienda = []
           this.form.state = 1
           break
         }
@@ -377,6 +420,7 @@ export default {
           this.form.user = ''
           this.form.password = ''
           this.form.userType = []
+          this.form.tienda = []
           this.form.state = 1
           break
         }
@@ -387,6 +431,7 @@ export default {
           this.form.user = ''
           this.form.password = ''
           this.form.userType = []
+          this.form.tienda = []
           this.form.state = 1
           break
         }
@@ -407,6 +452,7 @@ export default {
       this.form.state = data.estado
       this.form.id = data.id
       this.form.userType = data.tipo_usuario
+      this.form.tienda = data.tienda
     },
     /* Guardar */
     onSave () {
