@@ -95,6 +95,9 @@ import AdminParent from '../views/App/Admin/AdminParent'
 // Clientes
 import ClientesParent from '../views/App/Clientes/ClientesParent'
 
+// Proveedores
+import Proveedores from '../views/App/Proveedores/Proveedores'
+
 // Compras
 import ComprasParent from '../views/App/Compras/ComprasParent'
 
@@ -217,6 +220,15 @@ const ClientesRoutes = (prop, mode) => [
     name: prop + '.clientes',
     meta: { dark: mode, auth: true, name: 'ClientesParent' },
     component: ClientesParent
+  }
+]
+
+const ProveedoresRoutes = (prop, mode) => [
+  {
+    path: 'proveedores',
+    name: prop + '.proveedores',
+    meta: { dark: mode, auth: true, name: 'Proveedores' },
+    component: Proveedores
   }
 ]
 
@@ -762,6 +774,13 @@ const routes = [
     component: Layout1,
     meta: { auth: true },
     children: ClientesRoutes('clientes')
+  },
+  {
+    path: '/proveedores',
+    name: 'proveedores',
+    component: Layout1,
+    meta: { auth: true },
+    children: ProveedoresRoutes('proveedores')
   },
   {
     path: '/compras',

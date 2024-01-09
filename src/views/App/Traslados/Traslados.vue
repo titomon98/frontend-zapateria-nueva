@@ -10,6 +10,120 @@
     >
       <div class="iq-alert-text">{{ alertText }}</div>
     </b-alert>
+    <b-modal id="modal-3" ref="modal-3" size="xl" title="Agregar zapatos">
+      <b-alert
+        :show="alertCountDownError"
+        dismissible
+        fade
+        @dismissed="alertCountDownError=0"
+        class="text-white bg-danger"
+      >
+        <div class="iq-alert-text">{{ alertErrorText }}</div>
+      </b-alert>
+      <b-row class="ml-2">
+
+          <b-col md="12">
+            <b-form-group label="Zapatos:">
+            <v-select
+              name="zapatos"
+              v-model="$v.zapato.$model"
+              :state="!$v.zapato.$error"
+              :options="zapatos"
+              :filterable="false"
+              placeholder="Seleccione el zapato a vender"
+              @search="onSearch"
+            >
+              <template v-slot:spinner="{ loading }">
+                <div v-show="loading">Cargando...</div>
+              </template>
+              <template v-slot:option="option">
+                {{ 'Nombre: '+ option.zapato.estilo + ' Talla: '+ option.talla + ' Color: '+ option.zapato.colore.nombre }}
+              </template>
+              <template slot="selected-option" slot-scope="option">
+                {{ 'Nombre: '+ option.zapato.estilo + ' Color: '+ option.talla + ' Color: '+ option.zapato.colore.nombre }}
+              </template>
+            </v-select>
+            <div v-if="$v.zapato.$error" class="invalid-feedback-vselect">
+              Debe seleccionar el zapato
+            </div>
+          </b-form-group>
+          <div v-if="$v.zapato.$invalid" class="invalid-feedback">
+            Debe ingresar el zapato
+          </div>
+          </b-col>
+      </b-row>
+      <b-row class="ml-2">
+        <b-col md="6">
+          <b-form-group label="Nombre de zapato:">
+            <h6>{{ zapato.zapato.estilo }}</h6>
+          </b-form-group>
+        </b-col>
+        <b-col md="3">
+          <b-form-group label="Talla:">
+            <h6>{{ zapato.talla }}</h6>
+          </b-form-group>
+        </b-col>
+        <b-col md="3">
+          <b-form-group label="Color:">
+            <h6>{{ zapato.zapato.colore.nombre }}</h6>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row class="ml-2">
+        <b-col md="4">
+          <b-form-group label="Precio de venta:">
+            <h6>{{ zapato.zapato.precio_venta }}</h6>
+          </b-form-group>
+
+        </b-col>
+        <b-col md="4">
+          <b-form-group label="Precio mínimo:">
+            <h6>{{ zapato.zapato.precio_minimo }}</h6>
+          </b-form-group>
+        </b-col>
+        <b-col md="4">
+          <b-form-group label="Existencia actual:">
+            <h6>{{ zapato.cantidad }}</h6>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row class="ml-2">
+        <b-col md="6">
+          <b-form-group label="Cantidad:">
+            <b-form-input
+              type="number"
+              v-model.trim="$v.formZapato.cantidad.$model"
+              :state="!$v.formZapato.cantidad.$error"
+              placeholder="Ingresar cantidad a vender"
+            ></b-form-input>
+          </b-form-group>
+          <div v-if="$v.formZapato.cantidad.$invalid" class="invalid-feedback">
+            Debe ingresar la cantidad
+          </div>
+        </b-col>
+        <b-col md="6">
+          <b-form-group label="Motivo de traslado:">
+            <b-form-input
+              type="number"
+              v-model.trim="$v.formZapato.motivo.$model"
+              :state="!$v.formZapato.motivo.$error"
+              placeholder="Ingresar motivo de traslado"
+            ></b-form-input>
+          </b-form-group>
+          <div v-if="$v.formZapato.motivo.$invalid" class="invalid-feedback">
+            Debe ingresar el motivo
+          </div>
+        </b-col>
+      </b-row>
+      <template #modal-footer="{}">
+        <b-button  variant="primary" @click="onValidate('zapato')"
+          >Guardar</b-button
+        >
+        <b-button variant="danger" @click="closeModal('zapato')"
+          >Cancelar</b-button
+        >
+      </template>
+    </b-modal>
     <b-row>
       <b-col md="12">
         <iq-card>
@@ -81,7 +195,7 @@
               </b-col>
               <b-col md="4">
                 <b-form-group label="Agregar zapatos:">
-                  <b-button variant="info" v-b-modal.modal-1>AGREGAR ZAPATOS</b-button>
+                  <b-button variant="info" v-b-modal.modal-3>AGREGAR ZAPATOS</b-button>
                 </b-form-group>
               </b-col>
             </b-row>
@@ -181,9 +295,6 @@ export default {
   mounted () {
     xray.index()
   },
-  beforeDestroy () {
-    console.log('Aqui vamos a meter la validacion')
-  },
   computed: {
     ...mapGetters([
       'currentUser'
@@ -196,7 +307,6 @@ export default {
       total: 0,
       perPage: 5,
       search: '',
-      search_exam: '',
       paciente: null,
       id_usuario: 0,
       tienda1: null,
@@ -204,21 +314,30 @@ export default {
       responsable: null,
       tiendas: [],
       descripcion: null,
-      formServicio: {
+      zapato: {
+        talla: '',
+        zapato: {
+          cantidad: 0,
+          estilo: '',
+          colore: {
+            nombre: ''
+          },
+          precio_venta: 0,
+          precio_minimo: 0
+        }
+      },
+      formZapato: {
         id: 0,
-        descripcion: '',
+        estilo: '',
         cantidad: null,
+        descripcion: '',
         total: 0,
-        is_genetic: null,
-        is_therapy: null,
-        is_service: null
+        motivo: null
       },
       checkText: 'Cliente externo',
       check: false,
-      medicine: [],
-      existencia_medicina: 0,
-      tipos_de_cobro: [],
       arrayDetalles: [],
+      zapatos: [],
       responsables: [],
       total_array: 0,
       fields: [
@@ -272,7 +391,12 @@ export default {
       tienda1: { required },
       tienda2: { required },
       descripcion: { required },
-      responsable: { required }
+      responsable: { required },
+      formZapato: {
+        cantidad: { required },
+        motivo: { required }
+      },
+      zapato: { required }
     }
   },
   methods: {
@@ -464,6 +588,25 @@ export default {
         }
       ).then((response) => {
         this.responsables = response.data
+        loading(false)
+      })
+    },
+    onSearch (search, loading) {
+      if (search.length) {
+        loading(true)
+        this.searching(search, loading)
+      }
+    },
+    searching (search, loading) {
+      axios.get(apiUrl + '/zapatos/getSelect',
+        {
+          params: {
+            search: search,
+            tienda: this.currentUser.tienda
+          }
+        }
+      ).then((response) => {
+        this.zapatos = response.data
         loading(false)
       })
     }

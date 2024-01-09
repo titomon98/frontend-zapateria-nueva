@@ -129,6 +129,18 @@
     "icon": "ri-user-add-fill"
   },
   {
+    "title": "Proveedores",
+    "name": "Proveedores",
+    "is_heading": false,
+    "is_active": false,
+    "link": {
+      "name": "proveedores.proveedores"
+    },
+    "class_name": "",
+    "is_icon_class": true,
+    "icon": "ri-briefcase-fill"
+  },
+  {
     "title": "Usuarios",
     "name": "Usuarios",
     "is_heading": false,
