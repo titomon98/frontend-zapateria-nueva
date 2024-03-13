@@ -91,7 +91,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-2-tallas" ref="modal-2-tallas" title="Ver tallas">
+    <b-modal id="modal-2-tallas" ref="modal-2-tallas" size="lg" title="Ver tallas">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -101,22 +101,53 @@
       >
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
-      <b-form @submit="$event.preventDefault()">
-        <b-form-group label="Nombre:">
-          <b-form-input
-            v-model.trim="form.name"
-            placeholder="Ingresar nombre de talla"
-          ></b-form-input>
-
-        </b-form-group>
-
-      </b-form>
+      <b-row class="ml-2">
+        <b-col md="6">
+          <b-form-group label="Estilo:">
+            <h6>{{ form.estilo }}</h6>
+          </b-form-group>
+        </b-col>
+        <b-col md="6">
+          <b-form-group label="Color:">
+            <h6>{{ form.color }}</h6>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row class="ml-2">
+        <b-col md="6">
+          <b-form-group label="Precio costo:">
+            <h6>{{ form.precio_costo }}</h6>
+          </b-form-group>
+        </b-col>
+        <b-col md="6">
+          <b-form-group label="Precio venta:">
+            <h6>{{ form.precio_venta }}</h6>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row class="ml-2">
+          <br>
+          <br>
+          <table class="table table-hover product_item_list c_table theme-color mb-0">
+            <thead>
+                <tr>
+                    <th>Talla</th>
+                    <th>Código</th>
+                    <th>Cantidad en existencia</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="details in tallas" :key="details.id">
+                  <td v-text="details.talla"></td>
+                  <td v-text="details.codigo"></td>
+                  <td v-text="details.cantidad"></td>
+                </tr>
+            </tbody>
+          </table>
+        </b-row>
       <template #modal-footer="{}">
-        <b-button variant="primary" @click="onValidate('update')"
-          >Guardar</b-button
-        >
-        <b-button variant="danger" @click="closeModal('update')"
-          >Cancelar</b-button
+        <b-button variant="danger" @click="closeModal('close')"
+          >Cerrar</b-button
         >
       </template>
     </b-modal>
@@ -306,11 +337,16 @@ export default {
       search: '',
       corridas: [],
       tiendas: [],
+      tallas: [],
       form: {
         id: 0,
+        estilo: '',
         corrida: 'PRIMERA',
         tienda: null,
-        state: 1
+        state: 1,
+        precio_costo: '',
+        precio_venta: '',
+        color: ''
       },
       alertSecs: 5,
       alertCountDown: 0,
@@ -462,7 +498,7 @@ export default {
           this.form.tienda = null
           break
         }
-        case 'update': {
+        case 'close': {
           this.$v.$reset()
           this.$refs['modal-2-tallas'].hide()
           this.form.id = 0
@@ -471,6 +507,7 @@ export default {
           this.form.state = 1
           this.corridas = []
           this.form.tienda = null
+          this.tallas = []
           break
         }
       }
@@ -489,10 +526,13 @@ export default {
       }
     },
     setData (data) {
-      this.form.name = data.estilo
-      this.form.precio = data.precio
+      this.form.estilo = data.estilo
+      this.form.precio_costo = data.precio_costo
+      this.form.precio_venta = data.precio_venta
       this.form.state = data.estado
+      this.form.color = data.colore.nombre
       this.form.id = data.id
+      this.getTallas(data.id)
     },
     onSave () {
       const me = this
@@ -632,6 +672,17 @@ export default {
         loading(true)
         this.searchingTiendas(search, loading)
       }
+    },
+    getTallas (id) {
+      axios.get(apiUrl + '/tallas/get',
+        {
+          params: {
+            id: id
+          }
+        }
+      ).then((response) => {
+        this.tallas = response.data
+      })
     }
   }
 }

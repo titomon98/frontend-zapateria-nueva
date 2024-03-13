@@ -377,7 +377,7 @@ export default {
         case 'code': {
           this.form.codigo = ''
           var characters =
-            'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+            '0123456789'
           var charactersLength = characters.length
           for (var i = 0; i < 10; i++) {
             this.form.codigo += characters.charAt(
@@ -455,7 +455,7 @@ export default {
         .then((response) => {
           me.alertVariant = 'primary'
           me.showAlert()
-          me.alertText = 'Se ha actualizado la talla ' + me.form.name + ' exitosamente'
+          me.alertText = 'Se ha actualizado la talla exitosamente'
           me.$refs.vuetable.refresh()
           me.closeModal('update')
         })
