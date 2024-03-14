@@ -613,6 +613,7 @@ export default {
       const imgHeight = 2.5
 
       doc.addImage(imgData, 'PNG', 0.3, 0.5, imgWidth, imgHeight)
+
       doc.addImage(imgData, 'PNG', 5.5, 0.5, imgWidth, imgHeight)
       doc.addImage(imgData, 'PNG', 0.3, 2.8, imgWidth, imgHeight)
       doc.addImage(imgData, 'PNG', 5.5, 2.8, imgWidth, imgHeight)
