@@ -700,10 +700,10 @@ export default {
           }
         }
       ).then((response) => {
-        if (response.data == '' && this.codigo != '') {
+        if (response.data === '' && this.codigo !== '') {
           this.alertErrorText = 'El código no fue encontrado'
           this.showAlertError()
-        } else if (response.data == '' && this.codigo == '') {
+        } else if (response.data === '' && this.codigo === '') {
           this.alertErrorText = 'El código está vacío'
           this.showAlertError()
         } else {
