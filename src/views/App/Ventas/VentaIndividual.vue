@@ -465,7 +465,7 @@ export default {
       me.total = 0.0
       me.arrayDetalles.forEach(element => {
         me.total = (parseFloat(me.total) + parseFloat(element.total))
-      });
+      })
     },
     closeModal (action) {
       switch (action) {

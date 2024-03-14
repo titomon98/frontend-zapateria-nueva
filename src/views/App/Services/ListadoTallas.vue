@@ -48,11 +48,11 @@
             </b-button>
           </template>
           <br />
-          <vue-barcode
+          <vuebarcode
             :value="form.codigo"
             align="center"
             :options="{ lineColor: '#0000', text: 'Scan' }"
-          > </vue-barcode>
+          > </vuebarcode>
           <div v-if="$v.form.codigo.required.$invalid" class="invalid-feedback">
             Debe ingresar el codigo
           </div>
@@ -105,11 +105,11 @@
             </b-button>
           </template>
           <br />
-          <vue-barcode
+          <vuebarcode
             :value="form.codigo"
             align="center"
             :options="{ lineColor: '#0000', text: 'Scan' }"
-          > </vue-barcode>
+          > </vuebarcode>
           <div v-if="$v.form.codigo.required.$invalid" class="invalid-feedback">
             Debe ingresar el codigo
           </div>
@@ -176,6 +176,34 @@
         >
       </template>
     </b-modal>
+    <b-modal id="modal-codigo-tallas-list" ref="modal-codigo-tallas-list" title="Imprimir codigo">
+      <b-alert
+        :show="alertCountDownError"
+        dismissible
+        fade
+        @dismissed="alertCountDownError=0"
+        class="text-white bg-danger"
+      >
+        <div class="iq-alert-text">{{ alertErrorText }}</div>
+      </b-alert>
+      <vuebarcode
+        :value="barcode_data"
+        ref="vuebarcode"
+        align="center"
+        :options="{ lineColor: '#0000', text: 'Scan' }"
+      > </vuebarcode>
+      <template #modal-footer="{}">
+        <b-button
+          type="submit"
+          variant="primary"
+          @click="imprimirCodigo()"
+          >Guardar</b-button
+        >
+        <b-button variant="danger" @click="$bvModal.hide('modal-codigo-tallas-list')"
+          >Cancelar</b-button
+        >
+      </template>
+    </b-modal>
     <b-row>
       <b-col md="12">
         <iq-card>
@@ -238,13 +266,22 @@
                     ><i :class="'fas fa-pencil-alt'"
                   /></b-button>
                   <b-button
+                    v-b-tooltip.top="'Imprimir código'"
+                    @click="setCodigo(props.rowData)"
+                    v-b-modal.modal-codigo-tallas-list
+                    class="mb-2"
+                    size="sm"
+                    variant="outline-dark"
+                    ><i :class="'fas fa-print'"
+                  /></b-button>
+                  <b-button
                     v-b-tooltip.top="
                       props.rowData.estado == 1 ? 'Desactivar' : 'Activar'"
                     @click="
-                      setData(props.rowData);
+                      setData(props.rowData)
                       props.rowData.estado == 1
                         ? $bvModal.show('modal-3-tallas-list')
-                        : $bvModal.show('modal-4-tallas-list');
+                        : $bvModal.show('modal-4-tallas-list')
                     "
                     class="mb-2"
                     size="sm"
@@ -280,6 +317,8 @@ import { required } from '@vuelidate/validators'
 import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
 import VueBarcode from 'vue-barcode'
+import JsPDF from 'jspdf'
+import JsBarcode from 'jsbarcode'
 
 export default {
   name: 'ListadoTallas',
@@ -287,7 +326,7 @@ export default {
     vuetable: Vuetable,
     'vuetable-pagination-bootstrap': VuetablePaginationBootstrap,
     'datatable-heading': DatatableHeading,
-    'vue-barcode': VueBarcode
+    'vuebarcode': VueBarcode
   },
   setup () {
     return { $v: useVuelidate() }
@@ -297,6 +336,7 @@ export default {
   },
   data () {
     return {
+      barcode_data: '',
       from: 0,
       to: 0,
       total: 0,
@@ -547,6 +587,37 @@ export default {
     },
     showAlertError () {
       this.alertCountDownError = this.alertSecs
+    },
+    setCodigo (data) {
+      this.barcode_data = data.codigo
+    },
+    imprimirCodigo () {
+      const barcodeData = this.barcode_data // Replace with your actual data
+      const barcodeOptions = {
+        format: 'CODE128', // Choose your desired barcode format
+        width: 1,
+        height: 20,
+        displayValue: false // Optionally display the barcode value below
+      }
+
+      const doc = new JsPDF({
+        unit: 'cm',
+        format: [11, 6],
+        orientation: 'landscape'
+      })
+      const canvas = document.createElement('canvas')
+      JsBarcode(canvas, barcodeData, barcodeOptions)
+
+      const imgData = canvas.toDataURL('image/png')
+      const imgWidth = 5
+      const imgHeight = 2.5
+
+      doc.addImage(imgData, 'PNG', 0.3, 0.5, imgWidth, imgHeight)
+      doc.addImage(imgData, 'PNG', 5.5, 0.5, imgWidth, imgHeight)
+      doc.addImage(imgData, 'PNG', 0.3, 2.8, imgWidth, imgHeight)
+      doc.addImage(imgData, 'PNG', 5.5, 2.8, imgWidth, imgHeight)
+
+      doc.save('barcode-' + this.barcode_data + '.pdf')
     }
   }
 }
