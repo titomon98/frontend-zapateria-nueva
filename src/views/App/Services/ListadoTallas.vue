@@ -337,6 +337,7 @@ export default {
   data () {
     return {
       barcode_data: '',
+      barcode_name: '',
       from: 0,
       to: 0,
       total: 0,
@@ -589,10 +590,13 @@ export default {
       this.alertCountDownError = this.alertSecs
     },
     setCodigo (data) {
+      console.log(data)
       this.barcode_data = data.codigo
+      this.barcode_name = data.zapato.estilo
     },
     imprimirCodigo () {
       const barcodeData = this.barcode_data // Replace with your actual data
+      const barcodeName = this.barcode_name
       const barcodeOptions = {
         format: 'CODE128', // Choose your desired barcode format
         width: 1,
@@ -611,12 +615,23 @@ export default {
       const imgData = canvas.toDataURL('image/png')
       const imgWidth = 5
       const imgHeight = 2.5
+      doc.setFontSize(10).setFont(undefined, 'bold')
 
       doc.addImage(imgData, 'PNG', 0.3, 0.5, imgWidth, imgHeight)
+      doc.text(barcodeName, 0.75, 1)
+      doc.text(barcodeData, 0.75, 2.7)
 
       doc.addImage(imgData, 'PNG', 5.5, 0.5, imgWidth, imgHeight)
+      doc.text(barcodeName, 5.95, 1)
+      doc.text(barcodeData, 5.95, 2.7)
+
       doc.addImage(imgData, 'PNG', 0.3, 2.8, imgWidth, imgHeight)
+      doc.text(barcodeName, 0.75, 3.3)
+      doc.text(barcodeData, 0.75, 5)
+
       doc.addImage(imgData, 'PNG', 5.5, 2.8, imgWidth, imgHeight)
+      doc.text(barcodeName, 5.95, 3.3)
+      doc.text(barcodeData, 5.95, 5)
 
       doc.save('barcode-' + this.barcode_data + '.pdf')
     }

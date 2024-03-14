@@ -60,8 +60,24 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <b-row class="ml-2">
+          <b-col md="3">
+            <b-form-group label="Tipo de búsqueda:">
+              <b-form-radio v-model="tipo_busqueda" value="CODIGO" name="customRadio">Código</b-form-radio>
+              <b-form-radio v-model="tipo_busqueda" value="ESTILO" name="customRadio">Estilo</b-form-radio>
+            </b-form-group>
 
-          <b-col md="12">
+          </b-col>
+          <b-col md="12" v-if="tipo_busqueda === 'CODIGO'">
+            <b-form-input
+              type="text"
+              v-model.trim="codigo"
+              :state="!$v.zapato.$error"
+              placeholder="Ingresar código"
+              @input="cambioCodigo"
+            ></b-form-input>
+            <br>
+          </b-col>
+          <b-col md="12" v-else-if="tipo_busqueda === 'ESTILO'">
             <b-form-group label="Zapatos:">
             <v-select
               name="zapatos"
@@ -318,6 +334,8 @@ export default {
       search: '',
       tipo_cobro: null,
       serie: '',
+      tipo_busqueda: 'CODIGO',
+      codigo: '',
       numero: '',
       id_usuario: 0,
       cliente: null,
@@ -672,6 +690,25 @@ export default {
       ).then((response) => {
         this.clientes = response.data
         loading(false)
+      })
+    },
+    cambioCodigo () {
+      axios.get(apiUrl + '/tallas/getByCode',
+        {
+          params: {
+            codigo: this.codigo
+          }
+        }
+      ).then((response) => {
+        if (response.data == '' && this.codigo != '') {
+          this.alertErrorText = 'El código no fue encontrado'
+          this.showAlertError()
+        } else if (response.data == '' && this.codigo == '') {
+          this.alertErrorText = 'El código está vacío'
+          this.showAlertError()
+        } else {
+          this.zapato = response.data
+        }
       })
     }
   }
