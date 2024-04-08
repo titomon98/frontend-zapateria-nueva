@@ -128,6 +128,9 @@ import MarcasData from '../views/App/Data/Marcas'
 // Ventas
 import VentasParent from '../views/App/Ventas/VentasParent'
 
+// Busqueda
+import Busqueda from '../views/App/Busqueda/Busqueda.vue'
+
 Vue.use(VueRouter)
 
 const AdminRoutes = (prop, mode) => [
@@ -136,6 +139,12 @@ const AdminRoutes = (prop, mode) => [
     name: prop + '.users',
     meta: { dark: mode, auth: true, name: 'Usuarios' },
     component: Users
+  },
+  {
+    path: 'busqueda',
+    name: prop + '.busqueda',
+    meta: { dark: mode, auth: true, name: 'Busqueda' },
+    component: Busqueda
   },
   {
     path: 'adminparent',

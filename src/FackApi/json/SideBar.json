@@ -151,5 +151,17 @@
     "class_name": "",
     "is_icon_class": true,
     "icon": "ri-user-5-fill"
+  },
+  {
+    "title": "Búsqueda de zapatos",
+    "name": "Búsqueda de zapatos",
+    "is_heading": false,
+    "is_active": false,
+    "link": {
+      "name": "admin.busqueda"
+    },
+    "class_name": "",
+    "is_icon_class": true,
+    "icon": "ri-search-line"
   }
 ]
