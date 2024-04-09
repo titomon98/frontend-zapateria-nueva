@@ -1,6 +1,6 @@
 <template>
   <b-container fluid>
-    <b-modal id="modal-1" ref="modal-1" title="Agregar fechas">
+    <b-modal id="modal-1" ref="modal-1" title="Cambio de estado de traslado" size="xl">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -11,22 +11,45 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <b-form>
-        <b-form-group label="Fecha inicial:">
-          <date-range-picker
-            ref="picker"
-            v-model="selectedDates"
-            :singleDatePicker="'range'"
-            :range="true"
-            :ranges="false"
-            :start-text="startText"
-            :end-text="endText"
-            :show-dropdowns=showDropdowns
-            :locale-data="localeData"
-          />
-        </b-form-group>
+        <b-row class="ml-2">
+          <b-col md="4">
+            <b-form-group label="Registro interno:">
+              <h6>{{ encabezado.id }}</h6>
+            </b-form-group>
+          </b-col>
+          <b-col md="4">
+            <b-form-group label="Zapato a trasladar:">
+              <h6>{{ encabezado.zapato }}</h6>
+            </b-form-group>
+          </b-col>
+          <b-col md="4">
+            <b-form-group label="Talla a trasladar:">
+              <h6>{{ encabezado.talla }}</h6>
+            </b-form-group>
+          </b-col>
+        </b-row>
+        <b-row class="ml-2">
+          <b-col md="4">
+            <b-form-group label="Estado:">
+              <b-form-radio v-model="selectedOption" value="1">Recibo completo</b-form-radio>
+              <b-form-radio v-model="selectedOption" value="3">En camino</b-form-radio>
+              <b-form-radio v-model="selectedOption" value="4">Recibido incompleto</b-form-radio>
+              <b-form-radio v-model="selectedOption" value="5">Cancelado</b-form-radio>
+              <b-form-radio v-model="selectedOption" value="6">No hay existencia física</b-form-radio>
+            </b-form-group>
+          </b-col>
+          <b-col md="8">
+            <b-form-group label="Comentario:">
+              <b-form-textarea
+                v-model.trim="descripcion"
+                placeholder="Agregar comentario"
+              ></b-form-textarea>
+            </b-form-group>
+          </b-col>
+        </b-row>
       </b-form>
       <template #modal-footer="{}">
-        <b-button  variant="primary" @click="generarEspecifico()"
+        <b-button  variant="primary" @click="cambiarEstado()"
           >Guardar</b-button
         >
         <b-button variant="danger" @click="closeModal('especifico')"
@@ -34,7 +57,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-2" ref="modal-2" title="Traslado individual">
+    <b-modal id="modal-2" ref="modal-2" title="Traslado individual" size="xl">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -46,86 +69,41 @@
       </b-alert>
       <b-row class="ml-2">
         <b-col md="4">
-          <b-form-group label="Número de factura:">
+          <b-form-group label="Registro interno:">
             <h6>{{ encabezado.id }}</h6>
           </b-form-group>
         </b-col>
         <b-col md="4">
-          <b-form-group label="Cliente:">
-            <h6>{{ encabezado.cliente }}</h6>
+          <b-form-group label="Zapato a trasladar:">
+            <h6>{{ encabezado.zapato }}</h6>
           </b-form-group>
         </b-col>
         <b-col md="4">
-          <b-form-group label="Nit:">
-            <h6>{{ encabezado.nit }}</h6>
+          <b-form-group label="Talla a trasladar:">
+            <h6>{{ encabezado.talla }}</h6>
           </b-form-group>
         </b-col>
       </b-row>
       <b-row class="ml-2">
         <b-col md="4">
-          <b-form-group label="Fecha de venta:">
+          <b-form-group label="Estado:">
+            <h6>{{ encabezado.estado }}</h6>
+          </b-form-group>
+        </b-col>
+        <b-col md="4">
+          <b-form-group label="Comentario:">
+            <h6>{{ encabezado.descripcion }}</h6>
+          </b-form-group>
+        </b-col>
+        <b-col md="4">
+          <b-form-group label="Fecha de última actualización:">
             <h6>{{ encabezado.fecha }}</h6>
           </b-form-group>
-        </b-col>
-        <b-col md="4">
-          <b-form-group label="Usuario que registró:">
-            <h6>{{ encabezado.usuario }}</h6>
-          </b-form-group>
-        </b-col>
-      </b-row>
-      <br>
-      <br>
-      <table class="table table-hover product_item_list c_table theme-color mb-0">
-        <thead>
-            <tr>
-                <th>Descripción</th>
-                <th>Cantidad</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="details in arrayDetalles" :key="details.id">
-              <td v-text="details.descripcion"></td>
-              <td v-text="details.cantidad"></td>
-              <td v-text="details.subtotal"></td>
-            </tr>
-        </tbody>
-      </table>
-      <br>
-      <b-row class="ml-2">
-        <b-col md="6">
-          <h5>Total factura: {{ encabezado.total }}</h5>
         </b-col>
       </b-row>
       <template #modal-footer="{}">
         <b-button variant="danger" @click="closeModal('ver')"
           >Cerrar</b-button
-        >
-      </template>
-    </b-modal>
-    <b-modal id="modal-3" ref="modal-3" title="Desactivar venta">
-      <b-alert
-        :show="alertCountDownError"
-        dismissible
-        fade
-        @dismissed="alertCountDownError=0"
-        class="text-white bg-danger"
-      >
-        <div class="iq-alert-text">{{ alertErrorText }}</div>
-      </b-alert>
-      <h6 class="my-4">
-        ¿Desea desactivar la venta: {{ form.id }}? Esta acción no se puede deshacer
-      </h6>
-      <template #modal-footer="{}">
-        <b-button
-          type="submit"
-          variant="primary"
-          @click="onState()
-          $bvModal.hide('modal-3')"
-          >Desactivar</b-button
-        >
-        <b-button variant="danger" @click="$bvModal.hide('modal-3')"
-          >Cancelar</b-button
         >
       </template>
     </b-modal>
@@ -226,16 +204,10 @@
               <template slot="actions" slot-scope="props">
                 <b-button-group>
                   <b-button
-                    v-b-tooltip.top="'Editar'"
+                    v-if="props.rowData.estado !== 1 && props.rowData.estado !== 5"
+                    v-b-tooltip.top="'Cambiar estado de traslado'"
                     @click="setData(props.rowData)"
-                    class="mb-2"
-                    size="sm"
-                    variant="outline-warning"
-                    ><i :class="'fas fa-pencil-alt'"
-                  /></b-button>
-                  <b-button
-                    v-b-tooltip.top="'Ingresar traslado'"
-                    @click="setData(props.rowData)"
+                    v-b-modal.modal-1
                     class="mb-2"
                     size="sm"
                     variant="outline-info"
@@ -243,7 +215,7 @@
                   /></b-button>
                   <b-button
                     v-b-tooltip.top="'Ver detalles'"
-                    @click="seeSale(props.rowData)"
+                    @click="seeTraslado(props.rowData)"
                     v-b-modal.modal-2
                     class="mb-2"
                     size="sm"
@@ -259,20 +231,6 @@
                     variant="outline-dark"
                     ><i :class="'fas fa-print'"
                   /></b-button>
-                  <b-button
-                    v-b-tooltip.top="'Desactivar'"
-                    v-if="props.rowData.estado === 1"
-                    class="mb-2"
-                    size="sm"
-                    @click="
-                      setData(props.rowData);
-                      $bvModal.show('modal-3');
-                    "
-                    :variant="'outline-danger'"
-                  >
-                  <i :class="'fas fa-trash-alt'"
-                  />
-                  </b-button>
                 </b-button-group>
               </template>
               <!-- Paginacion -->
@@ -281,11 +239,6 @@
                 ref="pagination"
                 @vuetable-pagination:change-page="onChangePage"
               />
-          </template>
-          <template v-slot:footerAction>
-            <b-button variant="dark" v-b-modal.modal-1>GENERAR CIERRE</b-button>
-            <b-button variant="dark" @click="cierreDiario()">GENERAR CIERRE DE HOY</b-button>
-            <b-button variant="dark" @click="cierreDiarioExcel()">GENERAR CIERRE DE HOY EXCEL</b-button>
           </template>
         </iq-card>
       </b-col>
@@ -301,15 +254,15 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
-import DateRangePicker from 'vue2-daterange-picker'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'SalesList',
   components: {
     vuetable: Vuetable,
     'vuetable-pagination-bootstrap': VuetablePaginationBootstrap,
-    'datatable-heading': DatatableHeading,
-    DateRangePicker
+    'datatable-heading': DatatableHeading
   },
   setup () {
     return { $v: useVuelidate() }
@@ -318,8 +271,14 @@ export default {
     xray.index()
     this.getSalesToday()
   },
+  computed: {
+    ...mapGetters([
+      'currentUser'
+    ])
+  },
   data () {
     return {
+      descripcion: null,
       localeData: {
         direction: 'ltr',
         format: 'dd/mm/yyyy',
@@ -331,7 +290,7 @@ export default {
         monthNames: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
         firstDay: 0
       },
-
+      selectedOption: 1,
       selectedDates: {
         start: null,
         end: null
@@ -355,10 +314,9 @@ export default {
       encabezado: {
         id: 0,
         fecha: null,
-        cliente: null,
-        nit: null,
-        usuario: null,
-        total: null
+        zapato: null,
+        talla: null,
+        descripcion: null
       },
       alertSecs: 5,
       alertCountDown: 0,
@@ -414,16 +372,26 @@ export default {
     }
   },
   methods: {
-    seeSale (data) {
+    seeTraslado (data) {
       let me = this
-      me.arrayDetalles = data.detalle_ventas
       me.encabezado.id = data.id
       me.encabezado.fecha = new Date().toLocaleDateString('es-us', data.fecha)
-      me.encabezado.cliente = data.client
-      me.encabezado.usuario = data.usuario.nombre + ' ' + data.usuario.apellidos
-      me.encabezado.nit = data.nit
-      me.encabezado.total = data.total
-      this.$refs['modal-2'].show()
+      me.encabezado.zapato = data.detalle_traslados[0].talla.zapato.estilo
+      me.encabezado.talla = data.detalle_traslados[0].talla.talla
+      me.encabezado.descripcion = data.descripcion
+      if (data.estado === 1) {
+        me.encabezado.estado = 'RECIBIDO COMPLETO'
+      } else if (data.estado === 2) {
+        me.encabezado.estado = 'SOLICITADO'
+      } else if (data.estado === 3) {
+        me.encabezado.estado = 'EN CAMINO'
+      } else if (data.estado === 4) {
+        me.encabezado.estado = 'RECIBIDO INCOMPLETO'
+      } else if (data.estado === 5) {
+        me.encabezado.estado = 'CANCELADO'
+      } else if (data.estado === 6) {
+        me.encabezado.estado = 'NO HAY EXISTENCIA FÍSICA EN TIENDA'
+      }
     },
     getSalesToday () {
       axios.get(apiUrl + '/traslados/getToday'
@@ -432,18 +400,6 @@ export default {
       })
     },
     printSale (data) {
-      let me = this
-      me.arrayDetalles = data.detalle_ventas
-      me.encabezado.id = data.id
-      me.encabezado.fecha = new Date().toLocaleDateString('es-us', data.fecha)
-      me.encabezado.cliente = data.client
-      me.encabezado.usuario = data.usuario.nombre + ' ' + data.usuario.apellidos
-      me.encabezado.nit = data.nit
-      me.encabezado.total = data.total
-      this.$refs['modal-2'].show()
-    },
-    addDocument (data) {
-      // Añadir documento
       let me = this
       me.arrayDetalles = data.detalle_ventas
       me.encabezado.id = data.id
@@ -478,9 +434,17 @@ export default {
       }
     },
     setData (data) {
-      this.form.name = data.nombre
-      this.form.state = data.estado
-      this.form.id = data.id
+      this.encabezado.id = data.id
+      this.encabezado.zapato = data.detalle_traslados[0].talla.zapato.estilo
+      this.encabezado.talla = data.detalle_traslados[0].talla.talla
+      this.encabezado.descripcion = data.descripcion
+    },
+    resetData () {
+      this.encabezado.id = null
+      this.encabezado.zapato = null
+      this.encabezado.talla = null
+      this.encabezado.descripcion = null
+      this.selectedOption = 1
     },
     /* Guardar */
     onUpdate () {
@@ -495,21 +459,23 @@ export default {
           console.error('Error!', error)
         })
     },
-    onState () {
+    cambiarEstado () {
       let me = this
-      if (this.form.state === 1) {
-        axios
-          .put(apiUrl + '/traslados/deactivate', {
-            id: this.form.id
-          })
-          .then((response) => {
-            me.$refs.vuetable.refresh()
-            me.$refs['modal-3'].hide()
-          })
-          .catch((error) => {
-            console.error('There was an error!', error)
-          })
-      }
+      axios
+        .put(apiUrl + '/traslados/cambiar', {
+          encabezado: this.encabezado,
+          descripcion: this.descripcion,
+          estado: this.selectedOption,
+          currentUser: this.currentUser
+        })
+        .then((response) => {
+          me.$refs.vuetable.refresh()
+          me.$refs['modal-1'].hide()
+          me.resetData()
+        })
+        .catch((error) => {
+          console.error('There was an error!', error)
+        })
     },
     makeQueryParams (sortOrder, currentPage, perPage) {
       return sortOrder[0]

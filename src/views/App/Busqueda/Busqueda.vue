@@ -443,7 +443,8 @@ export default {
           responsable: me.responsable,
           descripcion: me.descripcion,
           id_usuario: me.id_usuario,
-          id: this.form.id
+          id: this.form.id,
+          currentUser: this.currentUser
         })
           .then((response) => {
             me.alertVariant = 'success'
