@@ -34,7 +34,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-2" ref="modal-2" title="Venta individual">
+    <b-modal id="modal-2" ref="modal-2" title="Traslado individual">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -193,17 +193,32 @@
               <div slot="estado" slot-scope="props">
                 <h5 v-if="props.rowData.estado == 1">
                   <b-badge variant="light"
-                    ><h6 class="success"><strong>INGRESADO</strong></h6></b-badge
+                    ><h6 class="success"><strong>RECIBIDO COMPLETO</strong></h6></b-badge
                   >
                 </h5>
                 <h5 v-else-if="props.rowData.estado == 2">
                   <b-badge variant="light"
-                    ><h6 class="success"><strong>PENDIENTE DE INGRESO</strong></h6></b-badge
+                    ><h6 class="success"><strong>SOLICITADO</strong></h6></b-badge
                   >
                 </h5>
-                <h5 v-else>
+                <h5 v-else-if="props.rowData.estado == 3">
                   <b-badge variant="light"
-                    ><h6 class="danger"><strong>ANULADO</strong></h6></b-badge
+                    ><h6 class="success"><strong>EN CAMINO</strong></h6></b-badge
+                  >
+                </h5>
+                <h5 v-else-if="props.rowData.estado == 4">
+                  <b-badge variant="light"
+                    ><h6 class="success"><strong>RECIBIDO INCOMPLETO</strong></h6></b-badge
+                  >
+                </h5>
+                <h5 v-else-if="props.rowData.estado == 5">
+                  <b-badge variant="light"
+                    ><h6 class="success"><strong>CANCELADO</strong></h6></b-badge
+                  >
+                </h5>
+                <h5 v-else-if="props.rowData.estado == 6">
+                  <b-badge variant="light"
+                    ><h6 class="success"><strong>NO HAY EXISTENCIA FÍSICA</strong></h6></b-badge
                   >
                 </h5>
               </div>
@@ -372,7 +387,7 @@ export default {
         {
           name: 'fecha',
           sortField: 'fecha',
-          title: 'Fecha de traslado',
+          title: 'Fecha solicitud de traslado',
           dataClass: 'list-item-heading'
         },
         {
