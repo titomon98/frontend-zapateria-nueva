@@ -12,24 +12,29 @@
       </b-alert>
       <b-form>
         <b-row class="ml-2">
-          <b-col md="4">
+          <b-col md="3">
             <b-form-group label="Registro interno:">
               <h6>{{ encabezado.id }}</h6>
             </b-form-group>
           </b-col>
-          <b-col md="4">
+          <b-col md="3">
             <b-form-group label="Zapato a trasladar:">
               <h6>{{ encabezado.zapato }}</h6>
             </b-form-group>
           </b-col>
-          <b-col md="4">
+          <b-col md="3">
             <b-form-group label="Talla a trasladar:">
               <h6>{{ encabezado.talla }}</h6>
             </b-form-group>
           </b-col>
+          <b-col md="3">
+            <b-form-group label="Anticipo:">
+              <h6>{{ encabezado.anticipo }}</h6>
+            </b-form-group>
+          </b-col>
         </b-row>
         <b-row class="ml-2">
-          <b-col md="4">
+          <b-col md="3">
             <b-form-group label="Estado:">
               <b-form-radio v-model="selectedOption" value="1">Recibo completo</b-form-radio>
               <b-form-radio v-model="selectedOption" value="3">En camino</b-form-radio>
@@ -38,7 +43,7 @@
               <b-form-radio v-model="selectedOption" value="6">No hay existencia física</b-form-radio>
             </b-form-group>
           </b-col>
-          <b-col md="8">
+          <b-col md="9">
             <b-form-group label="Comentario:">
               <b-form-textarea
                 v-model.trim="descripcion"
@@ -68,34 +73,39 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <b-row class="ml-2">
-        <b-col md="4">
+        <b-col md="3">
           <b-form-group label="Registro interno:">
             <h6>{{ encabezado.id }}</h6>
           </b-form-group>
         </b-col>
-        <b-col md="4">
+        <b-col md="3">
           <b-form-group label="Zapato a trasladar:">
             <h6>{{ encabezado.zapato }}</h6>
           </b-form-group>
         </b-col>
-        <b-col md="4">
+        <b-col md="3">
           <b-form-group label="Talla a trasladar:">
             <h6>{{ encabezado.talla }}</h6>
           </b-form-group>
         </b-col>
+        <b-col md="3">
+          <b-form-group label="Anticipo:">
+            <h6>{{ encabezado.anticipo }}</h6>
+          </b-form-group>
+        </b-col>
       </b-row>
       <b-row class="ml-2">
-        <b-col md="4">
+        <b-col md="3">
           <b-form-group label="Estado:">
             <h6>{{ encabezado.estado }}</h6>
           </b-form-group>
         </b-col>
-        <b-col md="4">
+        <b-col md="6">
           <b-form-group label="Comentario:">
             <h6>{{ encabezado.descripcion }}</h6>
           </b-form-group>
         </b-col>
-        <b-col md="4">
+        <b-col md="3">
           <b-form-group label="Fecha de última actualización:">
             <h6>{{ encabezado.fecha }}</h6>
           </b-form-group>
@@ -204,7 +214,7 @@
               <template slot="actions" slot-scope="props">
                 <b-button-group>
                   <b-button
-                    v-if="props.rowData.estado !== 1 && props.rowData.estado !== 5"
+                    v-if="props.rowData.estado !== 1 && props.rowData.estado !== 4 && props.rowData.estado !== 5 && props.rowData.estado !== 6"
                     v-b-tooltip.top="'Cambiar estado de traslado'"
                     @click="setData(props.rowData)"
                     v-b-modal.modal-1
@@ -316,7 +326,8 @@ export default {
         fecha: null,
         zapato: null,
         talla: null,
-        descripcion: null
+        descripcion: null,
+        ancitipo: null
       },
       alertSecs: 5,
       alertCountDown: 0,
@@ -379,6 +390,7 @@ export default {
       me.encabezado.zapato = data.detalle_traslados[0].talla.zapato.estilo
       me.encabezado.talla = data.detalle_traslados[0].talla.talla
       me.encabezado.descripcion = data.descripcion
+      me.encabezado.anticipo = data.anticipo
       if (data.estado === 1) {
         me.encabezado.estado = 'RECIBIDO COMPLETO'
       } else if (data.estado === 2) {
@@ -408,6 +420,7 @@ export default {
       me.encabezado.usuario = data.usuario.nombre + ' ' + data.usuario.apellidos
       me.encabezado.nit = data.nit
       me.encabezado.total = data.total
+      me.encabezado.anticipo = data.anticipo
       this.$refs['modal-2'].show()
     },
     closeModal (action) {
@@ -438,6 +451,7 @@ export default {
       this.encabezado.zapato = data.detalle_traslados[0].talla.zapato.estilo
       this.encabezado.talla = data.detalle_traslados[0].talla.talla
       this.encabezado.descripcion = data.descripcion
+      this.encabezado.anticipo = data.anticipo
     },
     resetData () {
       this.encabezado.id = null

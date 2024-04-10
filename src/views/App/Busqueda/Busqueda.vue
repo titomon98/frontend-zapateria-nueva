@@ -37,10 +37,10 @@
                 <div v-show="loading">Cargando...</div>
               </template>
               <template v-slot:option="option">
-                {{ option.nombre }}
+                {{ option.nombre + " existencia en tienda: " + tienda1.cantidad }}
               </template>
               <template slot="selected-option" slot-scope="option">
-                {{ option.nombre }}
+                {{ option.nombre + " existencia en tienda: " + tienda1.cantidad }}
               </template>
             </v-select>
             <div v-if="$v.tienda1.$error" class="invalid-feedback-vselect">
@@ -117,7 +117,7 @@
         </b-col>
       </b-row>
       <b-row class="ml-2">
-        <b-col md="12">
+        <b-col md="6">
           <b-form-group label="Descripción:">
             <b-form-input
               v-model.trim="$v.descripcion.$model"
@@ -128,6 +128,15 @@
           <div v-if="$v.descripcion.$invalid" class="invalid-feedback">
             Debe ingresar la descripción del traslado
           </div>
+        </b-col>
+        <b-col md="6">
+          <b-form-group label="Ancitipo:">
+            <b-form-input
+              type="number"
+              v-model.trim="anticipo"
+              placeholder="Ingresar anticipo"
+            ></b-form-input>
+          </b-form-group>
         </b-col>
       </b-row>
       <template #modal-footer="{}">
@@ -248,6 +257,7 @@ export default {
       tiendas: [],
       responsables: [],
       descripcion: null,
+      anticipo: null,
       cantidad: null,
       check: false,
       selectedOption: 1,
@@ -331,10 +341,10 @@ export default {
   },
   methods: {
     setData (data) {
-      console.log(data)
       this.tienda1 = {
         id: data.tienda.id,
-        nombre: data.tienda.nombre
+        nombre: data.tienda.nombre,
+        cantidad: data.cantidad
       }
       this.form.id = data.id
     },
@@ -435,6 +445,10 @@ export default {
         this.alertVariant = 'danger'
         this.showAlertError()
         this.alertErrorText = 'La tienda de origen no puede ser igual a la tienda de destino'
+      } else if (parseInt(me.cantidad) > parseInt(me.tienda1.cantidad)) {
+        this.alertVariant = 'danger'
+        this.showAlertError()
+        this.alertErrorText = 'La tienda de origen no cuenta con suficiente existencia'
       } else {
         axios.post(apiUrl + '/traslados/createRapido', {
           tienda1: me.tienda1,
@@ -442,6 +456,7 @@ export default {
           cantidad: me.cantidad,
           responsable: me.responsable,
           descripcion: me.descripcion,
+          anticipo: me.anticipo,
           id_usuario: me.id_usuario,
           id: this.form.id,
           currentUser: this.currentUser
