@@ -1,6 +1,6 @@
 <template>
   <b-container fluid>
-    <b-modal id="modal-1" ref="modal-1" title="Cambio de estado de traslado" size="xl">
+    <b-modal id="modal-1-completados" ref="modal-1-completados" title="Cambio de estado de traslado" size="xl">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -62,7 +62,7 @@
         >
       </template>
     </b-modal>
-    <b-modal id="modal-2" ref="modal-2" title="Traslado individual" size="xl">
+    <b-modal id="modal-2-completados" ref="modal-2-completados" title="Traslado individual" size="xl">
       <b-alert
         :show="alertCountDownError"
         dismissible
@@ -217,7 +217,7 @@
                     v-if="props.rowData.estado !== 1 && props.rowData.estado !== 4 && props.rowData.estado !== 5 && props.rowData.estado !== 6"
                     v-b-tooltip.top="'Cambiar estado de traslado'"
                     @click="setData(props.rowData)"
-                    v-b-modal.modal-1
+                    v-b-modal.modal-1-completados
                     class="mb-2"
                     size="sm"
                     variant="outline-info"
@@ -226,7 +226,7 @@
                   <b-button
                     v-b-tooltip.top="'Ver detalles'"
                     @click="seeTraslado(props.rowData)"
-                    v-b-modal.modal-2
+                    v-b-modal.modal-2-completados
                     class="mb-2"
                     size="sm"
                     variant="outline-success"
@@ -235,7 +235,7 @@
                   <b-button
                     v-b-tooltip.top="'Imprimir traslado'"
                     @click="printSale(props.rowData)"
-                    v-b-modal.modal-2
+                    v-b-modal.modal-2-completados
                     class="mb-2"
                     size="sm"
                     variant="outline-dark"
@@ -421,13 +421,13 @@ export default {
       me.encabezado.nit = data.nit
       me.encabezado.total = data.total
       me.encabezado.anticipo = data.anticipo
-      this.$refs['modal-2'].show()
+      this.$refs['modal-2-completados'].show()
     },
     closeModal (action) {
       switch (action) {
         case 'especifico': {
           this.$v.$reset()
-          this.$refs['modal-1'].hide()
+          this.$refs['modal-1-completados'].hide()
           this.form.id = 0
           this.form.name = ''
           this.form.state = 1
@@ -435,7 +435,7 @@ export default {
         }
         case 'ver': {
           this.$v.$reset()
-          this.$refs['modal-2'].hide()
+          this.$refs['modal-2-completados'].hide()
           this.arrayDetalles = null
           this.encabezado.id = null
           this.encabezado.fecha = null
@@ -484,7 +484,7 @@ export default {
         })
         .then((response) => {
           me.$refs.vuetable.refresh()
-          me.$refs['modal-1'].hide()
+          me.$refs['modal-1-completados'].hide()
           me.resetData()
         })
         .catch((error) => {
