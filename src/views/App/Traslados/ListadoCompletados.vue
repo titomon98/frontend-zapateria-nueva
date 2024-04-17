@@ -121,7 +121,7 @@
       <b-col md="12">
         <iq-card>
             <template v-slot:headerTitle>
-              <h4 class="card-title mt-3">Listado de traslados</h4>
+              <h4 class="card-title mt-3">Listado de traslados completados</h4>
               <div class="iq-search-bar mt-2">
                 <div class="row">
                       <div class="col-sm">
@@ -335,7 +335,7 @@ export default {
       alertText: '',
       alertErrorText: '',
       alertVariant: '',
-      apiBase: apiUrl + '/traslados/list',
+      apiBase: apiUrl + '/traslados/listCompletados',
       options: [
         { value: '1', nombre: 'Descripción' }
       ],

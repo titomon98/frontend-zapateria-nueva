@@ -57,18 +57,6 @@
     "icon": "ri-shopping-bag-fill"
   },
   {
-    "title": "Traslados entre tiendas",
-    "name": "Traslados entre tiendas",
-    "is_heading": false,
-    "is_active": false,
-    "link": {
-      "name": "traslados.traslados"
-    },
-    "class_name": "",
-    "is_icon_class": true,
-    "icon": "ri-arrow-right-line"
-  },
-  {
     "title": "Listado de traslados",
     "name": "Listado de traslados",
     "is_heading": false,
@@ -79,6 +67,18 @@
     "class_name": "",
     "is_icon_class": true,
     "icon": "ri-list-check"
+  },
+  {
+    "title": "Traslados detallado",
+    "name": "Traslados detallado",
+    "is_heading": false,
+    "is_active": false,
+    "link": {
+      "name": "traslados.listadoestados"
+    },
+    "class_name": "",
+    "is_icon_class": true,
+    "icon": "ri-list-check-2"
   },
   {
     "title": "Pedidos pendientes",

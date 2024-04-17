@@ -104,6 +104,7 @@ import ComprasParent from '../views/App/Compras/ComprasParent'
 // Traslados
 import Traslados from '../views/App/Traslados/Traslados'
 import ListadoTraslados from '../views/App/Traslados/ListadoTraslados'
+import ListadoEstados from '../views/App/Traslados/ListadoEstados.vue'
 
 // Pedidos
 import Pedidos from '../views/App/Pedidos/Pedidos'
@@ -271,6 +272,12 @@ const TrasladosRoutes = (prop, mode) => [
     name: prop + '.listadotraslados',
     meta: { dark: mode, auth: true, name: 'ListadoTraslados' },
     component: ListadoTraslados
+  },
+  {
+    path: 'listadoestados',
+    name: prop + '.listadoestados',
+    meta: { dark: mode, auth: true, name: 'ListadoEstados' },
+    component: ListadoEstados
   }
 ]
 
