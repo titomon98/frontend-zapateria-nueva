@@ -38,11 +38,23 @@
       "is_heading": false,
       "is_active": false,
       "link": {
-        "name": "ventas.ventasparent"
+        "name": "ventas.ventas"
       },
       "class_name": "",
       "is_icon_class": true,
       "icon": "ri-money-dollar-box-fill"
+    },
+    {
+      "title": "Listado de ventas",
+      "name": "Listado de ventas",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "ventas.listado"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-list-unordered"
     },
     {
       "title": "Compras",

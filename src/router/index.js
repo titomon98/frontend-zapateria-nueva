@@ -127,7 +127,8 @@ import TiendasData from '../views/App/Data/Tiendas'
 import MarcasData from '../views/App/Data/Marcas'
 
 // Ventas
-import VentasParent from '../views/App/Ventas/VentasParent'
+import Ventas from '../views/App/Ventas/VentaIndividual'
+import ListadoVentas from '../views/App/Ventas/ListadoVentas.vue'
 
 // Busqueda
 import Busqueda from '../views/App/Busqueda/Busqueda.vue'
@@ -218,9 +219,15 @@ const DataRoutes = (prop, mode) => [
 const VentasRoutes = (prop, mode) => [
   {
     path: 'ventas',
-    name: prop + '.ventasparent',
-    meta: { dark: mode, auth: true, name: 'VentasParent' },
-    component: VentasParent
+    name: prop + '.ventas',
+    meta: { dark: mode, auth: true, name: 'Ventas' },
+    component: Ventas
+  },
+  {
+    path: 'listado',
+    name: prop + '.listado',
+    meta: { dark: mode, auth: true, name: 'ListadoVentas' },
+    component: ListadoVentas
   }
 ]
 

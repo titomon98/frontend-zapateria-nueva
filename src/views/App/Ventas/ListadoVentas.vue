@@ -193,12 +193,12 @@
               <div slot="estado" slot-scope="props">
                 <h5 v-if="props.rowData.estado == 1">
                   <b-badge variant="light"
-                    ><h6 class="success"><strong>ACTIVO</strong></h6></b-badge
+                    ><h6 class="success"><strong>VENDIDO</strong></h6></b-badge
                   >
                 </h5>
                 <h5 v-else-if="props.rowData.estado == 2">
                   <b-badge variant="light"
-                    ><h6 class="success"><strong>PENDIENTE DE CONTABILIDAD</strong></h6></b-badge
+                    ><h6 class="success"><strong>PENDIENTE DE COBRAR</strong></h6></b-badge
                   >
                 </h5>
                 <h5 v-else>
@@ -260,7 +260,7 @@
                   />
                   </b-button>
                   <b-button
-                    v-b-tooltip.top="'Comprobar contabilidad'"
+                    v-b-tooltip.top="'Cobrar venta'"
                     v-if="props.rowData.estado === 2"
                     class="mb-2"
                     size="sm"
@@ -382,14 +382,20 @@ export default {
           dataClass: 'list-item-heading'
         },
         {
+          name: 'total',
+          sortField: 'total',
+          title: 'Total',
+          dataClass: 'list-item-heading'
+        },
+        {
           name: 'fecha',
           sortField: 'fecha',
           title: 'Fecha de venta',
           dataClass: 'list-item-heading'
         },
         {
-          name: 'client',
-          sortField: 'client',
+          name: 'cliente.nombre',
+          sortField: 'cliente.nombre',
           title: 'Cliente',
           dataClass: 'list-item-heading'
         },

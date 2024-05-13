@@ -183,13 +183,13 @@
       <b-col md="12">
         <iq-card>
             <template v-slot:headerTitle>
-              <h4 class="card-title mt-3">Caja</h4>
+              <h4 class="card-title mt-3">Ventas</h4>
             </template>
             <template v-slot:headerAction>
               <b-button variant="dark" v-b-modal.modal-1>AGREGAR CLIENTE</b-button>
             </template>
           <template v-slot:body>
-            <h5 class="card-title mt-3">Datos de generales de cobro</h5>
+            <h5 class="card-title mt-3">Datos de generales de venta</h5>
             <hr>
             <b-row class="ml-2">
               <b-col md="4">
