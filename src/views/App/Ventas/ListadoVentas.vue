@@ -1,35 +1,14 @@
 <template>
   <b-container fluid>
-    <b-modal id="modal-1" ref="modal-1" title="Agregar fechas">
-      <b-alert
-        :show="alertCountDownError"
-        dismissible
-        fade
-        @dismissed="alertCountDownError=0"
-        class="text-white bg-danger"
-      >
-        <div class="iq-alert-text">{{ alertErrorText }}</div>
-      </b-alert>
-      <b-form>
-        <b-form-group label="Fecha inicial:">
-          <date-range-picker
-            ref="picker"
-            v-model="selectedDates"
-            :singleDatePicker="'range'"
-            :range="true"
-            :ranges="false"
-            :start-text="startText"
-            :end-text="endText"
-            :show-dropdowns=showDropdowns
-            :locale-data="localeData"
-          />
-        </b-form-group>
-      </b-form>
+    <b-modal id="modal-pdf" ref="modal-pdf" title="Generar PDF" size="xl">
+      <div id="previewContainer">
+        <iframe :src="previewURL" width="100%" height="700px"></iframe>
+      </div>
       <template #modal-footer="{}">
-        <b-button  variant="primary" @click="generarEspecifico()"
+        <b-button  variant="primary" @click="descargarpdf()"
           >Guardar</b-button
         >
-        <b-button variant="danger" @click="closeModal('especifico')"
+        <b-button variant="danger" @click="closeModal('pdf')"
           >Cancelar</b-button
         >
       </template>
@@ -211,14 +190,6 @@
               <template slot="actions" slot-scope="props">
                 <b-button-group>
                   <b-button
-                    v-b-tooltip.top="'Editar'"
-                    @click="setData(props.rowData)"
-                    class="mb-2"
-                    size="sm"
-                    variant="outline-warning"
-                    ><i :class="'fas fa-pencil-alt'"
-                  /></b-button>
-                  <b-button
                     v-b-tooltip.top="'Ver detalles'"
                     @click="seeSale(props.rowData)"
                     v-b-modal.modal-2
@@ -230,41 +201,27 @@
                   <b-button
                     v-b-tooltip.top="'Imprimir venta'"
                     @click="printSale(props.rowData)"
-                    v-b-modal.modal-2
                     class="mb-2"
                     size="sm"
                     variant="outline-dark"
                     ><i :class="'fas fa-print'"
                   /></b-button>
                   <b-button
-                    v-b-tooltip.top="'Añadir documento'"
-                    @click="addDocument(props.rowData)"
-                    v-b-modal.modal-2
-                    class="mb-2"
-                    size="sm"
-                    variant="outline-info"
-                    ><i :class="'fas fa-file'"
-                  /></b-button>
-                  <b-button
-                    v-b-tooltip.top="'Desactivar'"
-                    v-if="props.rowData.estado === 1"
-                    class="mb-2"
-                    size="sm"
-                    @click="
-                      setData(props.rowData);
-                      $bvModal.show('modal-3');
-                    "
-                    :variant="'outline-danger'"
-                  >
-                  <i :class="'fas fa-trash-alt'"
-                  />
-                  </b-button>
-                  <b-button
                     v-b-tooltip.top="'Cobrar venta'"
                     v-if="props.rowData.estado === 2"
                     class="mb-2"
                     size="sm"
-                    :variant="'outline-success'"
+                    :variant="'outline-danger'"
+                  >
+                  <i :class="'fas fa-arrow-right'"
+                  />
+                  </b-button>
+                  <b-button
+                    v-b-tooltip.top="'Devolución de venta'"
+                    v-if="props.rowData.estado === 1"
+                    class="mb-2"
+                    size="sm"
+                    :variant="'outline-warning'"
                   >
                   <i :class="'fas fa-arrow-right'"
                   />
@@ -277,11 +234,6 @@
                 ref="pagination"
                 @vuetable-pagination:change-page="onChangePage"
               />
-          </template>
-          <template v-slot:footerAction>
-            <b-button variant="dark" v-b-modal.modal-1>GENERAR CIERRE</b-button>
-            <b-button variant="dark" @click="cierreDiario()">GENERAR CIERRE DE HOY</b-button>
-            <b-button variant="dark" @click="cierreDiarioExcel()">GENERAR CIERRE DE HOY EXCEL</b-button>
           </template>
         </iq-card>
       </b-col>
@@ -297,16 +249,15 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
-import DateRangePicker from 'vue2-daterange-picker'
-import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-import ExcelJS from 'exceljs'
+import JsPDF from 'jspdf'
+import { mapGetters } from 'vuex'
+import moment from 'moment'
 export default {
   name: 'SalesList',
   components: {
     vuetable: Vuetable,
     'vuetable-pagination-bootstrap': VuetablePaginationBootstrap,
-    'datatable-heading': DatatableHeading,
-    DateRangePicker
+    'datatable-heading': DatatableHeading
   },
   setup () {
     return { $v: useVuelidate() }
@@ -315,8 +266,17 @@ export default {
     xray.index()
     this.getSalesToday()
   },
+  computed: {
+    ...mapGetters([
+      'currentUser'
+    ])
+  },
   data () {
     return {
+      report: 0,
+      pdf: new JsPDF(),
+      pdfName: '',
+      previewURL: '',
       localeData: {
         direction: 'ltr',
         format: 'dd/mm/yyyy',
@@ -419,12 +379,13 @@ export default {
   methods: {
     seeSale (data) {
       let me = this
+      console.log(data)
       me.arrayDetalles = data.detalle_ventas
       me.encabezado.id = data.id
       me.encabezado.fecha = new Date().toLocaleDateString('es-us', data.fecha)
-      me.encabezado.cliente = data.client
+      me.encabezado.cliente = data.cliente.nombre
       me.encabezado.usuario = data.usuario.nombre + ' ' + data.usuario.apellidos
-      me.encabezado.nit = data.nit
+      me.encabezado.nit = data.cliente.nit
       me.encabezado.total = data.total
       this.$refs['modal-2'].show()
     },
@@ -433,29 +394,6 @@ export default {
       ).then((response) => {
         this.arrayToday = response.data
       })
-    },
-    printSale (data) {
-      let me = this
-      me.arrayDetalles = data.detalle_ventas
-      me.encabezado.id = data.id
-      me.encabezado.fecha = new Date().toLocaleDateString('es-us', data.fecha)
-      me.encabezado.cliente = data.client
-      me.encabezado.usuario = data.usuario.nombre + ' ' + data.usuario.apellidos
-      me.encabezado.nit = data.nit
-      me.encabezado.total = data.total
-      this.$refs['modal-2'].show()
-    },
-    addDocument (data) {
-      // Añadir documento
-      let me = this
-      me.arrayDetalles = data.detalle_ventas
-      me.encabezado.id = data.id
-      me.encabezado.fecha = new Date().toLocaleDateString('es-us', data.fecha)
-      me.encabezado.cliente = data.client
-      me.encabezado.usuario = data.usuario.nombre + ' ' + data.usuario.apellidos
-      me.encabezado.nit = data.nit
-      me.encabezado.total = data.total
-      this.$refs['modal-2'].show()
     },
     closeModal (action) {
       switch (action) {
@@ -476,6 +414,10 @@ export default {
           this.encabezado.cliente = null
           this.encabezado.usuario = null
           this.encabezado.total = null
+          break
+        }
+        case 'pdf': {
+          this.$refs['modal-pdf'].hide()
           break
         }
       }
@@ -559,22 +501,37 @@ export default {
     changeTypeSearch (columna) {
       this.columna = columna
     },
-    cierreDiarioExcel () {
-      const me = this
-      const workbook = new ExcelJS.Workbook()
-      const worksheet = workbook.addWorksheet('Cierre Diario')
-      worksheet.addRow(['No.', 'Nit', 'Nombre cliente', 'Total', 'Referencia SAT'])
-      for (let i = 0; i < me.arrayToday.length; i++) {
-        worksheet.addRow([me.arrayToday[i].id.toString(), me.arrayToday[i].nit, me.arrayToday[i].client, me.arrayToday[i].total, me.arrayToday[i].referencia_factura === null ? 'No ingresada' : me.arrayToday[i].referencia_factura])
-      }
-      workbook.xlsx.writeBuffer().then((buffer) => {
-        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = 'CierreDeHoyVentas.xlsx'
-        link.click()
+    printSale (data) {
+      this.$refs['modal-pdf'].show()
+      var altura = 2
+      var ahora = new Date()
+
+      this.pdf = new JsPDF({
+        unit: 'cm',
+        format: [14, 21.5]
       })
+      var ingreso = moment(ahora).format('DD/MM/YYYY')
+      this.pdf.setFontSize(10).setFont(undefined, 'bold')
+      this.pdf.text('Recibo de venta', 6, altura)
+      altura = altura + 0.5
+      this.pdf.text('Fecha de generación: ' + ingreso, 6, altura)
+      altura = altura + 0.5
+      this.pdf.text('Generado por: ', 6, altura)
+      this.pdf.setFontSize(10).setFont(undefined, 'normal')
+      this.pdf.text(this.currentUser.user, 8.5, altura)
+      altura = altura + 0.5
+      this.pdf.setFontSize(10).setFont(undefined, 'bold')
+      this.pdf.text('Registrado por: ', 6, altura)
+      this.pdf.setFontSize(10).setFont(undefined, 'normal')
+      this.pdf.text(data.usuario.nombre + ' ' + data.usuario.apellidos, 8.75, altura)
+      var pdfData = this.pdf.output('blob')
+      // Convert PDF to data URL
+      var pdfURL = URL.createObjectURL(pdfData)
+      this.previewURL = pdfURL
+      this.pdfName = 'ReciboVenta' + data.id + '.pdf'
+    },
+    descargarpdf () {
+      this.pdf.save(this.pdfName)
     }
   }
 }
