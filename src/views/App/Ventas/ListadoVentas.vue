@@ -199,11 +199,21 @@
                     ><i :class="'fas fa-eye'"
                   /></b-button>
                   <b-button
-                    v-b-tooltip.top="'Imprimir venta'"
+                    v-b-tooltip.top="'Imprimir recibo de venta'"
+                    v-if="props.rowData.estado === 1"
                     @click="printSale(props.rowData)"
                     class="mb-2"
                     size="sm"
                     variant="outline-dark"
+                    ><i :class="'fas fa-print'"
+                  /></b-button>
+                  <b-button
+                    v-b-tooltip.top="'Imprimir anticipo de venta'"
+                    v-if="props.rowData.estado === 2"
+                    @click="printSale(props.rowData)"
+                    class="mb-2"
+                    size="sm"
+                    variant="outline-info"
                     ><i :class="'fas fa-print'"
                   /></b-button>
                   <b-button
@@ -258,6 +268,9 @@ export default {
     vuetable: Vuetable,
     'vuetable-pagination-bootstrap': VuetablePaginationBootstrap,
     'datatable-heading': DatatableHeading
+  },
+  props: {
+    logo3: { type: String, default: require('./14x6.png') }
   },
   setup () {
     return { $v: useVuelidate() }
@@ -503,32 +516,48 @@ export default {
     },
     printSale (data) {
       this.$refs['modal-pdf'].show()
-      var altura = 2
+      var altura = 1
       var ahora = new Date()
+      const dia = ahora.getDay()
+      const mes = ahora.getMonth()
+      const tienda = data.detalle_ventas[0].talla.tienda.nombre
 
       this.pdf = new JsPDF({
         unit: 'cm',
-        format: [14, 21.5]
+        format: [14, 21.5],
+        orientation: 'landscape',
       })
       var ingreso = moment(ahora).format('DD/MM/YYYY')
+      var imgData = this.logo3
+      this.pdf.addImage(imgData, 'PNG', 1.5, 0.75, 4.37, 1.87)
       this.pdf.setFontSize(10).setFont(undefined, 'bold')
-      this.pdf.text('Recibo de venta', 6, altura)
+      if (data.estado === 1) {
+        this.pdf.text('Recibo de venta No. ' + data.id, 7, altura)
+        this.pdfName = 'ReciboVenta' + data.id + '.pdf'
+      } else {
+        this.pdf.text('Anticipo de venta No. ' + data.id, 7, altura)
+        this.pdfName = 'AnticipoVenta' + data.id + '.pdf'
+      }
+      //Encabezado
       altura = altura + 0.5
-      this.pdf.text('Fecha de generación: ' + ingreso, 6, altura)
+      this.pdf.text('Fecha de generación: ' + ingreso, 7, altura)
       altura = altura + 0.5
-      this.pdf.text('Generado por: ', 6, altura)
+      this.pdf.text('Recibo generado por: ', 7, altura)
       this.pdf.setFontSize(10).setFont(undefined, 'normal')
-      this.pdf.text(this.currentUser.user, 8.5, altura)
+      this.pdf.text(this.currentUser.user, 10.75, altura)
       altura = altura + 0.5
       this.pdf.setFontSize(10).setFont(undefined, 'bold')
-      this.pdf.text('Registrado por: ', 6, altura)
+      this.pdf.text('Venta registrada por: ', 7, altura)
       this.pdf.setFontSize(10).setFont(undefined, 'normal')
-      this.pdf.text(data.usuario.nombre + ' ' + data.usuario.apellidos, 8.75, altura)
+      this.pdf.text(data.usuario.nombre + ' ' + data.usuario.apellidos, 10.65, altura)
+      //Cuerpo de recibo
+      altura = altura + 1
+      this.pdf.text(tienda, 1.5, altura)
+
       var pdfData = this.pdf.output('blob')
       // Convert PDF to data URL
       var pdfURL = URL.createObjectURL(pdfData)
       this.previewURL = pdfURL
-      this.pdfName = 'ReciboVenta' + data.id + '.pdf'
     },
     descargarpdf () {
       this.pdf.save(this.pdfName)
