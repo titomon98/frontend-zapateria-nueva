@@ -160,7 +160,7 @@
             </b-form-group>
           </b-col>
           <b-col cols="12" class="text-center">
-            <div v-if="length(form.base64)>0">
+            <div v-if="form.base64.length>0">
               <h5>Imágenes seleccionadas:</h5>
               <div v-for="(item, index) in form.base64" :key="index">
               <img :src="item" alt="Image preview" class="img-preview"/>
