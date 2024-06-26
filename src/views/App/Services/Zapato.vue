@@ -149,6 +149,25 @@
 
           </b-col>
         </b-row>
+        <b-row>
+          <b-col cols="12">
+            <b-form-group label="File">
+              <b-form-file
+                v-model="image"
+                accept="image/*"
+                placeholder="Subir una imagen..."
+                drop-placeholder="Suelta una imagen aquí..."></b-form-file>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" class="text-center">
+            <div v-if="form.base64">
+              <h5>Imágenes seleccionadas:</h5>
+              <div v-for="(item, index) in form.base64" :key="index">
+              <img :src="item" alt="Image preview" class="img-preview"/>
+            </div>
+            </div>
+          </b-col>
+        </b-row>
       </b-form>
       <template #modal-footer="{}">
         <b-button variant="primary" @click="onValidate('save')"
@@ -482,6 +501,7 @@ export default {
   },
   data () {
     return {
+      image: null,
       from: 0,
       to: 0,
       total: 0,
@@ -501,7 +521,8 @@ export default {
         color: null,
         marca: null,
         clasificacion: null,
-        state: 1
+        state: 1,
+        base64: []
       },
       alertSecs: 5,
       alertCountDown: 0,
@@ -557,6 +578,15 @@ export default {
       ]
     }
   },
+  watch: {
+    image (newVal, oldVal) {
+      if (newVal) {
+        this.createBase64Image(newVal)
+      } else {
+        this.form.base64 = null
+      }
+    }
+  },
   validations () {
     return {
       form: {
@@ -566,6 +596,13 @@ export default {
     }
   },
   methods: {
+    createBase64Image (FileObject) {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        this.base64.append(event.target.result)
+      }
+      reader.readAsDataURL(FileObject)
+    },
     openModal (modal, action) {
       switch (modal) {
         case 'save': {
@@ -817,3 +854,27 @@ export default {
   }
 }
 </script>
+<style scoped>
+.mt-3 {
+  margin-top: 1rem;
+}
+.p-3 {
+  padding: 1rem;
+}
+.bg-light {
+  background-color: #f8f9fa !important;
+}
+.border {
+  border: 1px solid #dee2e6 !important;
+}
+.rounded {
+  border-radius: .25rem !important;
+}
+.img-preview {
+  max-width: 100%;
+  height: auto;
+  margin-top: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: .25rem;
+}
+</style>
