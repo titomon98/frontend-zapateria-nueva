@@ -599,7 +599,7 @@ export default {
     createBase64Image (FileObject) {
       const reader = new FileReader()
       reader.onload = (event) => {
-        this.base64.append(event.target.result)
+        this.form.base64.append(event.target.result)
         console.log(event.target.result)
       }
       reader.readAsDataURL(FileObject)
