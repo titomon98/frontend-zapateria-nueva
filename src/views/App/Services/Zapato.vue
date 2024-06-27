@@ -670,7 +670,6 @@ export default {
     },
     onValidate (action) {
       this.$v.$touch()
-      // this.form.base64Images = ['a', 'b', 'c']
       if (this.$v.$error !== true) {
         if (action === 'save') {
           this.onSave()
