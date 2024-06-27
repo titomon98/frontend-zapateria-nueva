@@ -389,7 +389,7 @@
               <img :src="item.foto" alt="Preview" class="img-preview"/>
             </div>
       <template #modal-footer="{}">
-        <b-button variant="danger" @click="$bvModal.hide('modal-3-zapatos')"
+        <b-button variant="danger" @click="$bvModal.hide('modal-5-zapatos')"
           >Cerrar</b-button
         >
       </template>
