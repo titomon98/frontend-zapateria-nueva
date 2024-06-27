@@ -579,7 +579,7 @@ export default {
     }
   },
   watch: {
-    image (newVal) {
+    images (newVal) {
       if (newVal && newVal.length) {
         this.createBase64Image(newVal)
       } else {
