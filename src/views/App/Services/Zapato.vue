@@ -894,7 +894,10 @@ export default {
 
     onShowImages (num) {
       axios.get(apiUrl + '/fotos/list', {
-        id_zapato: num
+        params:
+        {
+          id_zapato: num
+        }
       })
         .then((response) => {
         this.loadedPhotos = response.data.rows
