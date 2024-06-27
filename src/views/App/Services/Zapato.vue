@@ -155,6 +155,7 @@
               <b-form-file
                 v-model="images"
                 accept="image/*"
+                multiple
                 placeholder="Subir una imagen..."
                 drop-placeholder="Suelta una imagen aquí..."></b-form-file>
             </b-form-group>
