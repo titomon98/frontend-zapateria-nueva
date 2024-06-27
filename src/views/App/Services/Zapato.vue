@@ -603,25 +603,26 @@ export default {
       if (FileList.length > 4) {
         this.errorImage = 'Sólo puedes subir un máximo de 4 imágenes'
         this.images = []
-        return
+      } else {
+        this.form.base64Images = []
+        this.errorImage = null
+
+        Array.from(FileList).forEach(file => {
+          if (file.size > 2 * 1024 * 1024) {
+            this.errorImage = 'El tamaño máximo por imagen es de 2MB'
+            this.images = []
+          } else {
+            const reader = new FileReader()
+            reader.onload = (event) => {
+              this.form.base64Images.push(event.target.result)
+              /* eslint-disable */console.log(...oo_oo(`2875246221_621_10_621_42_4`,event.target.result))
+            }
+            reader.readAsDataURL(FileList[i])
+
+          }
+
+      })
       }
-      this.form.base64Images = []
-      this.errorImage = null
-
-      Array.from(FileList).forEach(file => {
-        if (file.size > 2 * 1024 * 1024) {
-          this.errorImage = 'El tamaño máximo por imagen es de 2MB'
-          this.images = []
-          return
-        }
-
-        const reader = new FileReader()
-        reader.onload = (event) => {
-          this.form.base64Images.push(event.target.result)
-          /* eslint-disable */console.log(...oo_oo(`2875246221_621_10_621_42_4`,event.target.result))
-        }
-        reader.readAsDataURL(FileList[i])
-    })
   },
     openModal (modal, action) {
       switch (modal) {
