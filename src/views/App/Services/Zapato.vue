@@ -617,6 +617,7 @@ export default {
           reader.onload = (event) => {
             this.form.base64Images.push(event.target.result)
           }
+
           reader.readAsDataURL(file)
         })
       }
