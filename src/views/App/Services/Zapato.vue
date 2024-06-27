@@ -892,7 +892,7 @@ export default {
       }
     },
     onShowImages (num) {
-      axios.get(apiUrl + '/fotos/get', {
+      axios.get(apiUrl + '/fotos/list', {
         id_zapato: num
       })
         .then((response) => {
