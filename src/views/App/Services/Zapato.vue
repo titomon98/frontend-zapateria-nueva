@@ -386,18 +386,11 @@
     </b-modal>
     <b-modal id="modal-5-zapatos" ref="modal-5-zapatos" title="Fotos del zapato">
       <div v-for="(item, index) in loadedPhotos" :key="index" cols="12" md="4" class="mb-3">
-              <img :src="item" alt="Preview" class="img-preview"/>
+              <img :src="item.foto" alt="Preview" class="img-preview"/>
             </div>
       <template #modal-footer="{}">
-        <b-button
-          type="submit"
-          variant="primary"
-          @click="onState()
-                  $bvModal.hide('modal-5-zapatos')"
-          >Desactivar</b-button
-        >
         <b-button variant="danger" @click="$bvModal.hide('modal-3-zapatos')"
-          >Cancelar</b-button
+          >Cerrar</b-button
         >
       </template>
     </b-modal>
@@ -721,7 +714,7 @@ export default {
       this.form.marca = data.marca
       this.form.clasificacion = data.clasificacione
       this.form.id = data.id
-      this.loadedPhotos = onShowImages(data.id)
+      this.loadedPhotos = this.onShowImages(data.id)
     },
     /* Guardar */
     onSave () {
