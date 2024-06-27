@@ -891,6 +891,7 @@ export default {
         this.searchingMarcas(search, loading)
       }
     },
+
     onShowImages (num) {
       axios.get(apiUrl + '/fotos/list', {
         id_zapato: num
