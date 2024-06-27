@@ -611,13 +611,13 @@ export default {
           if (file.size > 2 * 1024 * 1024) {
             this.errorImage = 'El tamaño máximo por imagen es de 2MB'
             this.images = []
-          } else {
-            const reader = new FileReader()
-            reader.onload = (event) => {
-              this.form.base64Images.push(event.target.result)
-            }
-            reader.readAsDataURL([file])
+            return
           }
+          const reader = new FileReader()
+          reader.onload = (event) => {
+            this.form.base64Images.push(event.target.result)
+          }
+          reader.readAsDataURL([file])
         })
       }
     },
