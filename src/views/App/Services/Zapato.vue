@@ -899,6 +899,9 @@ export default {
         this.loadedPhotos = response.data.rows
         console.log(response.data.rows)
       })
+        .catch ((error)=>{
+          console.error("Error", error)
+        })
     }
   }
 }
