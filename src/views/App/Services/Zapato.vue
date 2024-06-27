@@ -161,7 +161,7 @@
             </b-form-group>
           </b-col>
           <b-col cols="12" class="text-center">
-            <div v-if="form.base64">
+            <div v-if="form.base64Images.length">
               <h5>Imágenes seleccionadas:</h5>
               <div v-for="(item, index) in form.base64Images" :key="index" cols="12" md="4" class="mb-3">
               <img :src="item" alt="Preview" class="img-preview"/>
