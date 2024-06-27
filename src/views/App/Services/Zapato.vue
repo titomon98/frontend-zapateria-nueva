@@ -615,15 +615,12 @@ export default {
             const reader = new FileReader()
             reader.onload = (event) => {
               this.form.base64Images.push(event.target.result)
-              /* eslint-disable */console.log(...oo_oo(`2875246221_621_10_621_42_4`,event.target.result))
             }
-            reader.readAsDataURL(FileList[i])
-
+            reader.readAsDataURL(FileList[file])
           }
-
-      })
+        })
       }
-  },
+    },
     openModal (modal, action) {
       switch (modal) {
         case 'save': {
