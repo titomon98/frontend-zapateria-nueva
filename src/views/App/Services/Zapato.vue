@@ -384,6 +384,23 @@
         >
       </template>
     </b-modal>
+    <b-modal id="modal-5-zapatos" ref="modal-5-zapatos" title="Fotos del zapato">
+      <div v-for="(item, index) in loadedPhotos" :key="index" cols="12" md="4" class="mb-3">
+              <img :src="item" alt="Preview" class="img-preview"/>
+            </div>
+      <template #modal-footer="{}">
+        <b-button
+          type="submit"
+          variant="primary"
+          @click="onState()
+                  $bvModal.hide('modal-5-zapatos')"
+          >Desactivar</b-button
+        >
+        <b-button variant="danger" @click="$bvModal.hide('modal-3-zapatos')"
+          >Cancelar</b-button
+        >
+      </template>
+    </b-modal>
     <b-row>
       <b-col md="12">
         <iq-card>
@@ -464,6 +481,15 @@
                           ? 'fas fa-trash-alt'
                           : 'fas fa-check'"
                   /></b-button>
+                  <b-button
+                    v-b-tooltip.top="'Ver'"
+                    @click="setData(props.rowData)"
+                    v-b-modal.modal-5-zapatos
+                    class="mb-2"
+                    size="sm"
+                    variant="outline-success"
+                    ><i :class="'fas fa-eye'"
+                  /></b-button>
                 </b-button-group>
               </template>
               <!-- Paginacion -->
@@ -503,6 +529,7 @@ export default {
   },
   data () {
     return {
+      loadedPhotos: [],
       errorImage: null,
       images: [],
       from: 0,
@@ -694,6 +721,7 @@ export default {
       this.form.marca = data.marca
       this.form.clasificacion = data.clasificacione
       this.form.id = data.id
+      this.loadedPhotos = onShowImages(data.id)
     },
     /* Guardar */
     onSave () {
@@ -869,6 +897,14 @@ export default {
         loading(true)
         this.searchingMarcas(search, loading)
       }
+    },
+    onShowImages (num) {
+      axios.get(apiUrl + '/fotos/get', {
+        id_zapato: num
+      })
+        .then((response) => {
+        this.loadedPhotos = response.data.rows
+      })
     }
   }
 }
