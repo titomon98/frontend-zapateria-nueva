@@ -714,7 +714,7 @@ export default {
       this.form.marca = data.marca
       this.form.clasificacion = data.clasificacione
       this.form.id = data.id
-      this.loadedPhotos = this.onShowImages(data.id)
+      this.onShowImages(data.id)
     },
     /* Guardar */
     onSave () {
@@ -897,6 +897,7 @@ export default {
       })
         .then((response) => {
         this.loadedPhotos = response.data.rows
+        console.log(response.data.rows)
       })
     }
   }
