@@ -877,6 +877,7 @@ export default {
 }
 .img-preview {
   max-width: 100%;
+  max-height: 200px;
   height: auto;
   margin-top: 1rem;
   border: 1px solid #dee2e6;
