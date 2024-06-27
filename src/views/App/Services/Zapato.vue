@@ -153,17 +153,17 @@
           <b-col cols="12">
             <b-form-group label="File">
               <b-form-file
-                v-model="image"
+                v-model="images"
                 accept="image/*"
                 placeholder="Subir una imagen..."
                 drop-placeholder="Suelta una imagen aquí..."></b-form-file>
             </b-form-group>
           </b-col>
           <b-col cols="12" class="text-center">
-            <div v-if="form.base64.length>0">
+            <div v-if="form.base64">
               <h5>Imágenes seleccionadas:</h5>
-              <div v-for="(item, index) in form.base64" :key="index">
-              <img :src="item" alt="Image preview" class="img-preview"/>
+              <div v-for="(item, index) in form.base64Images" :key="index" cols="12" md="4" class="mb-3">
+              <img :src="item" alt="Preview" class="img-preview"/>
             </div>
             </div>
           </b-col>
@@ -501,7 +501,7 @@ export default {
   },
   data () {
     return {
-      image: null,
+      images: [],
       from: 0,
       to: 0,
       total: 0,
@@ -522,7 +522,7 @@ export default {
         marca: null,
         clasificacion: null,
         state: 1,
-        base64: []
+        base64Images: []
       },
       alertSecs: 5,
       alertCountDown: 0,
@@ -579,11 +579,11 @@ export default {
     }
   },
   watch: {
-    image (newVal, oldVal) {
-      if (newVal) {
+    image (newVal) {
+      if (newVal && newVal.length) {
         this.createBase64Image(newVal)
       } else {
-        this.form.base64 = null
+        this.form.base64Images = []
       }
     }
   },
@@ -596,13 +596,16 @@ export default {
     }
   },
   methods: {
-    createBase64Image (FileObject) {
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        this.form.base64.append(event.target.result)
-        console.log(event.target.result)
+    createBase64Image (FileList) {
+      this.form.base64Images = []
+      for (let i = 0; i < FileList.length; i++) {
+        const reader = new FileReader()
+        reader.onload = (event) => {
+          this.form.base64Images.push(event.target.result)
+          console.log(event.target.result)
+        }
+        reader.readAsDataURL(FileList[i])
       }
-      reader.readAsDataURL(FileObject)
     },
     openModal (modal, action) {
       switch (modal) {
