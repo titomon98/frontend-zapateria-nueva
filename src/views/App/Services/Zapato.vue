@@ -319,6 +319,30 @@
 
           </b-col>
         </b-row>
+        <div>
+          <b-col cols="12">
+            <b-form-group label="File">
+              <b-form-file
+                v-model="images"
+                accept="image/*"
+                multiple
+                placeholder="Subir una imagen..."
+                drop-placeholder="Suelta una imagen aquí..."></b-form-file>
+                <b-alert variant="danger" v-if="errorImage" dismissible>{{ errorImage }}</b-alert>
+            </b-form-group>
+          </b-col>
+        </div>
+        <b-container fluid>
+          <b-row>
+            <b-col v-for="(item, index) in loadedPhotos" :key="index" cols="12" md="6" class="mb-3">
+              <div class="img-preview-container">
+                <img :src="item.foto" alt="Preview" class="img-preview"/>
+                <div class="overlay"></div>
+                <span class="close-icon">x</span>
+              </div>
+            </b-col>
+          </b-row>
+        </b-container>
       </b-form>
       <template #modal-footer="{}">
         <b-button variant="info" @click="onValidate('update-all')"
@@ -392,32 +416,16 @@
         <b-container fluid>
           <b-row>
             <b-col v-for="(item, index) in loadedPhotos" :key="index" cols="12" md="6" class="mb-3">
-              <div class="img-preview-container">
-                <img :src="item.foto" alt="Preview" class="img-preview"/>
+              <div class="img-preview-container-1">
+                <img :src="item.foto" alt="Preview" class="img-preview-1"/>
                 <div class="overlay"></div>
                 <span class="close-icon">x</span>
               </div>
             </b-col>
           </b-row>
         </b-container>
-        <div>
-          <b-col cols="12">
-            <b-form-group label="File">
-              <b-form-file
-                v-model="images"
-                accept="image/*"
-                multiple
-                placeholder="Subir una imagen..."
-                drop-placeholder="Suelta una imagen aquí..."></b-form-file>
-                <b-alert variant="danger" v-if="errorImage" dismissible>{{ errorImage }}</b-alert>
-            </b-form-group>
-          </b-col>
-        </div>
       </template>
       <template #modal-footer="{}">
-        <b-button variant="danger" @click="$bvModal.hide('modal-5-zapatos')"
-          >Guardar</b-button
-        >
         <b-button variant="danger" @click="$bvModal.hide('modal-5-zapatos')"
           >Cerrar</b-button
         >
