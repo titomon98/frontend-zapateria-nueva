@@ -338,7 +338,9 @@
               <div class="img-preview-container">
                 <img :src="item.foto" alt="Preview" class="img-preview"/>
                 <div class="overlay"></div>
-                <span class="close-icon">x</span>
+                <span class="close-icon"><i
+                      :class="'fas fa-trash-alt'"
+                  /></span>
               </div>
             </b-col>
           </b-row>
@@ -419,7 +421,6 @@
               <div class="img-preview-container-1">
                 <img :src="item.foto" alt="Preview" class="img-preview-1"/>
                 <div class="overlay"></div>
-                <span class="close-icon">x</span>
               </div>
             </b-col>
           </b-row>
@@ -976,6 +977,19 @@ export default {
   position: relative;
   display: inline-block;
 }
+.img-preview-1 {
+  max-width: 100%;
+  max-height: 200px;
+  height: auto;
+  margin-top: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: .25rem;
+  transition: opacity 0.3s ease-in-out;
+}
+.img-preview-container-1 {
+  position: relative;
+  display: inline-block;
+}
 .img-preview-container:hover .img-preview {
   opacity: 0.7;
 }
@@ -997,7 +1011,7 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: gray;
+  color: rgb(219, 213, 213);
   font-size: 48px;
   display: none;
   cursor: pointer;
@@ -1005,4 +1019,5 @@ export default {
 .img-preview-container:hover .close-icon {
   display: block;
 }
+
 </style>
