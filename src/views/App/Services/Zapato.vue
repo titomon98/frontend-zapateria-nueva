@@ -385,11 +385,40 @@
       </template>
     </b-modal>
     <b-modal id="modal-5-zapatos" ref="modal-5-zapatos" title="Fotos del zapato">
-      <div v-for="(item, index) in loadedPhotos" :key="index" cols="12" md="4" class="mb-3">
-              <img :src="item.foto" alt="Preview" class="img-preview"/>
-            </div>
+      <template>
+        <!-- <div v-for="(item, index) in loadedPhotos" :key="index" cols="12" md="4" class="mb-3">
+            <img :src="item.foto" alt="Preview" class="img-preview"/>
+        </div> -->
+        <b-container fluid>
+          <b-row>
+            <b-col v-for="(item, index) in loadedPhotos" :key="index" cols="12" md="6" class="mb-3">
+              <div class="img-preview-container">
+                <img :src="item.foto" alt="Preview" class="img-preview"/>
+                <div class="overlay"></div>
+                <span class="close-icon">x</span>
+              </div>
+            </b-col>
+          </b-row>
+        </b-container>
+        <div>
+          <b-col cols="12">
+            <b-form-group label="File">
+              <b-form-file
+                v-model="images"
+                accept="image/*"
+                multiple
+                placeholder="Subir una imagen..."
+                drop-placeholder="Suelta una imagen aquí..."></b-form-file>
+                <b-alert variant="danger" v-if="errorImage" dismissible>{{ errorImage }}</b-alert>
+            </b-form-group>
+          </b-col>
+        </div>
+      </template>
       <template #modal-footer="{}">
-        <b-button variant="danger" @click="$bvModal.hide('modal-3-zapatos')"
+        <b-button variant="danger" @click="$bvModal.hide('modal-5-zapatos')"
+          >Guardar</b-button
+        >
+        <b-button variant="danger" @click="$bvModal.hide('modal-5-zapatos')"
           >Cerrar</b-button
         >
       </template>
@@ -933,5 +962,39 @@ export default {
   margin-top: 1rem;
   border: 1px solid #dee2e6;
   border-radius: .25rem;
+  transition: opacity 0.3s ease-in-out;
+}
+.img-preview-container {
+  position: relative;
+  display: inline-block;
+}
+.img-preview-container:hover .img-preview {
+  opacity: 0.7;
+}
+.img-preview-container .overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+.img-preview-container:hover .overlay {
+  opacity: 1;
+}
+.img-preview-container .close-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: gray;
+  font-size: 48px;
+  display: none;
+  cursor: pointer;
+}
+.img-preview-container:hover .close-icon {
+  display: block;
 }
 </style>
