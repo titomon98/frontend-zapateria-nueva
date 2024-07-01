@@ -153,7 +153,7 @@
           <b-col cols="12">
             <b-form-group label="File">
               <b-form-file
-                v-model="images"
+                v-model="newImages"
                 accept="image/*"
                 multiple
                 placeholder="Subir una imagen..."
@@ -163,10 +163,20 @@
           </b-col>
           <b-col cols="12" class="text-center">
             <div v-if="form.base64Images.length">
-              <h5>Imágenes seleccionadas:</h5>
+              <h5>Imágenes actuales:</h5>
               <div v-for="(item, index) in form.base64Images" :key="index" cols="12" md="4" class="mb-3">
-              <img :src="item" alt="Preview" class="img-preview"/>
+                <a @click="onImageDelete(item, index)">
+                  <img :src="item" alt="Preview" class="img-preview"/>
+                </a>
+              </div>
             </div>
+            <div v-if="this.newImagesArray.length">
+              <h5>Imágenes nuevas:</h5>
+              <div v-for="(item, index) in newImagesArray" :key="index" cols="12" md="4" class="mb-3">
+                <a @click="onNewImageDelete(index)">
+                  <img :src="item" alt="Preview" class="img-preview"/>
+                </a>
+              </div>
             </div>
           </b-col>
         </b-row>
@@ -561,9 +571,11 @@ export default {
   },
   data () {
     return {
+      newImagesArray: [],
       loadedPhotos: [],
       errorImage: null,
       images: [],
+      newImages: [],
       from: 0,
       to: 0,
       total: 0,
@@ -647,6 +659,13 @@ export default {
       } else {
         this.form.base64Images = []
       }
+    },
+    newImages (newVal) {
+      if (newVal && newVal.length) {
+        this.createNewImage(newVal)
+      } else {
+        this.newImages = []
+      }
     }
   },
   validations () {
@@ -681,6 +700,31 @@ export default {
         })
       }
     },
+
+    createNewImage (FileList) {
+      if (FileList.length + this.form.base64Images.length > 4) {
+        this.errorImage = 'Sólo puedes subir un máximo de 4 imágenes'
+        this.newImages = []
+      } else {
+        this.form.newImagesArray = []
+        this.errorImage = null
+
+        Array.from(FileList).forEach(file => {
+          if (file.size > 2 * 1024 * 1024) {
+            this.errorImage = 'El tamaño máximo por imagen es de 2MB'
+            this.newImages = []
+            return
+          }
+          const reader = new FileReader()
+          reader.onload = (event) => {
+            this.newImagesArray.push(event.target.result)
+          }
+
+          reader.readAsDataURL(file)
+        })
+      }
+    },
+
     openModal (modal, action) {
       switch (modal) {
         case 'save': {
@@ -741,7 +785,6 @@ export default {
       }
     },
     setData (data) {
-      /* eslint-disable */console.log(...oo_oo(`2875246221_686_6_686_23_4`,data))
       this.form.estilo = data.estilo
       this.form.caracteristicas = data.caracteristicas
       this.form.precio_costo = data.precio_costo
@@ -776,6 +819,7 @@ export default {
     },
     /* Guardar */
     onUpdate () {
+      this.form.base64Images = this.newImagesArray
       const me = this
       // this.$refs["modalSave"].hide();
       axios.put(apiUrl + '/zapatos/update', {
@@ -793,6 +837,28 @@ export default {
           me.alertErrorText = 'Ha ocurrido un error, por favor intente más tarde'
           console.error('Error!', error)
         })
+    },
+    onImageDelete (selectedImage, imageIndex) {
+      console.log(selectedImage)
+      const me = this
+      axios.delete(apiUrl + '/fotos/delete', {
+
+        form: { id: selectedImage }
+
+      })
+        .then((response) => {
+          this.form.base64Images.splice(imageIndex, 1)
+          me.alertVariant = 'danger'
+          me.showAlert()
+          me.alertText = 'Se ha eliminado la imagen exitosamente'
+          me.$refs.vuetable.refresh()
+        })
+    },
+    onNewImageDelete (imageIndex) {
+      this.newImagesArray.splice(imageIndex, 1)
+    },
+    onNewImageSave (imageIndex) {
+      this.newImagesArray.splice(imageIndex, 1)
     },
     onState () {
       let me = this
@@ -939,11 +1005,11 @@ export default {
         }
       })
         .then((response) => {
-        this.loadedPhotos = response.data.rows
-        console.log(response.data.rows)
-      })
-        .catch ((error)=>{
-          console.error("Error", error)
+          this.loadedPhotos = response.data.rows
+          console.log(response.data.rows)
+        })
+        .catch((error) => {
+          console.error('Error', error)
         })
     }
   }
