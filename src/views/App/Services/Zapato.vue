@@ -332,6 +332,7 @@
             </b-form-group>
           </b-col>
         </div>
+
         <b-container fluid>
           <b-row>
             <b-col v-for="(item, index) in loadedPhotos" :key="index" cols="12" md="6" class="mb-3">
