@@ -149,11 +149,11 @@
 
           </b-col>
         </b-row>
-        <b-row>
+        <div>
           <b-col cols="12">
             <b-form-group label="File">
               <b-form-file
-                v-model="newImages"
+                v-model="images"
                 accept="image/*"
                 multiple
                 placeholder="Subir una imagen..."
@@ -161,25 +161,7 @@
                 <b-alert variant="danger" v-if="errorImage" dismissible>{{ errorImage }}</b-alert>
             </b-form-group>
           </b-col>
-          <b-col cols="12" class="text-center">
-            <div v-if="form.base64Images.length">
-              <h5>Imágenes actuales:</h5>
-              <div v-for="(item, index) in form.base64Images" :key="index" cols="12" md="4" class="mb-3">
-                <button @click="onImageDelete(item, index)">
-                  <img :src="item" alt="Preview" class="img-preview"/>
-                </button>
-              </div>
-            </div>
-            <div v-if="this.newImagesArray.length">
-              <h5>Imágenes nuevas:</h5>
-              <div v-for="(item, index) in newImagesArray" :key="index" cols="12" md="4" class="mb-3">
-                <a @click="onNewImageDelete(index)">
-                  <img :src="item" alt="Preview" class="img-preview"/>
-                </a>
-              </div>
-            </div>
-          </b-col>
-        </b-row>
+        </div>
       </b-form>
       <template #modal-footer="{}">
         <b-button variant="primary" @click="onValidate('save')"
@@ -329,11 +311,11 @@
 
           </b-col>
         </b-row>
-        <div>
+        <b-row>
           <b-col cols="12">
             <b-form-group label="File">
               <b-form-file
-                v-model="images"
+                v-model="newImages"
                 accept="image/*"
                 multiple
                 placeholder="Subir una imagen..."
@@ -341,7 +323,25 @@
                 <b-alert variant="danger" v-if="errorImage" dismissible>{{ errorImage }}</b-alert>
             </b-form-group>
           </b-col>
-        </div>
+          <b-col cols="12" class="text-center">
+            <div v-if="form.base64Images.length">
+              <h5>Imágenes actuales:</h5>
+              <div v-for="(item, index) in form.base64Images" :key="index" cols="12" md="4" class="mb-3">
+                <button @click="onImageDelete(item, index)">
+                  <img :src="item" alt="Preview" class="img-preview"/>
+                </button>
+              </div>
+            </div>
+            <div v-if="this.newImagesArray.length">
+              <h5>Imágenes nuevas:</h5>
+              <div v-for="(item, index) in newImagesArray" :key="index" cols="12" md="4" class="mb-3">
+                <a @click="onNewImageDelete(index)">
+                  <img :src="item" alt="Preview" class="img-preview"/>
+                </a>
+              </div>
+            </div>
+          </b-col>
+        </b-row>
 
         <b-container fluid>
           <b-row>
