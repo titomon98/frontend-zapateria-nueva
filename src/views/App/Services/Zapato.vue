@@ -165,7 +165,9 @@
             <div v-if="form.base64Images.length">
               <h5>Imágenes actuales:</h5>
               <div v-for="(item, index) in form.base64Images" :key="index" cols="12" md="4" class="mb-3">
-                <img :src="item" alt="Preview" @click="onImageDelete(item, index)" class="img-preview"/>
+                <button @click="onImageDelete(item, index)">
+                  <img :src="item" alt="Preview" class="img-preview"/>
+                </button>
               </div>
             </div>
             <div v-if="this.newImagesArray.length">
