@@ -840,6 +840,7 @@ export default {
     },
     onImageDelete (selectedImage, imageIndex) {
       console.log(selectedImage)
+      console.log('HOLA')
       const me = this
       axios.delete(apiUrl + '/fotos/delete', {
 
