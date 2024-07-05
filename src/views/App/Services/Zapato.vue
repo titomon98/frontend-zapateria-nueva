@@ -161,6 +161,36 @@
                 <b-alert variant="danger" v-if="errorImage" dismissible>{{ errorImage }}</b-alert>
             </b-form-group>
           </b-col>
+          <!-- <b-col cols="12" class="text-center">
+            <div v-if="form.base64Images.length">
+              <h5>Imágenes actuales:</h5>
+              <div v-for="(item, index) in form.base64Images" :key="index" cols="12" md="4" class="mb-3">
+                <button @click="onImageDelete(item, index)">
+                  <img :src="item" alt="Preview" class="img-preview"/>
+                </button>
+              </div>
+            </div>
+            <div v-if="this.newImagesArray.length">
+              <h5>Imágenes nuevas:</h5>
+              <div v-for="(item, index) in newImagesArray" :key="index" cols="12" md="4" class="mb-3">
+                <a @click="onNewImageDelete(index)">
+                  <img :src="item" alt="Preview" class="img-preview"/>
+                </a>
+              </div>
+            </div>
+          </b-col>
+          <b-col v-for="(item, index) in form.base64Images" :key="index" cols="12" md="6" class="mb-3">
+            <div class="img-preview-container">
+              <button @click="onNewImageDelete(index)">
+                <img :src="item.foto" alt="Preview" class="img-preview"/>
+                <div class="overlay"></div>
+                <span class="close-icon"><i
+                      :class="'fas fa-trash-alt'"
+                  /></span>
+              </button>
+            </div>
+          </b-col>
+          -->
           <b-col cols="12" class="text-center">
             <div v-if="form.base64Images.length">
               <h5>Imágenes seleccionadas:</h5>
@@ -319,6 +349,62 @@
 
           </b-col>
         </b-row>
+        <div>
+          <b-col cols="12">
+            <b-form-group label="File">
+              <b-form-file
+                v-model="newImages"
+                accept="image/*"
+                multiple
+                placeholder="Subir una imagen..."
+                drop-placeholder="Suelta una imagen aquí..."></b-form-file>
+                <b-alert variant="danger" v-if="errorImage" dismissible>{{ errorImage }}</b-alert>
+            </b-form-group>
+          </b-col>
+        </div>
+
+        <b-container fluid>
+          <b-row>
+            <!--
+            <div v-if="form.base64Images.length">
+              <h5>Imágenes actuales:</h5>
+              <div v-for="(item, index) in form.base64Images" :key="index" cols="12" md="4" class="mb-3">
+                <button @click="onImageDelete(item, index)">
+                  <img :src="item" alt="Preview" class="img-preview"/>
+                </button>
+              </div>
+            </div>
+            -->
+            <div ref="loadedImages">
+              <h5>Imágenes actuales:</h5>
+              <div v-for="(item, index) in loadedPhotos" :key="index">
+                <b-col cols="12" md="6" class="mb-3">
+                  <div class="img-preview-container">
+                    <button @click="onImageDelete(item, index)">
+                      <img :src="item.foto" alt="Preview" class="img-preview"/>
+                      <div class="overlay"></div>
+                      <span class="close-icon"><i
+                            :class="'fas fa-trash-alt'"
+                        /></span>
+                    </button>
+                  </div>
+                </b-col>
+              </div>
+            </div>
+          </b-row>
+          <b-row>
+            <b-col cols="12">
+              <div v-if="this.newImagesArray.length">
+                <h5>Imágenes nuevas:</h5>
+                <div v-for="(item, index) in newImagesArray" :key="index" cols="12" md="4" class="mb-3">
+                  <a @click="onNewImageDelete(index)">
+                    <img :src="item" alt="Preview" class="img-preview"/>
+                  </a>
+                </div>
+              </div>
+            </b-col>
+          </b-row>
+        </b-container>
       </b-form>
       <template #modal-footer="{}">
         <b-button variant="info" @click="onValidate('update-all')"
@@ -385,9 +471,46 @@
       </template>
     </b-modal>
     <b-modal id="modal-5-zapatos" ref="modal-5-zapatos" title="Fotos del zapato">
-      <div v-for="(item, index) in loadedPhotos" :key="index" cols="12" md="4" class="mb-3">
-              <img :src="item.foto" alt="Preview" class="img-preview"/>
-            </div>
+      <template>
+        <!-- <div v-for="(item, index) in loadedPhotos" :key="index" cols="12" md="4" class="mb-3">
+            <img :src="item.foto" alt="Preview" class="img-preview"/>
+        </div> -->
+        <b-carousel
+          id="carousel-1"
+          v-model="slide"
+          :interval="4000"
+          controls
+          indicators
+          background="#ababab"
+          style="text-shadow: 1px 1px 2px #333;"
+          @sliding-start="onSlideStart"
+          @sliding-end="onSlideEnd"
+        >
+          <div v-for="(item, index) in loadedPhotos" :key="index">
+            <b-carousel-slide class="img-preview-container-1">
+              <template #img>
+                <img
+                  class="img-preview-1"
+                  :src="item.foto"
+                  alt="Preview"
+                >
+              </template>
+              <!-- <img :src="item.foto" alt="Preview" class="img-preview-1"/>
+              <div class="overlay"></div> -->
+            </b-carousel-slide>
+          </div>
+    </b-carousel>
+        <!-- <b-container fluid>
+          <b-row>
+            <b-col v-for="(item, index) in loadedPhotos" :key="index" cols="12" md="6" class="mb-3">
+              <div class="img-preview-container-1">
+                <img :src="item.foto" alt="Preview" class="img-preview-1"/>
+                <div class="overlay"></div>
+              </div>
+            </b-col>
+          </b-row>
+        </b-container> -->
+      </template>
       <template #modal-footer="{}">
         <b-button variant="danger" @click="$bvModal.hide('modal-5-zapatos')"
           >Cerrar</b-button
@@ -522,9 +645,11 @@ export default {
   },
   data () {
     return {
+      newImagesArray: [],
       loadedPhotos: [],
       errorImage: null,
       images: [],
+      newImages: [],
       from: 0,
       to: 0,
       total: 0,
@@ -608,6 +733,13 @@ export default {
       } else {
         this.form.base64Images = []
       }
+    },
+    newImages (newVal) {
+      if (newVal && newVal.length) {
+        this.createNewImage(newVal)
+      } else {
+        this.newImages = []
+      }
     }
   },
   validations () {
@@ -642,6 +774,31 @@ export default {
         })
       }
     },
+
+    createNewImage (FileList) {
+      if (FileList.length + this.form.base64Images.length > 4) {
+        this.errorImage = 'Sólo puedes subir un máximo de 4 imágenes'
+        this.newImages = []
+      } else {
+        this.form.newImagesArray = []
+        this.errorImage = null
+
+        Array.from(FileList).forEach(file => {
+          if (file.size > 2 * 1024 * 1024) {
+            this.errorImage = 'El tamaño máximo por imagen es de 2MB'
+            this.newImages = []
+            return
+          }
+          const reader = new FileReader()
+          reader.onload = (event) => {
+            this.newImagesArray.push(event.target.result)
+          }
+
+          reader.readAsDataURL(file)
+        })
+      }
+    },
+
     openModal (modal, action) {
       switch (modal) {
         case 'save': {
@@ -671,6 +828,10 @@ export default {
           this.form.precio_minimo = ''
           this.form.precio_mayorista = ''
           this.form.state = 1
+          this.loadedImages = []
+          this.loadedPhotos = []
+          this.newImagesArray = []
+          this.form.base64Images = []
           break
         }
         case 'update': {
@@ -684,6 +845,10 @@ export default {
           this.form.precio_minimo = ''
           this.form.precio_mayorista = ''
           this.form.state = 1
+          this.loadedImages = []
+          this.loadedPhotos = []
+          this.newImagesArray = []
+          this.form.base64Images = []
           break
         }
       }
@@ -702,7 +867,6 @@ export default {
       }
     },
     setData (data) {
-      /* eslint-disable */console.log(...oo_oo(`2875246221_686_6_686_23_4`,data))
       this.form.estilo = data.estilo
       this.form.caracteristicas = data.caracteristicas
       this.form.precio_costo = data.precio_costo
@@ -737,6 +901,7 @@ export default {
     },
     /* Guardar */
     onUpdate () {
+      this.form.base64Images = this.newImagesArray
       const me = this
       // this.$refs["modalSave"].hide();
       axios.put(apiUrl + '/zapatos/update', {
@@ -754,6 +919,28 @@ export default {
           me.alertErrorText = 'Ha ocurrido un error, por favor intente más tarde'
           console.error('Error!', error)
         })
+    },
+    onImageDelete (selectedImage, imageIndex) {
+      console.dir(selectedImage.id)
+      console.log('HOLA')
+      const me = this
+      axios.delete(apiUrl + '/fotos/delete', {
+        params: { id: selectedImage.id }
+      })
+        .then((response) => {
+          this.loadedPhotos.splice(imageIndex, 1)
+          me.alertVariant = 'danger'
+          me.showAlert()
+          me.alertText = 'Se ha eliminado la imagen exitosamente'
+          me.$refs.vuetable.refresh()
+          me.$refs.loadedImages.refresh()
+        })
+    },
+    onNewImageDelete (imageIndex) {
+      this.newImagesArray.splice(imageIndex, 1)
+    },
+    onNewImageSave (imageIndex) {
+      this.newImagesArray.splice(imageIndex, 1)
     },
     onState () {
       let me = this
@@ -900,11 +1087,11 @@ export default {
         }
       })
         .then((response) => {
-        this.loadedPhotos = response.data.rows
-        console.log(response.data.rows)
-      })
-        .catch ((error)=>{
-          console.error("Error", error)
+          this.loadedPhotos = response.data.rows
+          console.log(response.data.rows)
+        })
+        .catch((error) => {
+          console.error('Error', error)
         })
     }
   }
@@ -933,5 +1120,52 @@ export default {
   margin-top: 1rem;
   border: 1px solid #dee2e6;
   border-radius: .25rem;
+  transition: opacity 0.3s ease-in-out;
 }
+.img-preview-container {
+  position: relative;
+}
+.img-preview-1 {
+  max-width: 100%;
+  width: auto;
+  max-height: auto;
+  height: auto;
+  border: 1px solid #dee2e6;
+  border-radius: .25rem;
+  transition: opacity 0.3s ease-in-out;
+}
+.img-preview-container-1 {
+  position: relative;
+  display: inline-block;
+}
+.img-preview-container:hover .img-preview {
+  opacity: 0.7;
+}
+.img-preview-container .overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+.img-preview-container:hover .overlay {
+  opacity: 1;
+}
+.img-preview-container .close-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgb(219, 213, 213);
+  font-size: 48px;
+  display: none;
+  cursor: pointer;
+}
+.img-preview-container:hover .close-icon {
+  display: block;
+}
+
 </style>
