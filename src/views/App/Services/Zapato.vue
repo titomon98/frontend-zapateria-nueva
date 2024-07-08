@@ -153,7 +153,7 @@
           <b-col cols="12">
             <b-form-group label="File">
               <b-form-file
-                v-model="newImages"
+                v-model="images"
                 accept="image/*"
                 multiple
                 placeholder="Subir una imagen..."
@@ -161,7 +161,7 @@
                 <b-alert variant="danger" v-if="errorImage" dismissible>{{ errorImage }}</b-alert>
             </b-form-group>
           </b-col>
-          <b-col cols="12" class="text-center">
+          <!-- <b-col cols="12" class="text-center">
             <div v-if="form.base64Images.length">
               <h5>Imágenes actuales:</h5>
               <div v-for="(item, index) in form.base64Images" :key="index" cols="12" md="4" class="mb-3">
@@ -177,6 +177,26 @@
                   <img :src="item" alt="Preview" class="img-preview"/>
                 </a>
               </div>
+            </div>
+          </b-col>
+          <b-col v-for="(item, index) in form.base64Images" :key="index" cols="12" md="6" class="mb-3">
+            <div class="img-preview-container">
+              <button @click="onNewImageDelete(index)">
+                <img :src="item.foto" alt="Preview" class="img-preview"/>
+                <div class="overlay"></div>
+                <span class="close-icon"><i
+                      :class="'fas fa-trash-alt'"
+                  /></span>
+              </button>
+            </div>
+          </b-col>
+          -->
+          <b-col cols="12" class="text-center">
+            <div v-if="form.base64Images.length">
+              <h5>Imágenes seleccionadas:</h5>
+              <div v-for="(item, index) in form.base64Images" :key="index" cols="12" md="4" class="mb-3">
+              <img :src="item" alt="Preview" class="img-preview"/>
+            </div>
             </div>
           </b-col>
         </b-row>
@@ -333,7 +353,7 @@
           <b-col cols="12">
             <b-form-group label="File">
               <b-form-file
-                v-model="images"
+                v-model="newImages"
                 accept="image/*"
                 multiple
                 placeholder="Subir una imagen..."
@@ -345,13 +365,42 @@
 
         <b-container fluid>
           <b-row>
-            <b-col v-for="(item, index) in loadedPhotos" :key="index" cols="12" md="6" class="mb-3">
-              <div class="img-preview-container">
-                <img :src="item.foto" alt="Preview" class="img-preview"/>
-                <div class="overlay"></div>
-                <span class="close-icon"><i
-                      :class="'fas fa-trash-alt'"
-                  /></span>
+            <!--
+            <div v-if="form.base64Images.length">
+              <h5>Imágenes actuales:</h5>
+              <div v-for="(item, index) in form.base64Images" :key="index" cols="12" md="4" class="mb-3">
+                <button @click="onImageDelete(item, index)">
+                  <img :src="item" alt="Preview" class="img-preview"/>
+                </button>
+              </div>
+            </div>
+            -->
+            <div ref="loadedImages">
+              <h5>Imágenes actuales:</h5>
+              <div v-for="(item, index) in loadedPhotos" :key="index">
+                <b-col cols="12" md="6" class="mb-3">
+                  <div class="img-preview-container">
+                    <button @click="onImageDelete(item, index)">
+                      <img :src="item.foto" alt="Preview" class="img-preview"/>
+                      <div class="overlay"></div>
+                      <span class="close-icon"><i
+                            :class="'fas fa-trash-alt'"
+                        /></span>
+                    </button>
+                  </div>
+                </b-col>
+              </div>
+            </div>
+          </b-row>
+          <b-row>
+            <b-col cols="12">
+              <div v-if="this.newImagesArray.length">
+                <h5>Imágenes nuevas:</h5>
+                <div v-for="(item, index) in newImagesArray" :key="index" cols="12" md="4" class="mb-3">
+                  <a @click="onNewImageDelete(index)">
+                    <img :src="item" alt="Preview" class="img-preview"/>
+                  </a>
+                </div>
               </div>
             </b-col>
           </b-row>
@@ -426,7 +475,32 @@
         <!-- <div v-for="(item, index) in loadedPhotos" :key="index" cols="12" md="4" class="mb-3">
             <img :src="item.foto" alt="Preview" class="img-preview"/>
         </div> -->
-        <b-container fluid>
+        <b-carousel
+          id="carousel-1"
+          v-model="slide"
+          :interval="4000"
+          controls
+          indicators
+          background="#ababab"
+          style="text-shadow: 1px 1px 2px #333;"
+          @sliding-start="onSlideStart"
+          @sliding-end="onSlideEnd"
+        >
+          <div v-for="(item, index) in loadedPhotos" :key="index">
+            <b-carousel-slide class="img-preview-container-1">
+              <template #img>
+                <img
+                  class="img-preview-1"
+                  :src="item.foto"
+                  alt="Preview"
+                >
+              </template>
+              <!-- <img :src="item.foto" alt="Preview" class="img-preview-1"/>
+              <div class="overlay"></div> -->
+            </b-carousel-slide>
+          </div>
+    </b-carousel>
+        <!-- <b-container fluid>
           <b-row>
             <b-col v-for="(item, index) in loadedPhotos" :key="index" cols="12" md="6" class="mb-3">
               <div class="img-preview-container-1">
@@ -435,7 +509,7 @@
               </div>
             </b-col>
           </b-row>
-        </b-container>
+        </b-container> -->
       </template>
       <template #modal-footer="{}">
         <b-button variant="danger" @click="$bvModal.hide('modal-5-zapatos')"
@@ -754,6 +828,10 @@ export default {
           this.form.precio_minimo = ''
           this.form.precio_mayorista = ''
           this.form.state = 1
+          this.loadedImages = []
+          this.loadedPhotos = []
+          this.newImagesArray = []
+          this.form.base64Images = []
           break
         }
         case 'update': {
@@ -767,6 +845,10 @@ export default {
           this.form.precio_minimo = ''
           this.form.precio_mayorista = ''
           this.form.state = 1
+          this.loadedImages = []
+          this.loadedPhotos = []
+          this.newImagesArray = []
+          this.form.base64Images = []
           break
         }
       }
@@ -839,20 +921,19 @@ export default {
         })
     },
     onImageDelete (selectedImage, imageIndex) {
-      console.log(selectedImage)
+      console.dir(selectedImage.id)
       console.log('HOLA')
       const me = this
       axios.delete(apiUrl + '/fotos/delete', {
-
-        form: { id: selectedImage }
-
+        params: { id: selectedImage.id }
       })
         .then((response) => {
-          this.form.base64Images.splice(imageIndex, 1)
+          this.loadedPhotos.splice(imageIndex, 1)
           me.alertVariant = 'danger'
           me.showAlert()
           me.alertText = 'Se ha eliminado la imagen exitosamente'
           me.$refs.vuetable.refresh()
+          me.$refs.loadedImages.refresh()
         })
     },
     onNewImageDelete (imageIndex) {
@@ -1043,13 +1124,12 @@ export default {
 }
 .img-preview-container {
   position: relative;
-  display: inline-block;
 }
 .img-preview-1 {
   max-width: 100%;
-  max-height: 200px;
+  width: auto;
+  max-height: auto;
   height: auto;
-  margin-top: 1rem;
   border: 1px solid #dee2e6;
   border-radius: .25rem;
   transition: opacity 0.3s ease-in-out;
