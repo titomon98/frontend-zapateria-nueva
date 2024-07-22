@@ -5,22 +5,13 @@
         <iframe :src="previewURL" width="100%" height="700px"></iframe>
       </div>
       <template #modal-footer="{}">
-        <b-button  variant="primary" @click="descargarpdf()"
-          >Guardar</b-button
-        >
-        <b-button variant="danger" @click="closeModal('pdf')"
-          >Cancelar</b-button
-        >
+        <b-button variant="primary" @click="descargarpdf()">Guardar</b-button>
+        <b-button variant="danger" @click="closeModal('pdf')">Cancelar</b-button>
       </template>
     </b-modal>
     <b-modal id="modal-2" ref="modal-2" title="Venta individual">
-      <b-alert
-        :show="alertCountDownError"
-        dismissible
-        fade
-        @dismissed="alertCountDownError=0"
-        class="text-white bg-danger"
-      >
+      <b-alert :show="alertCountDownError" dismissible fade @dismissed="alertCountDownError=0"
+        class="text-white bg-danger">
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <b-row class="ml-2">
@@ -56,18 +47,18 @@
       <br>
       <table class="table table-hover product_item_list c_table theme-color mb-0">
         <thead>
-            <tr>
-                <th>Descripción</th>
-                <th>Cantidad</th>
-                <th>Total</th>
-            </tr>
+          <tr>
+            <th>Descripción</th>
+            <th>Cantidad</th>
+            <th>Total</th>
+          </tr>
         </thead>
         <tbody>
-            <tr v-for="details in arrayDetalles" :key="details.id">
-              <td v-text="details.descripcion"></td>
-              <td v-text="details.cantidad"></td>
-              <td v-text="details.subtotal"></td>
-            </tr>
+          <tr v-for="details in arrayDetalles" :key="details.id">
+            <td v-text="details.descripcion"></td>
+            <td v-text="details.cantidad"></td>
+            <td v-text="details.subtotal"></td>
+          </tr>
         </tbody>
       </table>
       <br>
@@ -76,174 +67,106 @@
           <h5>Total factura: {{ encabezado.total }}</h5>
         </b-col>
       </b-row>
+      <b-row class="ml-2">
+        <b-col md="6">
+          <strong><p style="color:black;">ESTO NO ES UNA FACTURA</p></strong>
+        </b-col>
+      </b-row>
       <template #modal-footer="{}">
-        <b-button variant="danger" @click="closeModal('ver')"
-          >Cerrar</b-button
-        >
+        <b-button variant="danger" @click="closeModal('ver')">Cerrar</b-button>
       </template>
     </b-modal>
     <b-modal id="modal-3" ref="modal-3" title="Desactivar venta">
-      <b-alert
-        :show="alertCountDownError"
-        dismissible
-        fade
-        @dismissed="alertCountDownError=0"
-        class="text-white bg-danger"
-      >
+      <b-alert :show="alertCountDownError" dismissible fade @dismissed="alertCountDownError=0"
+        class="text-white bg-danger">
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <h6 class="my-4">
         ¿Desea desactivar la venta: {{ form.id }}? Esta acción no se puede deshacer
       </h6>
       <template #modal-footer="{}">
-        <b-button
-          type="submit"
-          variant="primary"
-          @click="onState()
-          $bvModal.hide('modal-3')"
-          >Desactivar</b-button
-        >
-        <b-button variant="danger" @click="$bvModal.hide('modal-3')"
-          >Cancelar</b-button
-        >
+        <b-button type="submit" variant="primary" @click="onState()
+          $bvModal.hide('modal-3')">Desactivar</b-button>
+        <b-button variant="danger" @click="$bvModal.hide('modal-3')">Cancelar</b-button>
       </template>
     </b-modal>
     <b-row>
       <b-col md="12">
         <iq-card>
-            <template v-slot:headerTitle>
-              <h4 class="card-title mt-3">Listado de ventas</h4>
-              <div class="iq-search-bar mt-2">
-                <div class="row">
-                      <div class="col-sm">
-                        <b-form action="#" class="searchbox">
-                            <b-input id="search" placeholder="Buscar..." @input="(val) => searchChange(val)" />
-                            <a class="search-link" href="#"><i class="ri-search-line"></i></a>
-                        </b-form>
-                      </div>
-                      <div class="col-sm">
-                        <b-dropdown
-                          id="ddown1"
-                          :text="columna.nombre"
-                          variant="outline-dark"
-                          class="mr-1 float-md-left btn-group"
-                          size="xs"
-                        >
-                          <b-dropdown-item
-                            v-for="(search, index) in options"
-                            :key="index"
-                            @click="changeTypeSearch(search)"
-                            >{{ search.nombre }}</b-dropdown-item
-                          >
-                        </b-dropdown>
-                      </div>
+          <template v-slot:headerTitle>
+            <h4 class="card-title mt-3">Listado de ventas</h4>
+            <div class="iq-search-bar mt-2">
+              <div class="row">
+                <div class="col-sm">
+                  <b-form action="#" class="searchbox">
+                    <b-input id="search" placeholder="Buscar..." @input="(val) => searchChange(val)" />
+                    <a class="search-link" href="#"><i class="ri-search-line"></i></a>
+                  </b-form>
+                </div>
+                <div class="col-sm">
+                  <b-dropdown id="ddown1" :text="columna.nombre" variant="outline-dark"
+                    class="mr-1 float-md-left btn-group" size="xs">
+                    <b-dropdown-item v-for="(search, index) in options" :key="index"
+                      @click="changeTypeSearch(search)">{{ search.nombre }}</b-dropdown-item>
+                  </b-dropdown>
                 </div>
               </div>
-            </template>
-            <template v-slot:headerAction>
-              <router-link
-                to='Sales'
-              >
-                <b-button variant="primary">AGREGAR NUEVO</b-button>
-              </router-link>
+            </div>
+          </template>
+          <template v-slot:headerAction>
+            <router-link to='Sales'>
+              <b-button variant="primary">AGREGAR NUEVO</b-button>
+            </router-link>
           </template>
           <template v-slot:body>
-            <datatable-heading
-              :changePageSize="changePageSizes"
-              :searchChange="searchChange"
-              :from="from"
-              :to="to"
-              :total="total"
-              :perPage="perPage"
-            >
+            <datatable-heading :changePageSize="changePageSizes" :searchChange="searchChange" :from="from" :to="to"
+              :total="total" :perPage="perPage">
             </datatable-heading>
-            <vuetable
-              ref="vuetable"
-              class="table-divided order-with-arrow"
-              :api-url="apiBase"
-              :query-params="makeQueryParams"
-              :per-page="perPage"
-              :reactive-api-url="true"
-              :fields="fields"
-              pagination-path
-              @vuetable:pagination-data="onPaginationData"
-            >
+            <vuetable ref="vuetable" class="table-divided order-with-arrow" :api-url="apiBase"
+              :query-params="makeQueryParams" :per-page="perPage" :reactive-api-url="true" :fields="fields"
+              pagination-path @vuetable:pagination-data="onPaginationData">
               <!-- Estado -->
               <div slot="estado" slot-scope="props">
                 <h5 v-if="props.rowData.estado == 1">
-                  <b-badge variant="light"
-                    ><h6 class="success"><strong>VENDIDO</strong></h6></b-badge
-                  >
+                  <b-badge variant="light">
+                    <h6 class="success"><strong>VENDIDO</strong></h6>
+                  </b-badge>
                 </h5>
                 <h5 v-else-if="props.rowData.estado == 2">
-                  <b-badge variant="light"
-                    ><h6 class="success"><strong>PENDIENTE DE COBRAR</strong></h6></b-badge
-                  >
+                  <b-badge variant="light">
+                    <h6 class="success"><strong>PENDIENTE DE COBRAR</strong></h6>
+                  </b-badge>
                 </h5>
                 <h5 v-else>
-                  <b-badge variant="light"
-                    ><h6 class="danger"><strong>INACTIVO</strong></h6></b-badge
-                  >
+                  <b-badge variant="light">
+                    <h6 class="danger"><strong>INACTIVO</strong></h6>
+                  </b-badge>
                 </h5>
               </div>
               <!-- Botones -->
               <template slot="actions" slot-scope="props">
                 <b-button-group>
-                  <b-button
-                    v-b-tooltip.top="'Ver detalles'"
-                    @click="seeSale(props.rowData)"
-                    v-b-modal.modal-2
-                    class="mb-2"
-                    size="sm"
-                    variant="outline-success"
-                    ><i :class="'fas fa-eye'"
-                  /></b-button>
-                  <b-button
-                    v-b-tooltip.top="'Imprimir recibo de venta'"
-                    v-if="props.rowData.estado === 1"
-                    @click="printSale(props.rowData)"
-                    class="mb-2"
-                    size="sm"
-                    variant="outline-dark"
-                    ><i :class="'fas fa-print'"
-                  /></b-button>
-                  <b-button
-                    v-b-tooltip.top="'Imprimir anticipo de venta'"
-                    v-if="props.rowData.estado === 2"
-                    @click="printSale(props.rowData)"
-                    class="mb-2"
-                    size="sm"
-                    variant="outline-info"
-                    ><i :class="'fas fa-print'"
-                  /></b-button>
-                  <b-button
-                    v-b-tooltip.top="'Cobrar venta'"
-                    v-if="props.rowData.estado === 2"
-                    class="mb-2"
-                    size="sm"
-                    :variant="'outline-danger'"
-                  >
-                  <i :class="'fas fa-arrow-right'"
-                  />
+                  <b-button v-b-tooltip.top="'Ver detalles'" @click="seeSale(props.rowData)" v-b-modal.modal-2
+                    class="mb-2" size="sm" variant="outline-success"><i :class="'fas fa-eye'" /></b-button>
+                  <b-button v-b-tooltip.top="'Imprimir recibo de venta'" v-if="props.rowData.estado === 1"
+                    @click="printSale(props.rowData)" class="mb-2" size="sm" variant="outline-dark"><i
+                      :class="'fas fa-print'" /></b-button>
+                  <b-button v-b-tooltip.top="'Imprimir anticipo de venta'" v-if="props.rowData.estado === 2"
+                    @click="printSale(props.rowData)" class="mb-2" size="sm" variant="outline-info"><i
+                      :class="'fas fa-print'" /></b-button>
+                  <b-button v-b-tooltip.top="'Cobrar venta'" v-if="props.rowData.estado === 2" class="mb-2" size="sm"
+                    :variant="'outline-danger'">
+                    <i :class="'fas fa-arrow-right'" />
                   </b-button>
-                  <b-button
-                    v-b-tooltip.top="'Devolución de venta'"
-                    v-if="props.rowData.estado === 1"
-                    class="mb-2"
-                    size="sm"
-                    :variant="'outline-warning'"
-                  >
-                  <i :class="'fas fa-arrow-right'"
-                  />
+                  <b-button v-b-tooltip.top="'Devolución de venta'" v-if="props.rowData.estado === 1" class="mb-2"
+                    size="sm" :variant="'outline-warning'">
+                    <i :class="'fas fa-arrow-right'" />
                   </b-button>
                 </b-button-group>
               </template>
               <!-- Paginacion -->
             </vuetable>
-            <vuetable-pagination-bootstrap
-                ref="pagination"
-                @vuetable-pagination:change-page="onChangePage"
-              />
+            <vuetable-pagination-bootstrap ref="pagination" @vuetable-pagination:change-page="onChangePage" />
           </template>
         </iq-card>
       </b-col>
@@ -260,6 +183,7 @@ import { required } from '@vuelidate/validators'
 import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
 import JsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 import { mapGetters } from 'vuex'
 import moment from 'moment'
 export default {
@@ -518,14 +442,20 @@ export default {
       this.$refs['modal-pdf'].show()
       var altura = 1
       var ahora = new Date()
-      const dia = ahora.getDay()
-      const mes = ahora.getMonth()
       const tienda = data.detalle_ventas[0].talla.tienda.nombre
+      console.log(data)
+      this.arrayDetalles = data.detalle_ventas
+      this.encabezado.id = data.id
+      this.encabezado.fecha = new Date().toLocaleDateString('es-us', data.fecha)
+      this.encabezado.cliente = data.cliente.nombre
+      this.encabezado.usuario = data.usuario.nombre + ' ' + data.usuario.apellidos
+      this.encabezado.nit = data.cliente.nit
+      this.encabezado.total = data.total
 
       this.pdf = new JsPDF({
         unit: 'cm',
         format: [14, 21.5],
-        orientation: 'landscape',
+        orientation: 'landscape'
       })
       var ingreso = moment(ahora).format('DD/MM/YYYY')
       var imgData = this.logo3
@@ -538,7 +468,7 @@ export default {
         this.pdf.text('Anticipo de venta No. ' + data.id, 7, altura)
         this.pdfName = 'AnticipoVenta' + data.id + '.pdf'
       }
-      //Encabezado
+      // Encabezado
       altura = altura + 0.5
       this.pdf.text('Fecha de generación: ' + ingreso, 7, altura)
       altura = altura + 0.5
@@ -550,10 +480,29 @@ export default {
       this.pdf.text('Venta registrada por: ', 7, altura)
       this.pdf.setFontSize(10).setFont(undefined, 'normal')
       this.pdf.text(data.usuario.nombre + ' ' + data.usuario.apellidos, 10.65, altura)
-      //Cuerpo de recibo
+      // Cuerpo de recibo
       altura = altura + 1
-      this.pdf.text(tienda, 1.5, altura)
-
+      this.pdf.text('Tienda: ' + tienda, 1.5, altura)
+      altura = altura + 0.75
+      this.pdf.setFontSize(14).setFont(undefined, 'normal')
+      this.pdf.text('Total: ' + parseFloat(this.encabezado.total).toFixed(2), 1.5, altura)
+      altura = altura + 0.5
+      this.pdf.setFontSize(10).setFont(undefined, 'bold')
+      this.pdf.text('ESTO NO ES UNA FACTURA', 1.5, altura)
+      this.arrayDetalles.map(function (st) {
+        st.subtotal = parseFloat(st.subtotal).toFixed(2)
+      })
+      // Tabla
+      autoTable(this.pdf, {
+        columns: [{ header: 'Descripción', dataKey: 'descripcion' }, { header: 'Cantidad', dataKey: 'cantidad' }, { header: 'Subtotal', dataKey: 'subtotal' }],
+        body: this.arrayDetalles,
+        margin: { top: 5 },
+        headStyles: {
+          fillColor: [21, 21, 21],
+          textColor: [225, 225, 225],
+          fontStyle: 'bold'
+        }
+      })
       var pdfData = this.pdf.output('blob')
       // Convert PDF to data URL
       var pdfURL = URL.createObjectURL(pdfData)
