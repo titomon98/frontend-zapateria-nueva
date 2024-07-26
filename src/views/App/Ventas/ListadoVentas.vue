@@ -114,6 +114,8 @@
             </div>
           </template>
           <template v-slot:headerAction>
+            <b-button variant="danger" @click="cierrePDF()">GENERAR CIERRE EN PDF</b-button>
+            <b-button variant="success" @click="cierreExcel()">GENERAR CIERRE EN EXCEL</b-button>
             <router-link to='Sales'>
               <b-button variant="primary">AGREGAR NUEVO</b-button>
             </router-link>
@@ -510,6 +512,147 @@ export default {
     },
     descargarpdf () {
       this.pdf.save(this.pdfName)
+    },
+    cierrePDF () {
+      this.$refs['modal-pdf'].show()
+      // Llamar al endpoint con todas las ventas de la fecha dada
+
+      var altura = 1
+      var ahora = new Date()
+      const tienda = data.detalle_ventas[0].talla.tienda.nombre
+      this.arrayDetalles = data.detalle_ventas
+      this.encabezado.id = data.id
+      this.encabezado.fecha = new Date().toLocaleDateString('es-us', data.fecha)
+      this.encabezado.cliente = data.cliente.nombre
+      this.encabezado.usuario = data.usuario.nombre + ' ' + data.usuario.apellidos
+      this.encabezado.nit = data.cliente.nit
+      this.encabezado.total = data.total
+
+      this.pdf = new JsPDF({
+        unit: 'cm',
+        format: [14, 21.5],
+        orientation: 'landscape'
+      })
+      var ingreso = moment(ahora).format('DD/MM/YYYY')
+      var imgData = this.logo3
+      this.pdf.addImage(imgData, 'PNG', 1.5, 0.75, 4.37, 1.87)
+      this.pdf.setFontSize(10).setFont(undefined, 'bold')
+      if (data.estado === 1) {
+        this.pdf.text('Recibo de venta No. ' + data.id, 7, altura)
+        this.pdfName = 'ReciboVenta' + data.id + '.pdf'
+      } else {
+        this.pdf.text('Anticipo de venta No. ' + data.id, 7, altura)
+        this.pdfName = 'AnticipoVenta' + data.id + '.pdf'
+      }
+      // Encabezado
+      altura = altura + 0.5
+      this.pdf.text('Fecha de generación: ' + ingreso, 7, altura)
+      altura = altura + 0.5
+      this.pdf.text('Recibo generado por: ', 7, altura)
+      this.pdf.setFontSize(10).setFont(undefined, 'normal')
+      this.pdf.text(this.currentUser.user, 10.75, altura)
+      altura = altura + 0.5
+      this.pdf.setFontSize(10).setFont(undefined, 'bold')
+      this.pdf.text('Venta registrada por: ', 7, altura)
+      this.pdf.setFontSize(10).setFont(undefined, 'normal')
+      this.pdf.text(data.usuario.nombre + ' ' + data.usuario.apellidos, 10.65, altura)
+      // Cuerpo de recibo
+      altura = altura + 1
+      this.pdf.text('Tienda: ' + tienda, 1.5, altura)
+      altura = altura + 0.75
+      this.pdf.setFontSize(14).setFont(undefined, 'normal')
+      this.pdf.text('Total: ' + parseFloat(this.encabezado.total).toFixed(2), 1.5, altura)
+      altura = altura + 0.5
+      this.pdf.setFontSize(10).setFont(undefined, 'bold')
+      this.pdf.text('ESTO NO ES UNA FACTURA', 1.5, altura)
+      this.arrayDetalles.map(function (st) {
+        st.subtotal = parseFloat(st.subtotal).toFixed(2)
+      })
+      // Tabla
+      autoTable(this.pdf, {
+        columns: [{ header: 'Descripción', dataKey: 'descripcion' }, { header: 'Cantidad', dataKey: 'cantidad' }, { header: 'Subtotal', dataKey: 'subtotal' }],
+        body: this.arrayDetalles,
+        margin: { top: 5 },
+        headStyles: {
+          fillColor: [21, 21, 21],
+          textColor: [225, 225, 225],
+          fontStyle: 'bold'
+        }
+      })
+      var pdfData = this.pdf.output('blob')
+      // Convert PDF to data URL
+      var pdfURL = URL.createObjectURL(pdfData)
+      this.previewURL = pdfURL
+    },
+    async cierreExcel () {
+      await axios.get(apiUrl + '/ventas/reporte/cierre', {
+        params: {
+          date: '2024-07-18',
+          tienda: 1,
+        }
+      }).then((response) => {
+        this.actuales = response.data
+        console.log(response.data)
+        this.currentDate = new Date().toLocaleDateString('es-ES')
+        // Inicio tamanio columnas
+        const workbook = new ExcelJS.Workbook()
+        const worksheet = workbook.addWorksheet('Inventario de medicamentos actuales')
+        let column
+        column = worksheet.getColumn('A')
+        column.width = 50
+        column = worksheet.getColumn('B')
+        column.width = 20
+        column = worksheet.getColumn('C')
+        column.width = 20
+        column = worksheet.getColumn('D')
+        column.width = 20
+        column = worksheet.getColumn('E')
+        column.width = 20
+        column = worksheet.getColumn('F')
+        column.width = 20
+        // Fin tamanio columnas
+        worksheet.mergeCells('A1:F1')
+        worksheet.mergeCells('A2:F2')
+        worksheet.getCell('A1').value = 'Reporte de medicamentos actuales en Centro Galo'
+        worksheet.getCell('A2').value = 'Generado por: ' + this.currentUser.user + ' con fecha ' + this.currentDate
+        // Inicio encabezado
+        worksheet.getCell('A3').font = { bold: true }
+        worksheet.getCell('B3').font = { bold: true }
+        worksheet.getCell('C3').font = { bold: true }
+        worksheet.getCell('D3').font = { bold: true }
+        worksheet.getCell('E3').font = { bold: true }
+        worksheet.getCell('F3').font = { bold: true }
+        worksheet.getCell('A3').value = 'Nombre medicamento'
+        worksheet.getCell('B3').value = 'Existencia'
+        worksheet.getCell('C3').value = 'Costo unitario'
+        worksheet.getCell('D3').value = 'Valor total costo'
+        worksheet.getCell('E3').value = 'Precio unitario'
+        worksheet.getCell('F3').value = 'Valor total precio'
+        // Fin encabezado
+        // Cuerpo del reporte
+        let fila = 4
+        for (let i = 0; i < this.actuales.length; i++) {
+          const element = this.actuales[i]
+          worksheet.getCell('A' + fila).value = element.nombre
+          worksheet.getCell('B' + fila).value = element.existencia_total
+          worksheet.getCell('C' + fila).value = element.precio_costo
+          worksheet.getCell('D' + fila).value = parseFloat(element.precio_costo) * parseFloat(element.existencia_total)
+          worksheet.getCell('E' + fila).value = element.precio_publico
+          worksheet.getCell('F' + fila).value = parseFloat(element.precio_publico) * parseFloat(element.existencia_total)
+          fila++
+        }
+        // Fin del cuerpo del reporte
+
+        workbook.xlsx.writeBuffer().then((buffer) => {
+          const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = 'InventarioGeneral.xlsx'
+          link.click()
+        })
+        this.closeModal('excel')
+      })
     }
   }
 }
