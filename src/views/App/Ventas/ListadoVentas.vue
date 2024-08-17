@@ -188,6 +188,8 @@ import JsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { mapGetters } from 'vuex'
 import moment from 'moment'
+import ExcelJS from 'exceljs'
+
 export default {
   name: 'SalesList',
   components: {
@@ -513,7 +515,7 @@ export default {
     descargarpdf () {
       this.pdf.save(this.pdfName)
     },
-    cierrePDF () {
+    cierrePDF (data) {
       this.$refs['modal-pdf'].show()
       // Llamar al endpoint con todas las ventas de la fecha dada
 
@@ -588,7 +590,7 @@ export default {
       await axios.get(apiUrl + '/ventas/reporte/cierre', {
         params: {
           date: '2024-07-18',
-          tienda: 1,
+          tienda: 1
         }
       }).then((response) => {
         this.actuales = response.data
@@ -657,3 +659,4 @@ export default {
   }
 }
 </script>
+
