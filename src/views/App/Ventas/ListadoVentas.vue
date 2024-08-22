@@ -76,13 +76,13 @@
         <b-button variant="danger" @click="closeModal('ver')">Cerrar</b-button>
       </template>
     </b-modal>
-    <b-modal id="modal-3" ref="modal-3" title="Desactivar venta">
+    <b-modal id="modal-3" ref="modal-return-sale" title="Desactivar venta">
       <b-alert :show="alertCountDownError" dismissible fade @dismissed="alertCountDownError=0"
         class="text-white bg-danger">
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <h6 class="my-4">
-        ¿Desea desactivar la venta: {{ form.id }}? Esta acción no se puede deshacer
+        ¿Desea devolver la venta: {{ form.id }}? Esta acción no se puede deshacer
       </h6>
       <template #modal-footer="{}">
         <b-button type="submit" variant="primary" @click="onState()
@@ -151,16 +151,16 @@
                   <b-button v-b-tooltip.top="'Ver detalles'" @click="seeSale(props.rowData)" v-b-modal.modal-2
                     class="mb-2" size="sm" variant="outline-success"><i :class="'fas fa-eye'" /></b-button>
                   <b-button v-b-tooltip.top="'Imprimir recibo de venta'" v-if="props.rowData.estado === 1"
-                    @click="printSale(props.rowData)" class="mb-2" size="sm" variant="outline-dark"><i
+                    @click="printFullSale(props.rowData)" class="mb-2" size="sm" variant="outline-dark"><i
                       :class="'fas fa-print'" /></b-button>
-                  <b-button v-b-tooltip.top="'Imprimir anticipo de venta'" v-if="props.rowData.estado === 2"
+                  <b-button v-b-tooltip.top="'Imprimir anticipo de venta'" v-if="props.rowData.estado === 3"
                     @click="printSale(props.rowData)" class="mb-2" size="sm" variant="outline-info"><i
                       :class="'fas fa-print'" /></b-button>
-                  <b-button v-b-tooltip.top="'Cobrar venta'" v-if="props.rowData.estado === 2" class="mb-2" size="sm"
+                  <b-button v-b-tooltip.top="'Cobrar venta'" v-if="props.rowData.estado === 2 || props.rowData.estado === 3" class="mb-2" size="sm"
                     :variant="'outline-danger'">
                     <i :class="'fas fa-arrow-right'" />
                   </b-button>
-                  <b-button v-b-tooltip.top="'Devolución de venta'" v-if="props.rowData.estado === 1" class="mb-2"
+                  <b-button v-b-tooltip.top="'Devolución de venta'" v-if="props.rowData.estado === 1 || props.rowData.estado === 2 || props.rowData.estado === 3" class="mb-2"
                     size="sm" :variant="'outline-warning'">
                     <i :class="'fas fa-arrow-right'" />
                   </b-button>
@@ -229,7 +229,7 @@ export default {
         monthNames: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
         firstDay: 0
       },
-
+      pdfTitle: '',
       selectedDates: {
         start: null,
         end: null
@@ -443,6 +443,78 @@ export default {
       this.columna = columna
     },
     printSale (data) {
+      this.pdfTitle = 'Adelanto de venta'
+      this.$refs['modal-pdf'].show()
+      var altura = 1
+      console.log(data)
+      var ahora = new Date()
+      const tienda = data.detalle_ventas[0].talla.tienda.nombre
+      this.arrayDetalles = data.detalle_ventas
+      this.encabezado.id = data.id
+      this.encabezado.fecha = new Date().toLocaleDateString('es-us', data.fecha)
+      this.encabezado.cliente = data.cliente.nombre
+      this.encabezado.usuario = data.usuario.nombre + ' ' + data.usuario.apellidos
+      this.encabezado.nit = data.cliente.nit
+      this.encabezado.total = data.total
+
+      this.pdf = new JsPDF({
+        unit: 'cm',
+        format: [14, 21.5],
+        orientation: 'landscape'
+      })
+      var ingreso = moment(ahora).format('DD/MM/YYYY')
+      var imgData = this.logo3
+      this.pdf.addImage(imgData, 'PNG', 1.5, 0.75, 4.37, 1.87)
+      this.pdf.setFontSize(10).setFont(undefined, 'bold')
+      if (data.estado === 1) {
+        this.pdf.text('Anticipo de venta No. ' + data.id, 7, altura)
+        this.pdfName = 'ReciboVenta' + data.id + '.pdf'
+      } else {
+        this.pdf.text('Anticipo de venta No. ' + data.id, 7, altura)
+        this.pdfName = 'AnticipoVenta' + data.id + '.pdf'
+      }
+      // Encabezado
+      altura = altura + 0.5
+      this.pdf.text('Fecha de generación: ' + ingreso, 7, altura)
+      altura = altura + 0.5
+      this.pdf.text('Recibo generado por: ', 7, altura)
+      this.pdf.setFontSize(10).setFont(undefined, 'normal')
+      this.pdf.text(this.currentUser.user, 10.75, altura)
+      altura = altura + 0.5
+      this.pdf.setFontSize(10).setFont(undefined, 'bold')
+      this.pdf.text('Venta registrada por: ', 7, altura)
+      this.pdf.setFontSize(10).setFont(undefined, 'normal')
+      this.pdf.text(data.usuario.nombre + ' ' + data.usuario.apellidos, 10.65, altura)
+      // Cuerpo de recibo
+      altura = altura + 1
+      this.pdf.text('Tienda: ' + tienda, 1.5, altura)
+      altura = altura + 0.75
+      this.pdf.setFontSize(14).setFont(undefined, 'normal')
+      this.pdf.text('Total: ' + parseFloat(this.encabezado.total).toFixed(2), 1.5, altura)
+      altura = altura + 0.5
+      this.pdf.setFontSize(10).setFont(undefined, 'bold')
+      this.pdf.text('ESTO NO ES UNA FACTURA', 1.5, altura)
+      this.arrayDetalles.map(function (st) {
+        st.subtotal = parseFloat(st.subtotal).toFixed(2)
+      })
+      // Tabla
+      autoTable(this.pdf, {
+        columns: [{ header: 'Descripción', dataKey: 'descripcion' }, { header: 'Cantidad', dataKey: 'cantidad' }, { header: 'Subtotal', dataKey: 'subtotal' }],
+        body: this.arrayDetalles,
+        margin: { top: 5 },
+        headStyles: {
+          fillColor: [21, 21, 21],
+          textColor: [225, 225, 225],
+          fontStyle: 'bold'
+        }
+      })
+      var pdfData = this.pdf.output('blob')
+      // Convert PDF to data URL
+      var pdfURL = URL.createObjectURL(pdfData)
+      this.previewURL = pdfURL
+    },
+    printFullSale (data) {
+      this.pdfTitle = 'Recibo de venta'
       this.$refs['modal-pdf'].show()
       var altura = 1
       var ahora = new Date()

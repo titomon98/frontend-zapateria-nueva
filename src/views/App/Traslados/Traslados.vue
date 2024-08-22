@@ -40,7 +40,7 @@
                 {{ 'Nombre: '+ option.zapato.estilo + ' Talla: '+ option.talla + ' Color: '+ option.zapato.colore.nombre }}
               </template>
               <template slot="selected-option" slot-scope="option">
-                {{ 'Nombre: '+ option.zapato.estilo + ' Color: '+ option.talla + ' Color: '+ option.zapato.colore.nombre }}
+                {{ 'Nombre: '+ option.zapato.estilo + ' Talla: '+ option.talla + ' Color: '+ option.zapato.colore.nombre }}
               </template>
             </v-select>
             <div v-if="$v.zapato.$error" class="invalid-feedback-vselect">
@@ -104,7 +104,7 @@
         <b-col md="6">
           <b-form-group label="Motivo de traslado:">
             <b-form-input
-              type="number"
+              type="text"
               v-model.trim="$v.formZapato.motivo.$model"
               :state="!$v.formZapato.motivo.$error"
               placeholder="Ingresar motivo de traslado"
@@ -195,7 +195,7 @@
               </b-col>
               <b-col md="4">
                 <b-form-group label="Agregar zapatos:">
-                  <b-button variant="info" v-b-modal.modal-3>AGREGAR ZAPATOS</b-button>
+                  <b-button variant="info" @click="onAgregarZapato()">AGREGAR ZAPATOS</b-button>
                 </b-form-group>
               </b-col>
             </b-row>
@@ -239,6 +239,21 @@
                 </div>
               </b-col>
             </b-row>
+            <b-row class="ml-2">
+              <b-col md="6">
+                <b-form-group label="Anticipo:">
+                  <b-form-input
+                    type="number"
+                    v-model.trim="$v.adelanto.$model"
+                    :state="!$v.adelanto.$error"
+                    placeholder="Ingresar anticipo"
+                  ></b-form-input>
+                </b-form-group>
+                <div v-if="$v.adelanto.$invalid" class="invalid-feedback">
+                  Debe ingresar la anticipo para el traslado
+                </div>
+              </b-col>
+            </b-row>
             <!-- Aqui comenzar con detalles -->
             <br>
             <br>
@@ -246,7 +261,8 @@
               <thead>
                   <tr>
                       <th>Acciones</th>
-                      <th>Descripción</th>
+                      <th>Detalle</th>
+                      <th>Motivo</th>
                       <th>Cantidad</th>
                       <th>Total</th>
                   </tr>
@@ -260,7 +276,8 @@
                             </button>
                         </template>
                     </td>
-                    <td v-text="details.descripcion"></td>
+                    <td v-text="details.nombre_zapato"></td>
+                    <td v-text="details.motivo"></td>
                     <td v-text="details.cantidad"></td>
                     <td v-text="details.total"></td>
                   </tr>
@@ -268,7 +285,7 @@
             </table>
             <br>
             <br>
-            <b-button variant="warning" v-if="arrayDetalles.length > 0" @click="onValidateAll()">AGREGAR VENTA</b-button>
+            <b-button variant="warning" v-if="arrayDetalles.length > 0" @click="onValidateAll()">AGREGAR TRASLADO</b-button>
           </template>
 
         </iq-card>
@@ -312,13 +329,18 @@ export default {
       tienda1: null,
       tienda2: null,
       responsable: null,
+      adelanto: null,
+      isButtonEnabled: false,
       tiendas: [],
       descripcion: null,
       zapato: {
         talla: '',
+        id: 0,
         zapato: {
+          id: 0,
           cantidad: 0,
           estilo: '',
+          existencias: 0,
           colore: {
             nombre: ''
           },
@@ -392,9 +414,10 @@ export default {
       tienda2: { required },
       descripcion: { required },
       responsable: { required },
+      adelanto: { required },
       formZapato: {
-        cantidad: { required },
-        motivo: { required }
+        cantidad: { },
+        motivo: { }
       },
       zapato: { required }
     }
@@ -416,21 +439,97 @@ export default {
         }
       }
     },
+    onValidate (action) {
+      this.$v.$touch()
+      if (this.$v.$error !== true) {
+        if (action === 'zapato') {
+          this.onSaveShoe()
+        }
+      } else {
+        this.alertErrorText = 'Revisa que todos los campos requeridos esten llenos'
+        this.showAlertError()
+      }
+    },
+    onSaveShoe () {
+      const detalle = {
+        estilo: '',
+        cantidad: '',
+        motivo: '',
+        total: 0,
+        zapato: 0,
+        talla: '',
+        id_talla: 0,
+        nombre_zapato: '',
+        existencias: 0
+      }
+      if (parseInt(this.zapato.cantidad) >= parseInt(this.formZapato.cantidad)) {
+        detalle.estilo = this.formZapato.estilo
+        detalle.cantidad = this.formZapato.cantidad
+        detalle.motivo = this.formZapato.motivo
+        detalle.total = this.formZapato.total
+        detalle.zapato = this.zapato.zapato.id
+        detalle.nombre_zapato = this.zapato.zapato.estilo + ' - Talla: ' + this.zapato.talla
+        detalle.id_talla = this.zapato.id
+        detalle.talla = this.zapato.talla
+        detalle.existencias = this.zapato.cantidad
+        detalle.total = parseFloat(this.formZapato.cantidad) * this.zapato.zapato.precio_venta
+        this.arrayDetalles.push(detalle)
+      } else {
+        this.alertErrorText = 'La cantidad a trasladar no puede ser mayor a la cantidad en existencia'
+        this.showAlertError()
+      }
+      this.formZapato.estilo = ''
+      this.formZapato.cantidad = ''
+      this.formZapato.motivo = ''
+      this.formZapato.total = ''
+      /*
+       zapato: {
+        talla: '',
+        zapato: {
+          cantidad: 0,
+          estilo: '',
+          colore: {
+            nombre: ''
+          },
+          precio_venta: 0,
+          precio_minimo: 0
+        }
+      },
+      formZapato: {
+        id: 0,
+        estilo: '',
+        cantidad: null,
+        descripcion: '',
+        total: 0,
+        motivo: null
+      },
+      */
+    },
+    onAgregarZapato () {
+      this.$v.$touch()
+      if (this.$v.$error !== true) {
+        this.$refs['modal-3'].show()
+      } else {
+        if (this.descripcion && this.tienda1 && this.tienda2 && this.responsable && this.adelanto) {
+          this.$refs['modal-3'].show()
+        } else {
+          this.alertText = 'Debe llenar todos los campos antes de agregar zapatos.'
+          this.showAlert()
+        }
+      }
+    },
     onValidateAll () {
       this.$v.$touch()
       this.id_usuario = this.currentUser.id
-      this.formMedicamento.medicine = 'General'
-      this.formMedicamento.cantidad = 'General'
-      this.formExamen.descripcion = 'General'
-      this.formExamen.cantidad = 'General'
-      this.formServicio.descripcion = 'General'
-      this.formServicio.cantidad = 'General'
-      this.formServicio.total = 'General'
       if (this.$v.$error !== true) {
         this.onSave()
       } else {
-        this.alertText = 'Ha ocurrido un error en la venta'
-        this.showAlertError()
+        if (this.descripcion && this.tienda1 && this.tienda2 && this.responsable && this.adelanto) {
+          this.onSave()
+        } else {
+          this.alertText = 'Debe llenar todos los datos del traslado y agregar zapatos a este.'
+          this.showAlert()
+        }
       }
     },
     setData (data) {
@@ -455,31 +554,51 @@ export default {
     },
     /* Guardar */
     onSave () {
-      const me = this
-      axios.post(apiUrl + '/ventas/create', {
-        nit: me.nit,
-        direccion: me.direccion,
-        cliente: me.cliente,
-        detalle: me.arrayDetalles,
-        serie: me.serie,
-        numero: me.numero,
-        tipo_cobro: me.tipo_cobro,
-        id_usuario: me.id_usuario,
-        pertenencia: 'CENTRO GALO'
-      })
-        .then((response) => {
-          me.alertVariant = 'success'
-          me.showAlert()
-          me.alertText = 'Se ha creado la venta exitosamente'
-          me.closeModal('save')
-          me.arrayDetalles = []
+      if (this.descripcion && this.tienda1 && this.tienda2 && this.responsable && this.adelanto) {
+        var today = new Date()
+        const me = this
+        console.log(me.arrayDetalles)
+        axios.post(apiUrl + '/traslados/create', {
+          detalle: me.arrayDetalles,
+          fecha: today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate(),
+          descripcion: me.descripcion,
+          id_tienda_envio: me.tienda1.id,
+          id_tienda_recibe: me.tienda2.id,
+          id_responsable_envio: me.responsable,
+          id_usuario: me.id_usuario,
+          adelanto: me.adelanto,
+          pertenencia: 'CENTRO GALO'
         })
-        .catch((error) => {
-          me.alertVariant = 'danger'
-          me.showAlertError()
-          me.alertText = error.response.data.msg
-          console.error('Error!', error)
-        })
+          .then((response) => {
+            me.alertVariant = 'success'
+            me.showAlert()
+            me.arrayDetalles = []
+            me.fecha = ''
+            me.id_tienda_envio = null
+            me.id_tienda_recibe = null
+            me.id_responsable_envio = null
+            me.adelanto = ''
+            me.descripcion = ''
+            me.alertText = 'Se ha agregado el traslado exitosamente'
+            me.closeModal('save')
+          })
+          .catch((error) => {
+            me.alertVariant = 'danger'
+            me.showAlertError()
+            me.alertText = error.response.data.msg
+            console.error('Error!', error)
+            me.arrayDetalles = []
+            me.fecha = ''
+            me.id_tienda_envio = ''
+            me.id_tienda_recibe = ''
+            me.id_responsable_envio = ''
+            me.adelanto = ''
+            me.descripcion = ''
+          })
+      } else {
+        this.alertErrorText = 'Debe llenar todos los datos'
+        this.showAlertError()
+      }
     },
     makeQueryParams (sortOrder, currentPage, perPage) {
       return sortOrder[0]
