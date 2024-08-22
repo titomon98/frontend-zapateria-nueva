@@ -303,7 +303,7 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask'
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'Sales',
+  name: 'Traslados',
   components: {
   },
   setup () {
