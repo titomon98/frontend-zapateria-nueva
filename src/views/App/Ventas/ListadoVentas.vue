@@ -82,12 +82,84 @@
         <div class="iq-alert-text">{{ alertErrorText }}</div>
       </b-alert>
       <h6 class="my-4">
-        ¿Desea devolver la venta: {{ form.id }}? Esta acción no se puede deshacer
+        ¿Desea devolver la venta: {{ form.numero }}? Esta acción no se puede deshacer
       </h6>
       <template #modal-footer="{}">
         <b-button type="submit" variant="primary" @click="onState()
           $bvModal.hide('modal-3')">Desactivar</b-button>
         <b-button variant="danger" @click="$bvModal.hide('modal-3')">Cancelar</b-button>
+      </template>
+    </b-modal>
+    <b-modal id="modal-4" ref="modal-4" title="Pagar cuenta" size="xl">
+      <b-alert
+        :show="alertCountDownError"
+        dismissible
+        fade
+        @dismissed="alertCountDownError=0"
+        class="text-white bg-danger"
+      >
+        <div class="iq-alert-text">{{ alertErrorText }}</div>
+      </b-alert>
+      <template>
+        <div>
+          <h6>Detalle de factura</h6>
+          <b-card>
+            <b-card-body>
+              <b-table
+                hover
+                :items="cuentas"
+                :fields="fieldsAccounts"
+                :select-mode="'single'"
+                selectable
+              >
+              </b-table>
+              <b-form-group label="Seleccione métodos para pagar:" v-slot="{ ariaDescribedby }">
+                <b-form-checkbox-group
+                  id="checkbox-group-1"
+                  v-model="selectedPayment"
+                  :options="paymentOptions"
+                  :aria-describedby="ariaDescribedby"
+                  name="flavour-1"
+                ></b-form-checkbox-group>
+              </b-form-group>
+              <div v-if="selectedPayment.indexOf(1) !== -1">
+                Efectivo
+                <b-input :type="'number'" id="CashTypeInput" ref="CashTypeInput" v-model="paymentType.Efectivo" />
+              </div>
+              <div v-if="selectedPayment.indexOf(2) !== -1">
+                Tarjeta
+                <b-input :type="'number'" id="CardTypeInput" ref="CardTypeInput" v-model="paymentType.Tarjeta" />
+              </div>
+              <div v-if="selectedPayment.indexOf(3) !== -1">
+                Depósito
+                <b-input :type="'number'" id="DepositTypeInput" ref="DepositTypeInput" v-model="paymentType.Deposito" />
+              </div>
+              <div v-if="selectedPayment.indexOf(4) !== -1">
+                Cheque
+                <b-input :type="'number'" id="CheckTypeInput" ref="CheckTypeInput" v-model="paymentType.Cheque" />
+              </div>
+              <div>
+                <strong> TOTAL INGRESADO: {{ parseFloat(this.paymentType.Efectivo) + parseFloat(this.paymentType.Tarjeta) + parseFloat(this.paymentType.Deposito) + parseFloat(this.paymentType.Cheque) }}</strong>
+              </div>
+              <div>
+                <strong> TOTAL A PAGAR: {{ this.totalPayment }}</strong>
+              </div>
+            </b-card-body>
+            <div>
+
+            </div>
+          </b-card>
+        </div>
+      </template>
+      <template #modal-footer="{}">
+        <b-button variant="primary" @click="
+          onPay()
+        "
+          >Aceptar</b-button
+        >
+        <b-button variant="danger" @click="$bvModal.hide('modal-4')"
+          >Cancelar</b-button
+        >
       </template>
     </b-modal>
     <b-row>
@@ -114,8 +186,6 @@
             </div>
           </template>
           <template v-slot:headerAction>
-            <b-button variant="danger" @click="cierrePDF()">GENERAR CIERRE EN PDF</b-button>
-            <b-button variant="success" @click="cierreExcel()">GENERAR CIERRE EN EXCEL</b-button>
             <router-link to='Sales'>
               <b-button variant="primary">AGREGAR NUEVO</b-button>
             </router-link>
@@ -139,6 +209,11 @@
                     <h6 class="success"><strong>PENDIENTE DE COBRAR</strong></h6>
                   </b-badge>
                 </h5>
+                <h5 v-else-if="props.rowData.estado == 3">
+                  <b-badge variant="light">
+                    <h6 class="danger"><strong>PAGO PARCIAL</strong></h6>
+                  </b-badge>
+                </h5>
                 <h5 v-else>
                   <b-badge variant="light">
                     <h6 class="danger"><strong>INACTIVO</strong></h6>
@@ -157,7 +232,10 @@
                     @click="printSale(props.rowData)" class="mb-2" size="sm" variant="outline-info"><i
                       :class="'fas fa-print'" /></b-button>
                   <b-button v-b-tooltip.top="'Cobrar venta'" v-if="props.rowData.estado === 2 || props.rowData.estado === 3" class="mb-2" size="sm"
-                    :variant="'outline-danger'">
+                    :variant="'outline-danger'" @click="
+                      setData(props.rowData)
+                      $bvModal.show('modal-4')
+                    ">
                     <i :class="'fas fa-arrow-right'" />
                   </b-button>
                   <b-button v-b-tooltip.top="'Devolución de venta'" v-if="props.rowData.estado === 1 || props.rowData.estado === 2 || props.rowData.estado === 3" class="mb-2"
@@ -188,8 +266,6 @@ import JsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { mapGetters } from 'vuex'
 import moment from 'moment'
-import ExcelJS from 'exceljs'
-
 export default {
   name: 'SalesList',
   components: {
@@ -218,6 +294,15 @@ export default {
       pdf: new JsPDF(),
       pdfName: '',
       previewURL: '',
+      selectedPayment: [],
+      totalPayment: 0,
+      paymentOptions: [
+        { text: 'Efectivo', value: 1 },
+        { text: 'Tarjeta', value: 2 },
+        { text: 'Depósito', value: 3 },
+        { text: 'Cheque', value: 4 },
+        { text: 'Transferencia', value: 5 }
+      ],
       localeData: {
         direction: 'ltr',
         format: 'dd/mm/yyyy',
@@ -244,9 +329,41 @@ export default {
       search: '',
       form: {
         id: 0,
-        fecha1: null,
-        fecha2: null
+        state: '',
+        numero: 0
       },
+      fieldsAccounts: [
+        {
+          key: 'numero',
+          label: 'Numero',
+          sortable: true
+        },
+        {
+          key: 'fecha',
+          label: 'Fecha',
+          sortable: true
+        },
+        {
+          key: 'por_pagar',
+          label: 'Total a pagar',
+          sortable: true
+        },
+        {
+          key: 'total',
+          label: 'Total',
+          sortable: true
+        }
+      ],
+      paymentType: {
+        Efectivo: 0,
+        Tarjeta: 0,
+        Deposito: 0,
+        Cheque: 0,
+        Seguro: 0,
+        Transferencia: 0
+      },
+      paymentSum: 0,
+      cuentas: [],
       arrayDetalles: [],
       arrayToday: [],
       arrayEspecifico: [],
@@ -279,7 +396,7 @@ export default {
         {
           name: 'id',
           sortField: 'id',
-          title: 'Número interno',
+          title: 'Número de venta',
           dataClass: 'list-item-heading'
         },
         {
@@ -364,9 +481,12 @@ export default {
       }
     },
     setData (data) {
+      this.cuentas[0] = data
       this.form.name = data.nombre
       this.form.state = data.estado
       this.form.id = data.id
+      this.form.numero = data.numero
+      this.totalPayment = data.por_pagar
     },
     /* Guardar */
     onUpdate () {
@@ -383,19 +503,17 @@ export default {
     },
     onState () {
       let me = this
-      if (this.form.state === 1) {
-        axios
-          .put(apiUrl + '/ventas/deactivate', {
-            id: this.form.id
-          })
-          .then((response) => {
-            me.$refs.vuetable.refresh()
-            me.$refs['modal-3'].hide()
-          })
-          .catch((error) => {
-            console.error('There was an error!', error)
-          })
-      }
+      axios
+        .put(apiUrl + '/ventas/deactivate', {
+          id: this.form.id
+        })
+        .then((response) => {
+          me.$refs.vuetable.refresh()
+          me.$refs['modal-3'].hide()
+        })
+        .catch((error) => {
+          console.error('There was an error!', error)
+        })
     },
     makeQueryParams (sortOrder, currentPage, perPage) {
       return sortOrder[0]
@@ -446,9 +564,9 @@ export default {
       this.pdfTitle = 'Adelanto de venta'
       this.$refs['modal-pdf'].show()
       var altura = 1
-      console.log(data)
       var ahora = new Date()
       const tienda = data.detalle_ventas[0].talla.tienda.nombre
+      console.log(data)
       this.arrayDetalles = data.detalle_ventas
       this.encabezado.id = data.id
       this.encabezado.fecha = new Date().toLocaleDateString('es-us', data.fecha)
@@ -587,148 +705,44 @@ export default {
     descargarpdf () {
       this.pdf.save(this.pdfName)
     },
-    cierrePDF (data) {
-      this.$refs['modal-pdf'].show()
-      // Llamar al endpoint con todas las ventas de la fecha dada
-
-      var altura = 1
-      var ahora = new Date()
-      const tienda = data.detalle_ventas[0].talla.tienda.nombre
-      this.arrayDetalles = data.detalle_ventas
-      this.encabezado.id = data.id
-      this.encabezado.fecha = new Date().toLocaleDateString('es-us', data.fecha)
-      this.encabezado.cliente = data.cliente.nombre
-      this.encabezado.usuario = data.usuario.nombre + ' ' + data.usuario.apellidos
-      this.encabezado.nit = data.cliente.nit
-      this.encabezado.total = data.total
-
-      this.pdf = new JsPDF({
-        unit: 'cm',
-        format: [14, 21.5],
-        orientation: 'landscape'
-      })
-      var ingreso = moment(ahora).format('DD/MM/YYYY')
-      var imgData = this.logo3
-      this.pdf.addImage(imgData, 'PNG', 1.5, 0.75, 4.37, 1.87)
-      this.pdf.setFontSize(10).setFont(undefined, 'bold')
-      if (data.estado === 1) {
-        this.pdf.text('Recibo de venta No. ' + data.id, 7, altura)
-        this.pdfName = 'ReciboVenta' + data.id + '.pdf'
+    onPay () {
+      this.paymentSum = parseFloat(this.paymentType.Efectivo) + parseFloat(this.paymentType.Tarjeta) + parseFloat(this.paymentType.Deposito) + parseFloat(this.paymentType.Cheque)
+      if (this.paymentSum > parseFloat(this.totalPayment)) {
+        this.alertErrorText = 'El total ingresado es mayor al total por pagar'
+        this.showAlertError()
       } else {
-        this.pdf.text('Anticipo de venta No. ' + data.id, 7, altura)
-        this.pdfName = 'AnticipoVenta' + data.id + '.pdf'
+        let me = this
+        axios.post(apiUrl + '/ventas/pay',
+          {
+            id_venta: this.form.id,
+            por_pagar: parseFloat(parseFloat(this.totalPayment) - parseFloat(this.paymentSum)),
+            efectivo: this.paymentType.Efectivo,
+            tarjeta: this.paymentType.Tarjeta,
+            deposito: this.paymentType.Deposito,
+            cheque: this.paymentType.Cheque,
+            total: this.paymentSum,
+            fecha: new Date().toJSON().slice(0, 10)
+          })
+          .then(
+            this.paymentType.Efectivo = 0,
+            this.paymentType.Tarjeta = 0,
+            this.paymentType.Deposito = 0,
+            this.paymentType.Cheque = 0,
+            this.paymentType.Seguro = 0,
+            this.paymentType.transferencia = 0,
+            this.paymentSum = 0,
+            this.$refs.vuetable.refresh()
+          )
+          .catch((error) => {
+            console.error(error)
+          })
+        me.alertVariant = 'info'
+        me.showAlert()
+        me.alertText = 'Se ha cobrado de la venta no.' + me.form.numero + ' exitosamente'
+        me.$refs.vuetable.refresh()
+        me.$refs['modal-4'].hide()
       }
-      // Encabezado
-      altura = altura + 0.5
-      this.pdf.text('Fecha de generación: ' + ingreso, 7, altura)
-      altura = altura + 0.5
-      this.pdf.text('Recibo generado por: ', 7, altura)
-      this.pdf.setFontSize(10).setFont(undefined, 'normal')
-      this.pdf.text(this.currentUser.user, 10.75, altura)
-      altura = altura + 0.5
-      this.pdf.setFontSize(10).setFont(undefined, 'bold')
-      this.pdf.text('Venta registrada por: ', 7, altura)
-      this.pdf.setFontSize(10).setFont(undefined, 'normal')
-      this.pdf.text(data.usuario.nombre + ' ' + data.usuario.apellidos, 10.65, altura)
-      // Cuerpo de recibo
-      altura = altura + 1
-      this.pdf.text('Tienda: ' + tienda, 1.5, altura)
-      altura = altura + 0.75
-      this.pdf.setFontSize(14).setFont(undefined, 'normal')
-      this.pdf.text('Total: ' + parseFloat(this.encabezado.total).toFixed(2), 1.5, altura)
-      altura = altura + 0.5
-      this.pdf.setFontSize(10).setFont(undefined, 'bold')
-      this.pdf.text('ESTO NO ES UNA FACTURA', 1.5, altura)
-      this.arrayDetalles.map(function (st) {
-        st.subtotal = parseFloat(st.subtotal).toFixed(2)
-      })
-      // Tabla
-      autoTable(this.pdf, {
-        columns: [{ header: 'Descripción', dataKey: 'descripcion' }, { header: 'Cantidad', dataKey: 'cantidad' }, { header: 'Subtotal', dataKey: 'subtotal' }],
-        body: this.arrayDetalles,
-        margin: { top: 5 },
-        headStyles: {
-          fillColor: [21, 21, 21],
-          textColor: [225, 225, 225],
-          fontStyle: 'bold'
-        }
-      })
-      var pdfData = this.pdf.output('blob')
-      // Convert PDF to data URL
-      var pdfURL = URL.createObjectURL(pdfData)
-      this.previewURL = pdfURL
-    },
-    async cierreExcel () {
-      await axios.get(apiUrl + '/ventas/reporte/cierre', {
-        params: {
-          date: '2024-07-18',
-          tienda: 1
-        }
-      }).then((response) => {
-        this.actuales = response.data
-        console.log(response.data)
-        this.currentDate = new Date().toLocaleDateString('es-ES')
-        // Inicio tamanio columnas
-        const workbook = new ExcelJS.Workbook()
-        const worksheet = workbook.addWorksheet('Inventario de medicamentos actuales')
-        let column
-        column = worksheet.getColumn('A')
-        column.width = 50
-        column = worksheet.getColumn('B')
-        column.width = 20
-        column = worksheet.getColumn('C')
-        column.width = 20
-        column = worksheet.getColumn('D')
-        column.width = 20
-        column = worksheet.getColumn('E')
-        column.width = 20
-        column = worksheet.getColumn('F')
-        column.width = 20
-        // Fin tamanio columnas
-        worksheet.mergeCells('A1:F1')
-        worksheet.mergeCells('A2:F2')
-        worksheet.getCell('A1').value = 'Reporte de medicamentos actuales en Centro Galo'
-        worksheet.getCell('A2').value = 'Generado por: ' + this.currentUser.user + ' con fecha ' + this.currentDate
-        // Inicio encabezado
-        worksheet.getCell('A3').font = { bold: true }
-        worksheet.getCell('B3').font = { bold: true }
-        worksheet.getCell('C3').font = { bold: true }
-        worksheet.getCell('D3').font = { bold: true }
-        worksheet.getCell('E3').font = { bold: true }
-        worksheet.getCell('F3').font = { bold: true }
-        worksheet.getCell('A3').value = 'Nombre medicamento'
-        worksheet.getCell('B3').value = 'Existencia'
-        worksheet.getCell('C3').value = 'Costo unitario'
-        worksheet.getCell('D3').value = 'Valor total costo'
-        worksheet.getCell('E3').value = 'Precio unitario'
-        worksheet.getCell('F3').value = 'Valor total precio'
-        // Fin encabezado
-        // Cuerpo del reporte
-        let fila = 4
-        for (let i = 0; i < this.actuales.length; i++) {
-          const element = this.actuales[i]
-          worksheet.getCell('A' + fila).value = element.nombre
-          worksheet.getCell('B' + fila).value = element.existencia_total
-          worksheet.getCell('C' + fila).value = element.precio_costo
-          worksheet.getCell('D' + fila).value = parseFloat(element.precio_costo) * parseFloat(element.existencia_total)
-          worksheet.getCell('E' + fila).value = element.precio_publico
-          worksheet.getCell('F' + fila).value = parseFloat(element.precio_publico) * parseFloat(element.existencia_total)
-          fila++
-        }
-        // Fin del cuerpo del reporte
-
-        workbook.xlsx.writeBuffer().then((buffer) => {
-          const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-          const url = URL.createObjectURL(blob)
-          const link = document.createElement('a')
-          link.href = url
-          link.download = 'InventarioGeneral.xlsx'
-          link.click()
-        })
-        this.closeModal('excel')
-      })
     }
   }
 }
 </script>
-
