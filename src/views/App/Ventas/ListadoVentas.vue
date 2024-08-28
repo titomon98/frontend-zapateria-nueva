@@ -197,13 +197,13 @@
               <b-form-input type="date" v-model="selectedDate"></b-form-input>
               <b-button
                 v-b-tooltip.top="'Reporte de tallas de zapato excel'"
-                @click="console.log('excel')"
+                @click="setReporteExcel()"
                 variant="success"
                 ><i :class="'fas fa-table'"
               /></b-button>
               <b-button
                 v-b-tooltip.top="'Reporte de tallas de zapato pdf'"
-                @click="console.log('pdf')"
+                @click="setReportePdf()"
                 variant="danger"
                 ><i :class="'fa fa-file-pdf-o'"
               /></b-button>
@@ -723,18 +723,18 @@ export default {
       var pdfURL = URL.createObjectURL(pdfData)
       this.previewURL = pdfURL
     },
-    async setTallasExcel (data) {
-      await axios.get(apiUrl + '/reporte/tallas',
+    async setReporteExcel () {
+      await axios.get(apiUrl + '/ventas/reporte/total',
         {
           params: {
-            id_zapato: data.id
+            date: this.selectedDate
           }
         }).then((response) => {
         this.tallas = response.data
         this.currentDate = new Date().toLocaleDateString('es-ES')
         // Inicio tamanio columnas
         const workbook = new ExcelJS.Workbook()
-        const worksheet = workbook.addWorksheet('Reporte especifico')
+        const worksheet = workbook.addWorksheet('Reporte total de ventas')
         let column
         column = worksheet.getColumn('A')
         column.width = 20
@@ -746,30 +746,35 @@ export default {
         column.width = 20
         column = worksheet.getColumn('E')
         column.width = 20
+        column = worksheet.getColumn('F')
+        column.width = 20
         // Fin tamanio columnas
-        worksheet.mergeCells('A1:E1')
-        worksheet.mergeCells('A2:E2')
-        worksheet.getCell('A1').value = 'Reporte de tallas'
+        worksheet.mergeCells('A1:F1')
+        worksheet.mergeCells('A2:F2')
+        worksheet.getCell('A1').value = 'Reporte de ventas'
         worksheet.getCell('A2').value = 'Generado por: ' + this.currentUser.user + ' con fecha ' + this.currentDate
         worksheet.getCell('A3').font = { bold: true }
         worksheet.getCell('B3').font = { bold: true }
         worksheet.getCell('C3').font = { bold: true }
         worksheet.getCell('D3').font = { bold: true }
         worksheet.getCell('E3').font = { bold: true }
-        worksheet.getCell('A3').value = 'Estilo'
-        worksheet.getCell('B3').value = 'Código'
-        worksheet.getCell('C3').value = 'Cantidad'
-        worksheet.getCell('D3').value = 'Tienda'
-        worksheet.getCell('E3').value = 'Talla'
+        worksheet.getCell('F3').font = { bold: true }
+        worksheet.getCell('A3').value = 'Número'
+        worksheet.getCell('B3').value = 'Total'
+        worksheet.getCell('C3').value = 'Fecha'
+        worksheet.getCell('D3').value = 'Cliente'
+        worksheet.getCell('E3').value = 'Tienda'
+        worksheet.getCell('F3').value = 'Estado'
         // Cuerpo del reporte
         let fila = 4
         for (let i = 0; i < this.tallas.length; i++) {
           const element = this.tallas[i]
-          worksheet.getCell('A' + fila).value = element.zapato.estilo
-          worksheet.getCell('B' + fila).value = element.codigo
-          worksheet.getCell('C' + fila).value = element.cantidad
-          worksheet.getCell('D' + fila).value = element.tienda.nombre
-          worksheet.getCell('E' + fila).value = element.talla
+          worksheet.getCell('A' + fila).value = element.id
+          worksheet.getCell('B' + fila).value = element.total
+          worksheet.getCell('C' + fila).value = element.fecha
+          worksheet.getCell('D' + fila).value = element.cliente.nombre
+          worksheet.getCell('E' + fila).value = element.tienda.nombre
+          worksheet.getCell('F' + fila).value = element.estado
           fila++
         }
 
@@ -778,17 +783,17 @@ export default {
           const url = URL.createObjectURL(blob)
           const link = document.createElement('a')
           link.href = url
-          link.download = 'Tallas.xlsx'
+          link.download = 'reporte-ventas.xlsx'
           link.click()
         })
       })
     },
-    async setTallasPdf (data) {
-      console.log(data)
-      await axios.get(apiUrl + '/reporte/tallas',
+    async setReportePdf () {
+      // console.log(data)
+      await axios.get(apiUrl + '/ventas/reporte/total',
         {
           params: {
-            id_zapato: data.id
+            date: this.selectedDate
           }
         }).then((response) => {
         console.log(response.data)
@@ -803,7 +808,7 @@ export default {
         })
         var ingreso = moment(ahora).format('DD/MM/YYYY')
         this.pdf.setFontSize(10).setFont(undefined, 'bold')
-        this.pdf.text('Reporte de tallas', 6, altura)
+        this.pdf.text('Reporte de ventas', 6, altura)
         altura = altura + 0.5
         this.pdf.text('Fecha de generación: ' + ingreso, 6, altura)
         altura = altura + 0.5
@@ -813,21 +818,23 @@ export default {
         altura = altura + 0.5
         this.pdf.setFontSize(10).setFont(undefined, 'bold')
         altura = altura + 2
-        this.pdf.text('Estilo', 2, altura)
-        this.pdf.text('Código', 6, altura)
-        this.pdf.text('Cantidad', 10, altura)
-        this.pdf.text('Tienda', 14, altura)
-        this.pdf.text('Talla', 18, altura)
+        this.pdf.text('Número', 2, altura)
+        this.pdf.text('Total', 6, altura)
+        this.pdf.text('Fecha', 10, altura)
+        this.pdf.text('Cliente', 14, altura)
+        this.pdf.text('Tienda', 18, altura)
+        this.pdf.text('Estado', 20, altura)
         this.pdf.setFontSize(10).setFont(undefined, 'normal')
         altura = altura + 0.5
         for (let i = 0; i < this.tallas.length; i++) {
           const element = this.tallas[i]
 
-          this.pdf.text(element.zapato.estilo, 2, altura)
-          this.pdf.text(element.codigo, 6, altura)
-          this.pdf.text(element.cantidad, 10, altura)
-          this.pdf.text(element.tienda.nombre, 14, altura)
-          this.pdf.text(element.talla, 18, altura)
+          this.pdf.text(element.id, 2, altura)
+          this.pdf.text(element.total, 6, altura)
+          this.pdf.text(element.fecha, 10, altura)
+          this.pdf.text(element.cliente.nombre, 14, altura)
+          this.pdf.text(element.tienda.nombre, 18, altura)
+          this.pdf.text(element.estado, 20, altura)
           altura = altura + 0.5
           if (altura > 25) {
             this.pdf.addPage()
@@ -846,7 +853,7 @@ export default {
         // Convert PDF to data URL
         var pdfURL = URL.createObjectURL(pdfData)
         this.previewURL = pdfURL
-        this.pdfName = 'Tallas.pdf'
+        this.pdfName = 'Reporte.pdf'
       })
     },
     descargarpdf () {
