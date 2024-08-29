@@ -817,6 +817,8 @@ export default {
           format: [28, 21.5]
         })
         var ingreso = moment(ahora).format('DD/MM/YYYY')
+        var imgData = this.logo3
+        this.pdf.addImage(imgData, 'PNG', 1.5, 1, 4.37, 1.87)
         this.pdf.setFontSize(10).setFont(undefined, 'bold')
         this.pdf.text('Reporte de ventas', 6, altura)
         altura = altura + 0.5
@@ -831,7 +833,7 @@ export default {
         this.pdf.text('Número', 2, altura)
         this.pdf.text('Total', 4, altura)
         this.pdf.text('Fecha', 6, altura)
-        this.pdf.text('Cliente', 11, altura)
+        this.pdf.text('Cliente', 9, altura)
         this.pdf.text('Tienda', 13, altura)
         this.pdf.text('Estado', 16, altura)
         this.pdf.setFontSize(10).setFont(undefined, 'normal')
@@ -841,19 +843,19 @@ export default {
 
           this.pdf.text((element.id).toString(), 2, altura)
           this.pdf.text((element.total).toString(), 4, altura)
-          this.pdf.text(element.fecha, 6, altura)
-          this.pdf.text(element.cliente.nombre, 11, altura)
-          this.pdf.text(element.detalle_ventas[0].talla.tienda.nombre, 13, altura)
+          this.pdf.text((element.fecha).toDate().format('DD/MM/YYYY'), 6, altura)
+          this.pdf.text(element.cliente.nombre, 9, altura)
+          this.pdf.text(element.detalle_ventas[0].talla.tienda.nombre, 11, altura)
           // this.pdf.text(element.estado, 20, altura)
           if (element.estado === 1) {
-            this.pdf.text('VENDIDO', 16, altura)
+            this.pdf.text('VENDIDO', 14, altura)
           } else if (element.estado === 2) {
-            this.pdf.text('PENDIENTE DE COBRO', 16, altura)
+            this.pdf.text('PENDIENTE DE COBRO', 14, altura)
           }
           if (element.estado === 3) {
-            this.pdf.text('PAGO PARCIAL', 16, altura)
+            this.pdf.text('PAGO PARCIAL', 14, altura)
           } else {
-            this.pdf.text('INACTIVO', 16, altura)
+            this.pdf.text('INACTIVO', 14, altura)
           }
           altura = altura + 0.5
           if (altura > 25) {
