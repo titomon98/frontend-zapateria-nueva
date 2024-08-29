@@ -773,8 +773,18 @@ export default {
           worksheet.getCell('B' + fila).value = element.total
           worksheet.getCell('C' + fila).value = element.fecha
           worksheet.getCell('D' + fila).value = element.cliente.nombre
-          worksheet.getCell('E' + fila).value = element.tienda.nombre
-          worksheet.getCell('F' + fila).value = element.estado
+          worksheet.getCell('E' + fila).value = element.detalle_ventas[0].talla.tienda.nombre
+          // worksheet.getCell('F' + fila).value = element.estado
+          if (element.estado === 1) {
+            worksheet.getCell('F' + fila).value = 'VENDIDO'
+          } else if (element.estado === 2) {
+            worksheet.getCell('F' + fila).value = 'PENDIENTE DE COBRAR'
+          }
+          if (element.estado === 3) {
+            worksheet.getCell('F' + fila).value = 'PAGO PARCIAL'
+          } else {
+            worksheet.getCell('F' + fila).value = 'INACTIVO'
+          }
           fila++
         }
 
@@ -819,22 +829,32 @@ export default {
         this.pdf.setFontSize(10).setFont(undefined, 'bold')
         altura = altura + 2
         this.pdf.text('Número', 2, altura)
-        this.pdf.text('Total', 6, altura)
-        this.pdf.text('Fecha', 10, altura)
-        this.pdf.text('Cliente', 14, altura)
-        this.pdf.text('Tienda', 18, altura)
-        this.pdf.text('Estado', 20, altura)
+        this.pdf.text('Total', 4, altura)
+        this.pdf.text('Fecha', 6, altura)
+        this.pdf.text('Cliente', 11, altura)
+        this.pdf.text('Tienda', 13, altura)
+        this.pdf.text('Estado', 16, altura)
         this.pdf.setFontSize(10).setFont(undefined, 'normal')
         altura = altura + 0.5
         for (let i = 0; i < this.tallas.length; i++) {
           const element = this.tallas[i]
 
-          this.pdf.text(element.id, 2, altura)
-          this.pdf.text(element.total, 6, altura)
-          this.pdf.text(element.fecha, 10, altura)
-          this.pdf.text(element.cliente.nombre, 14, altura)
-          this.pdf.text(element.tienda.nombre, 18, altura)
-          this.pdf.text(element.estado, 20, altura)
+          this.pdf.text((element.id).toString(), 2, altura)
+          this.pdf.text((element.total).toString(), 4, altura)
+          this.pdf.text(element.fecha, 6, altura)
+          this.pdf.text(element.cliente.nombre, 11, altura)
+          this.pdf.text(element.detalle_ventas[0].talla.tienda.nombre, 13, altura)
+          // this.pdf.text(element.estado, 20, altura)
+          if (element.estado === 1) {
+            this.pdf.text('VENDIDO', 16, altura)
+          } else if (element.estado === 2) {
+            this.pdf.text('PENDIENTE DE COBRO', 16, altura)
+          }
+          if (element.estado === 3) {
+            this.pdf.text('PAGO PARCIAL', 16, altura)
+          } else {
+            this.pdf.text('INACTIVO', 16, altura)
+          }
           altura = altura + 0.5
           if (altura > 25) {
             this.pdf.addPage()
