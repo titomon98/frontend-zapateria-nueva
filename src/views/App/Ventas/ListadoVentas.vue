@@ -186,9 +186,28 @@
             </div>
           </template>
           <template v-slot:headerAction>
-            <router-link to='Sales'>
-              <b-button variant="primary">AGREGAR NUEVO</b-button>
-            </router-link>
+            <b-col>
+              <b-row style="align-content: start;">
+                <router-link to='Sales'>
+                  <b-button variant="primary">AGREGAR NUEVO</b-button>
+                </router-link>
+              </b-row>
+            </b-col>
+            <b-row style="padding-left: 20px;">
+              <b-form-input type="date" v-model="selectedDate"></b-form-input>
+              <b-button
+                v-b-tooltip.top="'Reporte de tallas de zapato excel'"
+                @click="setReporteExcel()"
+                variant="success"
+                ><i :class="'fas fa-table'"
+              /></b-button>
+              <b-button
+                v-b-tooltip.top="'Reporte de tallas de zapato pdf'"
+                @click="setReportePdf()"
+                variant="danger"
+                ><i :class="'fa fa-file-pdf-o'"
+              /></b-button>
+            </b-row>
           </template>
           <template v-slot:body>
             <datatable-heading :changePageSize="changePageSizes" :searchChange="searchChange" :from="from" :to="to"
@@ -262,6 +281,7 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import axios from 'axios'
 import { apiUrl } from '../../../config/constant'
+import ExcelJS from 'exceljs'
 import JsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { mapGetters } from 'vuex'
@@ -315,6 +335,7 @@ export default {
         firstDay: 0
       },
       pdfTitle: '',
+      selectedDate: '',
       selectedDates: {
         start: null,
         end: null
@@ -701,6 +722,171 @@ export default {
       // Convert PDF to data URL
       var pdfURL = URL.createObjectURL(pdfData)
       this.previewURL = pdfURL
+    },
+    async setReporteExcel () {
+      if (this.selectedDate) {
+        await axios.get(apiUrl + '/ventas/reporte/total',
+          {
+            params: {
+              date: this.selectedDate
+            }
+          }).then((response) => {
+          this.tallas = response.data
+          this.currentDate = new Date().toLocaleDateString('es-ES')
+          // Inicio tamanio columnas
+          const workbook = new ExcelJS.Workbook()
+          const worksheet = workbook.addWorksheet('Reporte total de ventas')
+          let column
+          column = worksheet.getColumn('A')
+          column.width = 20
+          column = worksheet.getColumn('B')
+          column.width = 20
+          column = worksheet.getColumn('C')
+          column.width = 20
+          column = worksheet.getColumn('D')
+          column.width = 20
+          column = worksheet.getColumn('E')
+          column.width = 20
+          column = worksheet.getColumn('F')
+          column.width = 20
+          // Fin tamanio columnas
+          worksheet.mergeCells('A1:F1')
+          worksheet.mergeCells('A2:F2')
+          worksheet.getCell('A1').value = 'Reporte de ventas'
+          worksheet.getCell('A2').value = 'Generado por: ' + this.currentUser.user + ' con fecha ' + this.currentDate
+          worksheet.getCell('A3').font = { bold: true }
+          worksheet.getCell('B3').font = { bold: true }
+          worksheet.getCell('C3').font = { bold: true }
+          worksheet.getCell('D3').font = { bold: true }
+          worksheet.getCell('E3').font = { bold: true }
+          worksheet.getCell('F3').font = { bold: true }
+          worksheet.getCell('A3').value = 'Número'
+          worksheet.getCell('B3').value = 'Total'
+          worksheet.getCell('C3').value = 'Fecha'
+          worksheet.getCell('D3').value = 'Cliente'
+          worksheet.getCell('E3').value = 'Tienda'
+          worksheet.getCell('F3').value = 'Estado'
+          // Cuerpo del reporte
+          let fila = 4
+          for (let i = 0; i < this.tallas.length; i++) {
+            const element = this.tallas[i]
+            worksheet.getCell('A' + fila).value = element.id
+            worksheet.getCell('B' + fila).value = element.total
+            worksheet.getCell('C' + fila).value = element.fecha
+            worksheet.getCell('D' + fila).value = element.cliente.nombre
+            worksheet.getCell('E' + fila).value = element.detalle_ventas[0].talla.tienda.nombre
+            // worksheet.getCell('F' + fila).value = element.estado
+            if (element.estado === 1) {
+              worksheet.getCell('F' + fila).value = 'VENDIDO'
+            } else if (element.estado === 2) {
+              worksheet.getCell('F' + fila).value = 'PENDIENTE DE COBRAR'
+            }
+            if (element.estado === 3) {
+              worksheet.getCell('F' + fila).value = 'PAGO PARCIAL'
+            } else {
+              worksheet.getCell('F' + fila).value = 'INACTIVO'
+            }
+            fila++
+          }
+
+          workbook.xlsx.writeBuffer().then((buffer) => {
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url
+            link.download = 'reporte-ventas.xlsx'
+            link.click()
+          })
+        })
+      } else {
+        this.alertText = 'Debe ingresar una fecha.'
+        this.showAlert()
+      }
+    },
+    async setReportePdf () {
+      // console.log(data)
+      if (this.selectedDate) {
+        await axios.get(apiUrl + '/ventas/reporte/total',
+          {
+            params: {
+              date: this.selectedDate
+            }
+          }).then((response) => {
+          console.log(response.data)
+          this.tallas = response.data
+          this.$refs['modal-pdf'].show()
+          var altura = 2
+          var ahora = new Date()
+
+          this.pdf = new JsPDF({
+            unit: 'cm',
+            format: [28, 21.5]
+          })
+          var ingreso = moment(ahora).format('DD/MM/YYYY')
+          var imgData = this.logo3
+          this.pdf.addImage(imgData, 'PNG', 1.5, 1, 4.37, 1.87)
+          this.pdf.setFontSize(10).setFont(undefined, 'bold')
+          this.pdf.text('Reporte de ventas', 6, altura)
+          altura = altura + 0.5
+          this.pdf.text('Fecha de generación: ' + ingreso, 6, altura)
+          altura = altura + 0.5
+          this.pdf.text('Generado por: ', 6, altura)
+          this.pdf.setFontSize(10).setFont(undefined, 'normal')
+          this.pdf.text(this.currentUser.user, 8.5, altura)
+          altura = altura + 0.5
+          this.pdf.setFontSize(10).setFont(undefined, 'bold')
+          altura = altura + 2
+          this.pdf.text('Número', 2, altura)
+          this.pdf.text('Total', 4, altura)
+          this.pdf.text('Fecha', 6, altura)
+          this.pdf.text('Cliente', 9, altura)
+          this.pdf.text('Tienda', 13, altura)
+          this.pdf.text('Estado', 16, altura)
+          this.pdf.setFontSize(10).setFont(undefined, 'normal')
+          altura = altura + 0.5
+          for (let i = 0; i < this.tallas.length; i++) {
+            const element = this.tallas[i]
+            const dataDate = new Date(element.fecha).toLocaleDateString()
+            this.pdf.text((element.id).toString(), 2, altura)
+            this.pdf.text((element.total).toString(), 4, altura)
+            this.pdf.text((dataDate), 6, altura)
+            this.pdf.text(element.cliente.nombre, 9, altura)
+            this.pdf.text(element.detalle_ventas[0].talla.tienda.nombre, 13, altura)
+            // this.pdf.text(element.estado, 20, altura)
+            if (element.estado === 1) {
+              this.pdf.text('VENDIDO', 16, altura)
+            } else if (element.estado === 2) {
+              this.pdf.text('PENDIENTE DE COBRO', 16, altura)
+            }
+            if (element.estado === 3) {
+              this.pdf.text('PAGO PARCIAL', 16, altura)
+            } else if (element.estado === 0) {
+              this.pdf.text('INACTIVO', 16, altura)
+            }
+            altura = altura + 0.5
+            if (altura > 25) {
+              this.pdf.addPage()
+              altura = 2
+              this.pdf.setFontSize(12).setFont(undefined, 'bold')
+              this.pdf.text('Fecha de generación: ' + ingreso, 6, altura)
+              altura = altura + 0.5
+              this.pdf.text('Generado por: ', 6, altura)
+              this.pdf.setFontSize(10).setFont(undefined, 'normal')
+              this.pdf.text(this.currentUser.user, 8.5, altura)
+              altura = altura + 3
+            }
+          }
+          altura = altura + 0.5
+          var pdfData = this.pdf.output('blob')
+          // Convert PDF to data URL
+          var pdfURL = URL.createObjectURL(pdfData)
+          this.previewURL = pdfURL
+          this.pdfName = 'Reporte.pdf'
+        })
+      } else {
+        this.alertText = 'Debe ingresar una fecha.'
+        this.showAlert()
+      }
     },
     descargarpdf () {
       this.pdf.save(this.pdfName)
