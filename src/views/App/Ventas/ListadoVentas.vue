@@ -255,7 +255,7 @@
                       setData(props.rowData)
                       $bvModal.show('modal-4')
                     ">
-                    <i :class="'fas fa-arrow-right'" />
+                    <i :class="'fas fa-money-bill'" />
                   </b-button>
                   <b-button v-b-tooltip.top="'Devolución de venta'" v-if="props.rowData.estado === 1 || props.rowData.estado === 2 || props.rowData.estado === 3" class="mb-2"
                     size="sm" :variant="'outline-warning'">
@@ -893,8 +893,11 @@ export default {
     },
     onPay () {
       this.paymentSum = parseFloat(this.paymentType.Efectivo) + parseFloat(this.paymentType.Tarjeta) + parseFloat(this.paymentType.Deposito) + parseFloat(this.paymentType.Cheque)
-      if (this.paymentSum > parseFloat(this.totalPayment)) {
+      if (parseFloat(this.paymentSum) > parseFloat(this.totalPayment)) {
         this.alertErrorText = 'El total ingresado es mayor al total por pagar'
+        this.showAlertError()
+      } else if (parseFloat(this.paymentSum) < parseFloat(this.totalPayment)) {
+        this.alertErrorText = 'El total ingresado es menor al total por pagar'
         this.showAlertError()
       } else {
         let me = this
