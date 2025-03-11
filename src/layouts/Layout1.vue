@@ -59,14 +59,20 @@ import Loader from '../components/xray/loader/Loader'
 import SideBarStyle1 from '../components/xray/sidebars/SideBarStyle1'
 import NavBarStyle1 from '../components/xray/navbars/NavBarStyle1'
 import SideBarItems from '../FackApi/json/SideBar'
-import SidebarVacacionistas from '../FackApi/json/SidebarVacacionistas'
-import SidebarCaja from '../FackApi/json/SidebarCaja'
 import HorizontalItems from '../FackApi/json/HorizontalMenu'
 import profile from '../assets/images/user/1.jpg'
 import loader from '../assets/images/logo.png'
 import { xray } from '../config/pluginInit'
 import { Users } from '../FackApi/api/chat'
 import { mapGetters, mapActions } from 'vuex'
+import SidebarBodeguero from '../FackApi/json/SidebarBodeguero'
+import SidebarCajero from '../FackApi/json/SidebarCajero'
+import SidebarConsultas from '../FackApi/json/SidebarConsultas'
+import SidebarGerente from '../FackApi/json/SidebarGerente'
+import SidebarGerenteGeneral from '../FackApi/json/SidebarGerenteGeneral'
+import SidebarVacacionista from '../FackApi/json/SidebarVacacionista'
+import SidebarVendedor from '../FackApi/json/SidebarVendedor'
+
 export default {
   name: 'Layout1',
   components: {
@@ -84,9 +90,19 @@ export default {
     if (this.currentUser.user_type === 1) {
       this.verticalMenu = SideBarItems
     } else if (this.currentUser.user_type === 2) {
-      this.verticalMenu = SidebarCaja
+      this.verticalMenu = SidebarCajero
     } else if (this.currentUser.user_type === 3) {
-      this.verticalMenu = SidebarVacacionistas
+      this.verticalMenu = SidebarVacacionista
+    } else if (this.currentUser.user_type === 4) {
+      this.verticalMenu = SidebarConsultas
+    } else if (this.currentUser.user_type === 5) {
+      this.verticalMenu = SidebarGerente
+    } else if (this.currentUser.user_type === 6) {
+      this.verticalMenu = SidebarGerenteGeneral
+    } else if (this.currentUser.user_type === 7) {
+      this.verticalMenu = SidebarBodeguero
+    } else if (this.currentUser.user_type === 8) {
+      this.verticalMenu = SidebarVendedor
     }
   },
   computed: {

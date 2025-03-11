@@ -93,18 +93,6 @@
     "icon": "ri-list-check-2"
   },
   {
-    "title": "Pedidos pendientes",
-    "name": "Pedidos pendientes",
-    "is_heading": false,
-    "is_active": false,
-    "link": {
-      "name": "pedidos.pedidosparent"
-    },
-    "class_name": "",
-    "is_icon_class": true,
-    "icon": "ri-file-list-fill"
-  },
-  {
     "title": "Alerta de tallas",
     "name": "Alerta de tallas",
     "is_heading": false,

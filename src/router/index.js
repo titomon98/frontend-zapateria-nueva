@@ -104,6 +104,7 @@ import ComprasParent from '../views/App/Compras/ComprasParent'
 // Traslados
 import Traslados from '../views/App/Traslados/Traslados'
 import ListadoTraslados from '../views/App/Traslados/ListadoTraslados'
+import ListadoTrasladosConsulta from '../views/App/Traslados/ListadoTrasladosConsulta'
 import ListadoEstados from '../views/App/Traslados/ListadoEstados.vue'
 
 // Pedidos
@@ -115,6 +116,8 @@ import Alertas from '../views/App/Alertas/Alertas'
 // Services
 import ServicesParent from '../views/App/Services/ServicesParent'
 import ServicesBodeguero from '../views/App/Services/ServicesBodeguero'
+import ServicesGerenteGeneral from '../views/App/Services/ServicesGerenteGeneral'
+import ServicesVacacionista from '../views/App/Services/ServicesVacacionista'
 import Tallas from '../views/App/Services/Tallas'
 import Zapato from '../views/App/Services/Zapato'
 import Tiendas from '../views/App/Services/Tiendas'
@@ -130,6 +133,7 @@ import MarcasData from '../views/App/Data/Marcas'
 // Ventas
 import Ventas from '../views/App/Ventas/VentaIndividual'
 import ListadoVentas from '../views/App/Ventas/ListadoVentas.vue'
+import ListadoVentasGeneral from '../views/App/Ventas/ListadoVentasGeneral.vue'
 
 // Busqueda
 import Busqueda from '../views/App/Busqueda/Busqueda.vue'
@@ -169,6 +173,18 @@ const ServicesRoutes = (prop, mode) => [
     name: prop + '.servicesbodeguero',
     meta: { dark: mode, auth: true, name: 'ServicesBodeguero' },
     component: ServicesBodeguero
+  },
+  {
+    path: 'servicesgerentegeneral',
+    name: prop + '.servicesgerentegeneral',
+    meta: { dark: mode, auth: true, name: 'ServicesGerenteGeneral' },
+    component: ServicesGerenteGeneral
+  },
+  {
+    path: 'servicesvacacionista',
+    name: prop + '.servicesvacacionista',
+    meta: { dark: mode, auth: true, name: 'ServicesVacacionista' },
+    component: ServicesVacacionista
   },
   {
     path: 'services',
@@ -235,6 +251,12 @@ const VentasRoutes = (prop, mode) => [
     name: prop + '.listado',
     meta: { dark: mode, auth: true, name: 'ListadoVentas' },
     component: ListadoVentas
+  },
+  {
+    path: 'listadogeneral',
+    name: prop + '.listadogeneral',
+    meta: { dark: mode, auth: true, name: 'ListadoVentasGeneral' },
+    component: ListadoVentasGeneral
   }
 ]
 
@@ -286,6 +308,12 @@ const TrasladosRoutes = (prop, mode) => [
     name: prop + '.listadotraslados',
     meta: { dark: mode, auth: true, name: 'ListadoTraslados' },
     component: ListadoTraslados
+  },
+  {
+    path: 'listadotrasladosconsulta',
+    name: prop + '.listadotrasladosconsulta',
+    meta: { dark: mode, auth: true, name: 'ListadoTrasladosConsulta' },
+    component: ListadoTrasladosConsulta
   },
   {
     path: 'listadoestados',

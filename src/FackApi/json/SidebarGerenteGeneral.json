@@ -26,7 +26,7 @@
       "is_heading": false,
       "is_active": false,
       "link": {
-        "name": "services.services"
+        "name": "services.servicesgerentegeneral"
       },
       "class_name": "",
       "is_icon_class": true,
@@ -74,7 +74,7 @@
       "is_heading": false,
       "is_active": false,
       "link": {
-        "name": "traslados.listadoestados"
+        "name": "traslados.listadotraslados"
       },
       "class_name": "",
       "is_icon_class": true,
@@ -91,6 +91,78 @@
       "class_name": "",
       "is_icon_class": true,
       "icon": "ri-list-check-2"
+    },
+    {
+      "title": "Alerta de tallas",
+      "name": "Alerta de tallas",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "alertas.alertas"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-file-warning-fill"
+    },
+    {
+      "title": "Control de datos",
+      "name": "Control de datos",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "data.data"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-equalizer-fill"
+    },
+    {
+      "title": "Clientes",
+      "name": "Clientes",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "clientes.clientes"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-user-add-fill"
+    },
+    {
+      "title": "Proveedores",
+      "name": "Proveedores",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "proveedores.proveedores"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-briefcase-fill"
+    },
+    {
+      "title": "Usuarios",
+      "name": "Usuarios",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "admin.users"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-user-5-fill"
+    },
+    {
+      "title": "Búsqueda de zapatos",
+      "name": "Búsqueda de zapatos",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "admin.busqueda"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-search-line"
     }
   ]
   

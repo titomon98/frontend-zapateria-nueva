@@ -342,6 +342,58 @@
         >
       </template>
     </b-modal>
+    <b-modal id="modal-3-zapatos" ref="modal-3-zapatos" title="Desactivar zapato">
+      <b-alert
+        :show="alertCountDownError"
+        dismissible
+        fade
+        @dismissed="alertCountDownError=0"
+        class="text-white bg-danger"
+      >
+        <div class="iq-alert-text">{{ alertErrorText }}</div>
+      </b-alert>
+      <h6 class="my-4">
+        ¿Desea desactivar el zapato: {{ form.estilo }} ?
+      </h6>
+      <template #modal-footer="{}">
+        <b-button
+          type="submit"
+          variant="primary"
+          @click="onState()
+                  $bvModal.hide('modal-3-zapatos')"
+          >Desactivar</b-button
+        >
+        <b-button variant="danger" @click="$bvModal.hide('modal-3-zapatos')"
+          >Cancelar</b-button
+        >
+      </template>
+    </b-modal>
+    <b-modal id="modal-4-zapatos" ref="modal-4-zapatos" title="Activar zapato">
+      <b-alert
+        :show="alertCountDownError"
+        dismissible
+        fade
+        @dismissed="alertCountDownError=0"
+        class="text-white bg-danger"
+      >
+        <div class="iq-alert-text">{{ alertErrorText }}</div>
+      </b-alert>
+      <h6 class="my-4">
+        ¿Desea activar el zapato: {{ form.estilo }} ?
+      </h6>
+      <template #modal-footer="{}">
+        <b-button
+          type="submit"
+          variant="primary"
+          @click="onState()
+                  $bvModal.hide('modal-4-zapatos')"
+          >Activar</b-button
+        >
+        <b-button variant="danger" @click="$bvModal.hide('modal-4-zapatos')"
+          >Cancelar</b-button
+        >
+      </template>
+    </b-modal>
     <b-modal id="modal-5-zapatos" ref="modal-5-zapatos" title="Fotos del zapato">
       <template>
         <!-- <div v-for="(item, index) in loadedPhotos" :key="index" cols="12" md="4" class="mb-3">
@@ -449,6 +501,25 @@
                     size="sm"
                     variant="outline-warning"
                     ><i :class="'fas fa-pencil-alt'"
+                  /></b-button>
+                  <b-button
+                    v-b-tooltip.top="
+                      props.rowData.estado == 1 ? 'Desactivar' : 'Activar'"
+                    @click="
+                      setData(props.rowData);
+                      props.rowData.estado == 1
+                        ? $bvModal.show('modal-3-zapatos')
+                        : $bvModal.show('modal-4-zapatos');
+                    "
+                    class="mb-2"
+                    size="sm"
+                    :variant="
+                      props.rowData.estado == 1 ? 'outline-danger' : 'outline-info'">
+                    <i
+                      :class="
+                        props.rowData.estado == 1
+                          ? 'fas fa-trash-alt'
+                          : 'fas fa-check'"
                   /></b-button>
                   <b-button
                     v-b-tooltip.top="'Ver'"

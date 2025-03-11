@@ -1,0 +1,156 @@
+[
+    {
+      "title": "Dashboard",
+      "name": "sidebar.admin",
+      "is_heading": true,
+      "is_active": false,
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": ""
+    },
+    {
+      "title": "Hospital Dashboard 1",
+      "name": "sidebar.dashboard2",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "dashboard.home-1"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-home-8-fill"
+    },
+    {
+      "title": "Productos",
+      "name": "Productos",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "services.servicesgerente"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-store-3-fill"
+    },
+    {
+      "title": "Ventas",
+      "name": "Ventas",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "ventas.ventas"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-money-dollar-box-fill"
+    },
+    {
+        "title": "Listado de ventas",
+        "name": "Listado de ventas",
+        "is_heading": false,
+        "is_active": false,
+        "link": {
+            "name": "ventas.listadogeneral"
+        },
+        "class_name": "",
+        "is_icon_class": true,
+        "icon": "ri-list-unordered"
+    },
+    {
+      "title": "Compras",
+      "name": "Compras",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "compras.comprasparent"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-shopping-bag-fill"
+    },
+    {
+      "title": "Listado de traslados",
+      "name": "Listado de traslados",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "traslados.listadotraslados"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-list-check"
+    },
+    {
+      "title": "Traslados detallado",
+      "name": "Traslados detallado",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "traslados.listadoestados"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-list-check-2"
+    },
+    {
+      "title": "Alerta de tallas",
+      "name": "Alerta de tallas",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "alertas.alertas"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-file-warning-fill"
+    },
+    {
+      "title": "Control de datos",
+      "name": "Control de datos",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "data.data"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-equalizer-fill"
+    },
+    {
+      "title": "Clientes",
+      "name": "Clientes",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "clientes.clientes"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-user-add-fill"
+    },
+    {
+      "title": "Proveedores",
+      "name": "Proveedores",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "proveedores.proveedores"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-briefcase-fill"
+    },
+    {
+      "title": "Búsqueda de zapatos",
+      "name": "Búsqueda de zapatos",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "admin.busqueda"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-search-line"
+    }
+  ]
+  
