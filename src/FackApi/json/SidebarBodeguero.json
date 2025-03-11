@@ -1,0 +1,60 @@
+[
+    {
+      "title": "Dashboard",
+      "name": "sidebar.admin",
+      "is_heading": true,
+      "is_active": false,
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": ""
+    },
+    {
+      "title": "Hospital Dashboard 1",
+      "name": "sidebar.dashboard2",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "dashboard.home-1"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-home-8-fill"
+    },
+    {
+      "title": "Productos",
+      "name": "Productos",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "services.servicesbodeguero"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-store-3-fill"
+    },
+    {
+      "title": "Listado de traslados",
+      "name": "Listado de traslados",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "traslados.listadotraslados"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-list-check"
+    },
+    {
+      "title": "Traslados detallado",
+      "name": "Traslados detallado",
+      "is_heading": false,
+      "is_active": false,
+      "link": {
+        "name": "traslados.listadoestados"
+      },
+      "class_name": "",
+      "is_icon_class": true,
+      "icon": "ri-list-check-2"
+    }
+  ]
+  

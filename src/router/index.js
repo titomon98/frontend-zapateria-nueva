@@ -114,6 +114,7 @@ import Alertas from '../views/App/Alertas/Alertas'
 
 // Services
 import ServicesParent from '../views/App/Services/ServicesParent'
+import ServicesBodeguero from '../views/App/Services/ServicesBodeguero'
 import Tallas from '../views/App/Services/Tallas'
 import Zapato from '../views/App/Services/Zapato'
 import Tiendas from '../views/App/Services/Tiendas'
@@ -162,6 +163,12 @@ const ServicesRoutes = (prop, mode) => [
     name: prop + '.services',
     meta: { dark: mode, auth: true, name: 'ServicesParent' },
     component: ServicesParent
+  },
+  {
+    path: 'servicesbodeguero',
+    name: prop + '.servicesbodeguero',
+    meta: { dark: mode, auth: true, name: 'ServicesBodeguero' },
+    component: ServicesBodeguero
   },
   {
     path: 'services',
